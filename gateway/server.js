@@ -41,7 +41,7 @@ app.get('*', function(req, res) {
 });
 
 app.post('/', function(req, res) {
-  return request.post("http://localhost/dmbs/core/main.php?db=" + req.query.db + "&clientId=" + req.query.clientId, {
+  return request.post("http://localhost/dbms/core/main.php?db=" + req.query.db + "&clientId=" + req.query.clientId, {
     form: {
       update: req.body.update
     }
