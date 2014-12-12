@@ -57,7 +57,7 @@ Connection = (function() {
   Connection.prototype.send = function() {
     var message;
     message = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    console.log('send', message);
+    console.log('send', this.clientId, message);
     return this.ws.send(message.join("\t"));
   };
 

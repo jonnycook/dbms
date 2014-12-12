@@ -28,7 +28,7 @@ class Connection
 		@send 'r', number, response...
 
 	send: (message...) ->
-		console.log 'send', message
+		console.log 'send', @clientId, message
 		@ws.send message.join "\t"
 
 	onMessage: (number, code, params) ->
