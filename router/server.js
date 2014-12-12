@@ -133,13 +133,16 @@ Connection = (function() {
   };
 
   Connection.prototype.close = function() {
-    clearInterval(this.pingTimerId);
-    this.ws.close();
-    delete connections[this.clientId];
-    console.log('close', this.clientId);
-    return request.get("http://127.0.0.1:3000/client/disconnected?id=" + this.clientId, function(err, res, body) {
-      return console.log(body);
-    });
+    if (!this.closed) {
+      this.closed = true;
+      clearInterval(this.pingTimerId);
+      this.ws.close();
+      delete connections[this.clientId];
+      console.log('close', this.clientId);
+      return request.get("http://127.0.0.1:3000/client/disconnected?id=" + this.clientId, function(err, res, body) {
+        return console.log(body);
+      });
+    }
   };
 
   return Connection;

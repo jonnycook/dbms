@@ -79,12 +79,14 @@ class Connection
 					@_respond number, body
 
 	close: ->
-		clearInterval @pingTimerId
-		@ws.close()
-		delete connections[@clientId]
-		console.log 'close', @clientId
-		request.get "http://127.0.0.1:3000/client/disconnected?id=#{@clientId}", (err, res, body) ->
-			console.log body
+		if !@closed
+			@closed = true
+			clearInterval @pingTimerId
+			@ws.close()
+			delete connections[@clientId]
+			console.log 'close', @clientId
+			request.get "http://127.0.0.1:3000/client/disconnected?id=#{@clientId}", (err, res, body) ->
+				console.log body
 
 connections = {}
 
