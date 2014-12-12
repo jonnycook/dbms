@@ -34,6 +34,18 @@ class Connection
 			[messageId, code, params...] = message.split '\t'
 			@onMessage messageId, code, params
 
+		counter = 0
+		ws.on 'pong', ->
+			--counter
+
+		@pingTimerId = setInterval (=>
+			if counter >= 2
+				@close()
+			else
+				++ counter
+				ws.ping()
+		), 5000
+
 
 	_respond: (number, response...) ->
 		# @ws.send "r\t#{number}\t#{response.join '\t'}"
@@ -67,6 +79,8 @@ class Connection
 					@_respond number, body
 
 	close: ->
+		clearTimeout @pingTimerId
+		@ws.close()
 		delete connections[@clientId]
 		console.log 'close', @clientId
 		request.get "http://127.0.0.1:3000/client/disconnected?id=#{@clientId}", (err, res, body) ->

@@ -44,6 +44,7 @@ app.post('/push', function(req, res) {
 
 Connection = (function() {
   function Connection(ws) {
+    var counter;
     this.ws = ws;
     console.log('new connection');
     ws.on('close', (function(_this) {
@@ -63,6 +64,20 @@ Connection = (function() {
         return _this.onMessage(messageId, code, params);
       };
     })(this));
+    counter = 0;
+    ws.on('pong', function() {
+      return --counter;
+    });
+    this.pingTimerId = setInterval(((function(_this) {
+      return function() {
+        if (counter >= 2) {
+          return _this.close();
+        } else {
+          ++counter;
+          return ws.ping();
+        }
+      };
+    })(this)), 5000);
   }
 
   Connection.prototype._respond = function() {
@@ -117,6 +132,8 @@ Connection = (function() {
   };
 
   Connection.prototype.close = function() {
+    clearTimeout(this.pingTimerId);
+    this.ws.close();
     delete connections[this.clientId];
     console.log('close', this.clientId);
     return request.get("http://127.0.0.1:3000/client/disconnected?id=" + this.clientId, function(err, res, body) {
