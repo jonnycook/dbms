@@ -23,6 +23,17 @@ class Connection
 	constructor: (@ws) ->
 		console.log 'new connection'
 
+		ws.on 'close', =>
+			@close()
+
+
+		ws.on 'error', =>
+			@close()
+		ws.on 'message', (message) ->
+			[messageId, code, params...] = message.split '\t'
+			conn.onMessage messageId, code, params
+
+
 	_respond: (number, response...) ->
 		# @ws.send "r\t#{number}\t#{response.join '\t'}"
 		@send 'r', number, response...
@@ -64,9 +75,3 @@ connections = {}
 
 wss.on 'connection', (ws) ->
 	conn = new Connection ws
-	ws.on 'close', ->
-		conn.close()
-
-	ws.on 'message', (message) ->
-		[messageId, code, params...] = message.split '\t'
-		conn.onMessage messageId, code, params

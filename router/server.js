@@ -46,6 +46,21 @@ Connection = (function() {
   function Connection(ws) {
     this.ws = ws;
     console.log('new connection');
+    ws.on('close', (function(_this) {
+      return function() {
+        return _this.close();
+      };
+    })(this));
+    ws.on('error', (function(_this) {
+      return function() {
+        return _this.close();
+      };
+    })(this));
+    ws.on('message', function(message) {
+      var code, messageId, params, _ref1;
+      _ref1 = message.split('\t'), messageId = _ref1[0], code = _ref1[1], params = 3 <= _ref1.length ? __slice.call(_ref1, 2) : [];
+      return conn.onMessage(messageId, code, params);
+    });
   }
 
   Connection.prototype._respond = function() {
@@ -115,15 +130,7 @@ connections = {};
 
 wss.on('connection', function(ws) {
   var conn;
-  conn = new Connection(ws);
-  ws.on('close', function() {
-    return conn.close();
-  });
-  return ws.on('message', function(message) {
-    var code, messageId, params, _ref1;
-    _ref1 = message.split('\t'), messageId = _ref1[0], code = _ref1[1], params = 3 <= _ref1.length ? __slice.call(_ref1, 2) : [];
-    return conn.onMessage(messageId, code, params);
-  });
+  return conn = new Connection(ws);
 });
 
 //# sourceMappingURL=server.js.map
