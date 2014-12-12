@@ -57,6 +57,7 @@ Connection = (function() {
   Connection.prototype.send = function() {
     var message;
     message = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    console.log('send', message);
     return this.ws.send(message.join("\t"));
   };
 
@@ -100,7 +101,7 @@ Connection = (function() {
 
   Connection.prototype.close = function() {
     delete connections[this.clientId];
-    console.log('close');
+    console.log('close', this.clientId);
     return request.get("http://127.0.0.1:3000/client/disconnected?id=" + this.clientId, function(err, res, body) {
       return console.log(body);
     });

@@ -28,6 +28,7 @@ class Connection
 		@send 'r', number, response...
 
 	send: (message...) ->
+		console.log 'send', message
 		@ws.send message.join "\t"
 
 	onMessage: (number, code, params) ->
@@ -55,7 +56,7 @@ class Connection
 
 	close: ->
 		delete connections[@clientId]
-		console.log 'close'
+		console.log 'close', @clientId
 		request.get "http://127.0.0.1:3000/client/disconnected?id=#{@clientId}", (err, res, body) ->
 			console.log body
 
