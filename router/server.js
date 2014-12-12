@@ -133,7 +133,7 @@ Connection = (function() {
   };
 
   Connection.prototype.close = function() {
-    clearTimeout(this.pingTimerId);
+    clearInterval(this.pingTimerId);
     this.ws.close();
     delete connections[this.clientId];
     console.log('close', this.clientId);

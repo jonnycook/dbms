@@ -26,7 +26,6 @@ class Connection
 		ws.on 'close', =>
 			@close()
 
-
 		ws.on 'error', =>
 			@close()
 
@@ -80,7 +79,7 @@ class Connection
 					@_respond number, body
 
 	close: ->
-		clearTimeout @pingTimerId
+		clearInterval @pingTimerId
 		@ws.close()
 		delete connections[@clientId]
 		console.log 'close', @clientId
