@@ -71,6 +71,7 @@ Connection = (function() {
     this.pingTimerId = setInterval(((function(_this) {
       return function() {
         if (counter >= 2) {
+          console.log('timeout', _this.clientId);
           return _this.close();
         } else {
           ++counter;

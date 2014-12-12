@@ -40,6 +40,7 @@ class Connection
 
 		@pingTimerId = setInterval (=>
 			if counter >= 2
+				console.log 'timeout', @clientId
 				@close()
 			else
 				++ counter
