@@ -1,4 +1,3 @@
-
 {Server:WebSocketServer, OPEN:OPEN} = require 'ws'
 request = require 'request'
 
@@ -40,6 +39,11 @@ class Connection
 				@db = params[1]
 				request.get "http://127.0.0.1:3000/client/connected?id=#{@clientId}", =>
 					@_respond number
+
+			when 'q'
+				console.log @db, @clientId
+				request.get "http://127.0.0.1:3000/pull?db=#{@db}&clientId=#{@clientId}", (err, res, body) =>
+					@_respond number, body
 
 			when 'g'
 				request.get "http://127.0.0.1:3000#{params[0]}?db=#{@db}&clientId=#{@clientId}", (err, res, body) =>

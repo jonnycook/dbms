@@ -72,6 +72,13 @@ Connection = (function() {
             return _this._respond(number);
           };
         })(this));
+      case 'q':
+        console.log(this.db, this.clientId);
+        return request.get("http://127.0.0.1:3000/pull?db=" + this.db + "&clientId=" + this.clientId, (function(_this) {
+          return function(err, res, body) {
+            return _this._respond(number, body);
+          };
+        })(this));
       case 'g':
         return request.get("http://127.0.0.1:3000" + params[0] + "?db=" + this.db + "&clientId=" + this.clientId, (function(_this) {
           return function(err, res, body) {

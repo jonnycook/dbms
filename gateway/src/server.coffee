@@ -15,6 +15,11 @@ app.get '/client/disconnected', (req, res) ->
 		res.send body
 		# res.end()
 
+app.get '/pull', (req, res) ->
+	console.log req.query
+	request "http://localhost/dbms/core/main.php?db=#{req.query.db}&clientId=#{req.query.clientId}&pull=1", (err, httpRes, body) ->
+		res.send body
+
 app.get '/schema', (req, res) ->
 	res.header 'Access-Control-Allow-Origin', '*'
 	request "http://localhost/dbms/core/main.php?schema=1&db=#{req.query.db}", (err, httpRes, body) ->

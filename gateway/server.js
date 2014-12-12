@@ -27,6 +27,13 @@ app.get('/client/disconnected', function(req, res) {
   });
 });
 
+app.get('/pull', function(req, res) {
+  console.log(req.query);
+  return request("http://localhost/dbms/core/main.php?db=" + req.query.db + "&clientId=" + req.query.clientId + "&pull=1", function(err, httpRes, body) {
+    return res.send(body);
+  });
+});
+
 app.get('/schema', function(req, res) {
   res.header('Access-Control-Allow-Origin', '*');
   return request("http://localhost/dbms/core/main.php?schema=1&db=" + req.query.db, function(err, httpRes, body) {
