@@ -29,9 +29,10 @@ class Connection
 
 		ws.on 'error', =>
 			@close()
-		ws.on 'message', (message) ->
+
+		ws.on 'message', (message) =>
 			[messageId, code, params...] = message.split '\t'
-			conn.onMessage messageId, code, params
+			@onMessage messageId, code, params
 
 
 	_respond: (number, response...) ->

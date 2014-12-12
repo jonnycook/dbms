@@ -56,11 +56,13 @@ Connection = (function() {
         return _this.close();
       };
     })(this));
-    ws.on('message', function(message) {
-      var code, messageId, params, _ref1;
-      _ref1 = message.split('\t'), messageId = _ref1[0], code = _ref1[1], params = 3 <= _ref1.length ? __slice.call(_ref1, 2) : [];
-      return conn.onMessage(messageId, code, params);
-    });
+    ws.on('message', (function(_this) {
+      return function(message) {
+        var code, messageId, params, _ref1;
+        _ref1 = message.split('\t'), messageId = _ref1[0], code = _ref1[1], params = 3 <= _ref1.length ? __slice.call(_ref1, 2) : [];
+        return _this.onMessage(messageId, code, params);
+      };
+    })(this));
   }
 
   Connection.prototype._respond = function() {
