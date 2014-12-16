@@ -76,7 +76,7 @@ return array(
 				)
 			)
 		),
-		'Goals' => array(
+		'Goal' => array(
 			'attributes' => array(
 				'name' => array(
 					'type' => 'string'
