@@ -60,6 +60,9 @@ return array(
 				'end' => array(
 					'type' => 'datetime',
 				),
+				// 'elapsed' => array(
+					
+				// )
 			),
 			'relationships' => array(
 				'activity' => array(

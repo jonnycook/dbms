@@ -85,7 +85,7 @@ function getObject(array $schema, $model, $id, &$results=null) {
 	return $object;
 }
 
-function updateObject(array $schema, $model, $id, $changes, &$mapping=null, array $allChanges=array()) {
+function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, array $allChanges=array()) {
 	assert(is_string($model));
 	assert($changes !== null);
 	if ($changes == 'delete') {
@@ -100,7 +100,7 @@ function updateObject(array $schema, $model, $id, $changes, &$mapping=null, arra
 	else {
 		$attributes = schemaModelAttributes($schema, $model);
 		$relationships = schemaModelRelationships($schema, $model);
-		foreach ($changes as $prop => $value) {
+		foreach ($changes as $prop => &$value) {
 			if (preg_match('/^([^.(\[]+)([.(\[].+)$/', $prop, $matches)) {
 				$value = (array)$value;
 
@@ -178,6 +178,7 @@ function updateObject(array $schema, $model, $id, $changes, &$mapping=null, arra
 				}
 			}
 		}
+		unset($value);
 
 		if (isTemporaryId($id)) {
 			$primaryStorageName = schemaModelStorage($schema, $model);
@@ -310,13 +311,16 @@ if ($resource = $_GET['resource']) {
 else if ($update = $_POST['update']) {
 	$update = json_decode($update, true);
 	$mapping = array();
-	foreach ($update as $model => $modelChanges) {
-		foreach ($modelChanges as $id => $changes) {
+	foreach ($update as $model => &$modelChanges) {
+		foreach ($modelChanges as $id => &$changes) {
 			if (!isTemporaryId($id) || !$mapping[$id]) {
 				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
 			}
 		}
+		unset($changes);
 	}
+	unset($modelChanges);
+
 
 	foreach ($update as $model => $modelChanges) {
 		foreach ($modelChanges as $id => $changes) {
