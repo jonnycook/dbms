@@ -54,15 +54,12 @@ return array(
 		),
 		'Instance' => array(
 			'attributes' => array(
-				'start' => array(
+				'begin' => array(
 					'type' => 'datetime',
 				),
 				'end' => array(
 					'type' => 'datetime',
 				),
-				// 'elapsed' => array(
-
-				// )
 			),
 			'relationships' => array(
 				'activity' => array(
@@ -82,7 +79,21 @@ return array(
 					'type' => 'string'
 				)
 			)
-		)
+		),
+		'Day' => array(
+			'attributes' => array(
+				'begin' => array(
+					'type' => 'datetime',
+				),
+				'end' => array(
+					'type' => 'datetime',
+				),
+				'intendedEnd' => array(
+					'type' => 'datetime',
+				)
+			)
+		),
+		// 'SleepBe'
 	),
 
 	'routes' => array(

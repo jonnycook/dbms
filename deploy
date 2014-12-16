@@ -1,0 +1,2 @@
+git add -A; git commit -m "."; git push origin master
+ssh root@23.239.17.29 "cd /var/www/dbms/; git pull"
