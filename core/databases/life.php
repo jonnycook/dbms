@@ -61,7 +61,7 @@ return array(
 					'type' => 'datetime',
 				),
 				// 'elapsed' => array(
-					
+
 				// )
 			),
 			'relationships' => array(
@@ -73,6 +73,13 @@ return array(
 					'storage' => array(
 						'key' => 'activity_id',
 					)
+				)
+			)
+		),
+		'Goals' => array(
+			'attributes' => array(
+				'name' => array(
+					'type' => 'string'
 				)
 			)
 		)
