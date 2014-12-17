@@ -93,6 +93,16 @@ return array(
 				)
 			)
 		),
+		'Thought' => array(
+			'attributes' => array(
+				'content' => array(
+					'type' => 'string',
+				),
+				'timestamp' => array(
+					'type' => 'datetime',
+				),
+			)
+		),
 		// 'SleepBe'
 	),
 
