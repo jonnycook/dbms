@@ -1,42 +1,93 @@
 <?php
 
-require_once('main.php');
+// require_once('main.php');
 
-$databaseName = 'test';
+$databaseName = 'divvydose';
 $databaseSchema = require("databases/$databaseName.php");
 
-$data = array(
-	'Model' => array(
-		'$1' => array(
-			'prop' => '1',
-			'parent' => '$2',
-			'hash' => array(
-				'yes' => true
-			)
-		),
-		'$2' => array(
-			'prop' => '2',
-		),
-		'$3' => array(
-			'prop' => '3',
-			'parent' => '$2',
-		)
-	)
-);
 
-$mapping = array();
-foreach ($data as $model => $modelChanges) {
-	foreach ($modelChanges as $id => $changes) {
-		if (!isTemporaryId($id) || !$mapping[$id]) {
-			updateObject($databaseSchema, $model, $id, $changes, $mapping, $data);
+
+
+	function mapObject($rules, $object, $state, &$output) {
+		if (is_array($rules)) {
+			foreach ($rules as $ruleKey => $ruleValue) {
+				if ($ruleValue === null) {
+					$output[] = $state;
+					return null;
+				}
+				else if ($ruleKey[0] == '@') {
+					$objectProp = substr($ruleKey, 1);
+					if ($objectProp == '*') {
+						$result = array();
+						foreach ($object as $key => $value) {
+							$result[] = mapObject($ruleValue, $value, $state, $output);
+						}
+						return $result;
+					}
+					else {
+						return mapObject($ruleValue, $object[$objectProp], $state, $output);
+					}
+				}
+				else if ($ruleKey == '*') {
+					$result = mapObject($ruleValue, $object, $state, $output);
+					foreach ($result as $key => $value) {
+						if (!isset($state[$key])) {
+							$state[$key] = $value;
+						}
+					}
+				}
+				else {
+					$state[$ruleKey] = mapObject($ruleValue, $object, $state, $output);
+				}
+			}
+		}
+		else {
+			$prop = substr($rules, 1);
+			if ($prop == '*') return $object;
+			else {
+				return $object[$prop];
+			}
 		}
 	}
-}
-var_dump($mapping);
 
-$results = array();
-getObject($databaseSchema, 'Model', $mapping['$1'], $results);
-var_dump($results);
+$supplements = json_decode(file_get_contents('supplements.json'), true);
+
+mapObject($databaseSchema['models']['SupplementStrength']['storage']['config']['supplements'], $supplements, array(), $output);
+header('Content-Type: text/plain');
+var_dump($output);
+
+// $data = array(
+// 	'Model' => array(
+// 		'$1' => array(
+// 			'prop' => '1',
+// 			'parent' => '$2',
+// 			'hash' => array(
+// 				'yes' => true
+// 			)
+// 		),
+// 		'$2' => array(
+// 			'prop' => '2',
+// 		),
+// 		'$3' => array(
+// 			'prop' => '3',
+// 			'parent' => '$2',
+// 		)
+// 	)
+// );
+
+// $mapping = array();
+// foreach ($data as $model => $modelChanges) {
+// 	foreach ($modelChanges as $id => $changes) {
+// 		if (!isTemporaryId($id) || !$mapping[$id]) {
+// 			updateObject($databaseSchema, $model, $id, $changes, $mapping, $data);
+// 		}
+// 	}
+// }
+// var_dump($mapping);
+
+// $results = array();
+// getObject($databaseSchema, 'Model', $mapping['$1'], $results);
+// var_dump($results);
 
 // updateObject($databaseSchema, 'Model', $mapping['$1'], array(
 // 	'prop' => '3',

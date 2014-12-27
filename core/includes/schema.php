@@ -14,11 +14,11 @@ function schemaModelStorage(array $schema, $model) {
 }
 
 function schemaModelAttributes(array $schema, $model) {
-	return $schema['models'][$model]['attributes'];
+	return (array)$schema['models'][$model]['attributes'];
 }
 
 function schemaModelRelationships(array $schema, $model) {
-	return $schema['models'][$model]['relationships'];
+	return (array)$schema['models'][$model]['relationships'];
 }
 
 function schemaModelProperty(array $schema, $model, $property) {
@@ -75,9 +75,9 @@ function schemaAllModelStorage($schema, $model) {
 	foreach ($attributes as $attrName => $attrSchema) {
 		$storageNames[propSchemaStorage($schema, $model, $attrSchema)] = true;
 	}
-	// foreach ($relationships as $attrName => $attrSchema) {
-	// 	$storageNames[propSchemaStorage($schema, $model, $attrSchema)] = true;
-	// }
+	foreach ($relationships as $attrName => $attrSchema) {
+		$storageNames[propSchemaStorage($schema, $model, $attrSchema)] = true;
+	}
 
 	return array_keys($storageNames);
 }

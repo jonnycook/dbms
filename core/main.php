@@ -4,6 +4,7 @@ require_once('includes/header.php');
 require_once('includes/schema.php');
 require_once('databaseEngines/MongoDbDatabaseEngine.class.php');
 require_once('databaseEngines/MysqlDatabaseEngine.class.php');
+require_once('databaseEngines/JsonDatabaseEngine.class.php');
 
 header('Content-Type: text/plain');
 
@@ -11,6 +12,7 @@ function createStorageEngine($type, array $config) {
 	switch ($type) {
 		case 'mysql': $class = 'MysqlDatabaseStorageEngine'; break;
 		case 'mongodb': $class = 'MongoDbDatabaseStorageEngine'; break;
+		case 'json': $class = 'JsonDatabaseStorageEngine'; break;
 		default: throw new Exception("Invalid storage engine $type");
 	}
 
@@ -58,6 +60,7 @@ function getObject(array $schema, $model, $id, &$results=null) {
 		$modelSchema = schemaModel($schema, $model);
 		$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
 
+		unset($value);
 		if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
 			$object[$relName] = $value;
 			if ($value !== null) {
@@ -85,12 +88,11 @@ function getObject(array $schema, $model, $id, &$results=null) {
 	return $object;
 }
 
-function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, array $allChanges=array()) {
+function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, array $allChanges=array(), $whatToUpdate='both') {
 	assert(is_string($model));
 	assert($changes !== null);
 	if ($changes == 'delete') {
 		$storageNames = schemaAllModelStorage($schema, $model);
-
 		foreach ($storageNames as $storageName) {
 			$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
 			$storage = storageEngine($schema, $storageName);
@@ -105,6 +107,8 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 				$value = (array)$value;
 
 				$prop = $matches[1];
+
+				if ($whatToUpdate == 'attributes' && $relationships[$prop] || $whatToUpdate == 'relationships' && $attributes[$prop]) continue;
 				$storageName = schemaModelPropertyStorage($schema, $model, $prop);
 
 				$str = $matches[2];
@@ -149,6 +153,20 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 					}
 				}
 
+				if ($relSchema = $relationships[$prop]) {
+					foreach ($value as &$relId) {
+						if (isTemporaryId($relId)) {
+							if ($mapping[$relId]) {
+								$relId = $mapping[$relId];
+							}
+							else {
+								$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $mapping, $allChanges);
+							}
+						}
+					}
+					unset($relId);
+				}
+
 				$storageChanges[$storageName]['operations'][] = array(
 					'operation' => $operation,
 					'parameters' => $value,
@@ -156,6 +174,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 				);
 			}
 			else {
+				if ($whatToUpdate == 'attributes' && $relationships[$prop] || $whatToUpdate == 'relationships' && $attributes[$prop]) continue;
 				if ($attrSchema = $attributes[$prop]) {
 					$storageName = propSchemaStorage($schema, $model, $attrSchema);
 					$storageChanges[$storageName]['attributes'][$prop] = $value;
@@ -175,6 +194,20 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 						}
 						$storageChanges[$storageName]['relationships'][$prop] = $value;
 					}
+					else if ($relSchema['type'] == 'Many') {
+						foreach ($value as &$relId) {
+							if (isTemporaryId($relId)) {
+								if ($mapping[$relId]) {
+									$relId = $mapping[$relId];
+								}
+								else {
+									$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $mapping, $allChanges);
+								}
+							}
+						}
+						unset($relId);
+						$storageChanges[$storageName]['relationships'][$prop] = $value;
+					}
 				}
 			}
 		}
@@ -184,22 +217,26 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 			$primaryStorageName = schemaModelStorage($schema, $model);
 			$storageConfig = schemaModelStorageConfig($schema, $model, $primaryStorageName);
 			$storage = storageEngine($schema, $primaryStorageName);
-			$mapping[$id] = $storage->insert($schema, $storageConfig, $model, null, $storageChanges[$primaryStorageName]);
+			$mapping[$id] = $storage->insert($schema, $storageConfig, $model, null, (array)$storageChanges[$primaryStorageName]);
 			unset($storageChanges[$primaryStorageName]);
 
-			foreach ($storageChanges as $storageName => $c) {
-				$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
-				$storage = storageEngine($schema, $storageName);
-				$storage->insert($schema, $storageConfig, $model, $mapping[$id], $c);
+			if ($storageChanges) {
+				foreach ($storageChanges as $storageName => $c) {
+					$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
+					$storage = storageEngine($schema, $storageName);
+					$storage->insert($schema, $storageConfig, $model, $mapping[$id], $c);
+				}
 			}
 
 			return $mapping[$id];
 		}
 		else {
-			foreach ($storageChanges as $storageName => $c) {
-				$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
-				$storage = storageEngine($schema, $storageName);
-				$storage->update($schema, $storageConfig, $model, $id, $c);
+			if ($storageChanges) {
+				foreach ($storageChanges as $storageName => $c) {
+					$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
+					$storage = storageEngine($schema, $storageName);
+					$storage->update($schema, $storageConfig, $model, $id, $c);
+				}				
 			}
 		}
 	}
@@ -311,9 +348,30 @@ if ($resource = $_GET['resource']) {
 else if ($update = $_POST['update']) {
 	$update = json_decode($update, true);
 	$mapping = array();
+
 	foreach ($update as $model => &$modelChanges) {
 		foreach ($modelChanges as $id => &$changes) {
-			if (!isTemporaryId($id) || !$mapping[$id]) {
+			if (isTemporaryId($id) && !$mapping[$id]) {
+				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update, 'attributes');
+			}
+		}
+		unset($changes);
+	}
+	unset($modelChanges);
+
+	foreach ($update as $model => &$modelChanges) {
+		foreach ($modelChanges as $id => &$changes) {
+			if (isTemporaryId($id)) {
+				updateObject($databaseSchema, $model, $mapping[$id], $changes, $mapping, $update, 'relationships');
+			}
+		}
+		unset($changes);
+	}
+	unset($modelChanges);
+
+	foreach ($update as $model => &$modelChanges) {
+		foreach ($modelChanges as $id => &$changes) {
+			if (!isTemporaryId($id)) {
 				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
 			}
 		}

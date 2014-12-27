@@ -69,25 +69,40 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 					$collection = $model;
 				}
 				$document = $this->document($collection, $this->storageId($storageConfig, $id));
-				$value = $document[$relSchema['storage']['key']];
+				$value = $document[$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $relName];
 				return !!$value;
 
 			case 'Many':
-				$relModelStorageConfig = schemaModelStorageConfig($schema, $relSchema['model']);
+				$foreignKey = $relSchema['storage']['foreignKey'] ? $relSchema['storage']['foreignKey'] : $relSchema['inverseRelationship'];
 
-				if ($relModelStorageConfig['collection']) {
-					$collection = $relModelStorageConfig['collection'];
+				if ($foreignKey) {
+					$relModelStorageConfig = schemaModelStorageConfig($schema, $relSchema['model']);
+
+					if ($relModelStorageConfig['collection']) {
+						$collection = $relModelStorageConfig['collection'];
+					}
+					else {
+						$collection = $relSchema['model'];
+					}
+
+					$cursor = $this->db->{$collection}->find(array(($foreignKey)  => $id));
+					foreach ($cursor as $document) {
+						$value[] = $this->modelId($relModelStorageConfig, $document['_id']);
+					}
+
+					return !!$value;
 				}
 				else {
-					$collection = $relSchema['model'];
+					if ($storageConfig['collection']) {
+						$collection = $storageConfig['collection'];
+					}
+					else {
+						$collection = $model;
+					}
+					$document = $this->document($collection, $this->storageId($storageConfig, $id));
+					$value = $document[$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $relName];
+					return !!$value;
 				}
-
-				$cursor = $this->db->{$collection}->find(array($relSchema['storage']['foreignKey'] => $id));
-				foreach ($cursor as $document) {
-					$value[] = $this->modelId($relModelStorageConfig, $document['_id']);
-				}
-
-				return !!$value;
 		}
 	}
 
@@ -112,12 +127,10 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 			foreach ($relationships as $name => $value) {
 				$relSchema = $schema['models'][$model]['relationships'][$name];
 				if ($relSchema['type'] == 'One') {
-					$data[$relSchema['storage']['key']] = $value;
+					$data[$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $name] = $value;
 				}
 			}
 		}
-
-
 
 		$this->db->{$collection}->insert($data);
 		return $this->modelId($storageConfig, $data['_id']);
@@ -131,13 +144,16 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 			$collection = $model;
 		}
 
-		$update = array('$set' => $changes['attributes']);
+
+		if ($changes['attributes']) {
+			$update = array('$set' => $changes['attributes']);		
+		}
 
 		if ($relationships = $changes['relationships']) {
 			foreach ($relationships as $name => $value) {
 				$relSchema = $schema['models'][$model]['relationships'][$name];
 				if ($relSchema['type'] == 'One') {
-					$update['$set'][$relSchema['storage']['key']] = $value;
+					$update['$set'][$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $name] = $value;
 				}
 			}
 		}
@@ -149,6 +165,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 						$update['$set'][implode('.', $operation['path'])] = $operation['parameters'][0];
 						break;
 
+					case 'add':
 					case 'push':
 						$update['$push'][implode('.', $operation['path'])] = $operation['parameters'][0];
 						break;
@@ -160,11 +177,18 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 					case 'shift':
 						$update['$pop'][implode('.', $operation['path'])] = -1;
 						break;
+
+					case 'remove':
+						$update['$pull'][implode('.', $operation['path'])] = $operation['parameters'][0];
+						break;
+
 				}
 			}
 		}
 
-		$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));
+		if ($update) {
+			$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));			
+		}
 	}
 
 	public function delete(array $schema, array $storageConfig, $model, $id) {
