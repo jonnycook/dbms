@@ -489,6 +489,19 @@ return array(
 					'type' => 'Many',
 				)
 			)
+		),
+
+		'FoodLog' => array(
+			'attributes' => array(
+				'timestamp' => array('type' => 'datetime'),
+			),
+
+			'relationships' => array(
+				'element' => array(
+					'model' => 'FoodElement',
+					'type' => 'One'
+				)
+			)
 		)
 
 		// 'SleepBe'
