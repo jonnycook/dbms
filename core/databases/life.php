@@ -416,8 +416,54 @@ return array(
 						'model' => 'Expense'
 					)
 				)
-			)
+			),
 		// ),
+
+
+
+		'BodyCondition' => array(
+			'attributes' => array(
+				'name' => array('type' => 'string'),
+			),
+			'relationships' => array(
+				'checkIns' => array(
+					'model' => 'BodyConditionCheckIn',
+					'type' => 'Many',
+					'inverseRelationship' => 'condition'
+				)
+			)
+		),
+
+		'BodyCheckIn' => array(
+			'attributes' => array(
+				'timestamp' => array('type' => 'datetime'),
+			),
+			'relationships' => array(
+				'conditions' => array(
+					'model' => 'BodyConditionCheckIn',
+					'type' => 'Many',
+					'inverseRelationship' => 'checkIn'
+				)
+			)
+		),
+
+		'BodyConditionCheckIn' => array(
+			'attributes' => array(
+				'degree' => array('type' => 'float')
+			),
+			'relationships' => array(
+				'checkIn' => array(
+					'model' => 'BodyCheckIn',
+					'type' => 'One',
+					'inverseRelationship' => 'conditions'
+				),
+				'condition' => array(
+					'model' => 'BodyCondition',
+					'type' => 'One',
+					'inverseRelationship' => 'checkIns'
+				)
+			)
+		)
 
 		// 'SleepBe'
 	),
