@@ -242,7 +242,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 	}
 }
 
-$databaseName = $_GET['db'];
+$databaseName = $_REQUEST['db'];
 $databaseSchema = require("databases/$databaseName.php");
 $clientId = $_GET['clientId'];
 
@@ -271,6 +271,54 @@ function distributeUpdate($db, $update, $clientId) {
 			}
 		}
 	}
+}
+
+function executeUpdate($update, $databaseSchema) {
+	$mapping = array();
+
+	foreach ($update as $model => &$modelChanges) {
+		foreach ($modelChanges as $id => &$changes) {
+			if (isTemporaryId($id) && !$mapping[$id]) {
+				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update, 'attributes');
+			}
+		}
+		unset($changes);
+	}
+	unset($modelChanges);
+
+	foreach ($update as $model => &$modelChanges) {
+		foreach ($modelChanges as $id => &$changes) {
+			if (isTemporaryId($id)) {
+				updateObject($databaseSchema, $model, $mapping[$id], $changes, $mapping, $update, 'relationships');
+			}
+		}
+		unset($changes);
+	}
+	unset($modelChanges);
+
+	foreach ($update as $model => &$modelChanges) {
+		foreach ($modelChanges as $id => &$changes) {
+			if (!isTemporaryId($id)) {
+				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
+			}
+		}
+		unset($changes);
+	}
+	unset($modelChanges);
+
+
+	foreach ($update as $model => $modelChanges) {
+		foreach ($modelChanges as $id => $changes) {
+			if ($newId = $mapping[$id]) {
+				$resolvedUpdate[$model][$newId] = $changes;
+			}
+			else {
+				$resolvedUpdate[$model][$id] = $changes;
+			}
+		}
+	}
+
+	return array($mapping, $resolvedUpdate);
 }
 
 function sendToClient($clientId, $db, $update) {
@@ -347,49 +395,51 @@ if ($resource = $_GET['resource']) {
 }
 else if ($update = $_POST['update']) {
 	$update = json_decode($update, true);
-	$mapping = array();
+	// $mapping = array();
 
-	foreach ($update as $model => &$modelChanges) {
-		foreach ($modelChanges as $id => &$changes) {
-			if (isTemporaryId($id) && !$mapping[$id]) {
-				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update, 'attributes');
-			}
-		}
-		unset($changes);
-	}
-	unset($modelChanges);
+	// foreach ($update as $model => &$modelChanges) {
+	// 	foreach ($modelChanges as $id => &$changes) {
+	// 		if (isTemporaryId($id) && !$mapping[$id]) {
+	// 			updateObject($databaseSchema, $model, $id, $changes, $mapping, $update, 'attributes');
+	// 		}
+	// 	}
+	// 	unset($changes);
+	// }
+	// unset($modelChanges);
 
-	foreach ($update as $model => &$modelChanges) {
-		foreach ($modelChanges as $id => &$changes) {
-			if (isTemporaryId($id)) {
-				updateObject($databaseSchema, $model, $mapping[$id], $changes, $mapping, $update, 'relationships');
-			}
-		}
-		unset($changes);
-	}
-	unset($modelChanges);
+	// foreach ($update as $model => &$modelChanges) {
+	// 	foreach ($modelChanges as $id => &$changes) {
+	// 		if (isTemporaryId($id)) {
+	// 			updateObject($databaseSchema, $model, $mapping[$id], $changes, $mapping, $update, 'relationships');
+	// 		}
+	// 	}
+	// 	unset($changes);
+	// }
+	// unset($modelChanges);
 
-	foreach ($update as $model => &$modelChanges) {
-		foreach ($modelChanges as $id => &$changes) {
-			if (!isTemporaryId($id)) {
-				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
-			}
-		}
-		unset($changes);
-	}
-	unset($modelChanges);
+	// foreach ($update as $model => &$modelChanges) {
+	// 	foreach ($modelChanges as $id => &$changes) {
+	// 		if (!isTemporaryId($id)) {
+	// 			updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
+	// 		}
+	// 	}
+	// 	unset($changes);
+	// }
+	// unset($modelChanges);
 
 
-	foreach ($update as $model => $modelChanges) {
-		foreach ($modelChanges as $id => $changes) {
-			if ($newId = $mapping[$id]) {
-				$resolvedUpdate[$model][$newId] = $changes;
-			}
-			else {
-				$resolvedUpdate[$model][$id] = $changes;
-			}
-		}
-	}
+	// foreach ($update as $model => $modelChanges) {
+	// 	foreach ($modelChanges as $id => $changes) {
+	// 		if ($newId = $mapping[$id]) {
+	// 			$resolvedUpdate[$model][$newId] = $changes;
+	// 		}
+	// 		else {
+	// 			$resolvedUpdate[$model][$id] = $changes;
+	// 		}
+	// 	}
+	// }
+
+	list($mapping, $resolvedUpdate) = executeUpdate($update, $databaseSchema);
 
 	distributeUpdate($databaseName, $resolvedUpdate, $clientId);
 
@@ -424,4 +474,19 @@ else if ($_GET['pull']) {
 	$clientDocument = mongoClient()->clients->findOne(array('_id' => $clientId));
 	mongoClient()->clients->update(array('_id' => $clientId), array('$unset' => array("updates.$databaseName" => 1)));
 	echo json_encode($clientDocument['updates'][$databaseName]);
+}
+else if ($backup = $_POST['backup']) {
+	$backup = json_decode($backup, true);
+	if ($backup['data']) $backup = $backup['data'];
+
+	foreach ($backup as $model => $changes) {
+		$storageNames = schemaAllModelStorage($databaseSchema, $model);
+		foreach ($storageNames as $storageName) {
+			$storageConfig = schemaModelStorageConfig($databaseSchema, $model, $storageName);
+			$storage = storageEngine($databaseSchema, $storageName);
+			$storage->truncate($databaseSchema, $storageConfig, $model);
+		}
+	}
+
+	executeUpdate($backup, $databaseSchema);
 }

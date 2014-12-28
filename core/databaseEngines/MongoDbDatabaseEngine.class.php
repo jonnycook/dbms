@@ -201,4 +201,15 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 
 		$this->db->{$collection}->remove(array('_id' => $this->storageId($storageConfig, $id)));
 	}
+
+	public function truncate(array $schema, array $storageConfig, $model) {
+		if ($storageConfig['collection']) {
+			$collection = $storageConfig['collection'];
+		}
+		else {
+			$collection = $model;
+		}
+
+		$this->db->{$collection}->drop();
+	}
 }
