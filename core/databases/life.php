@@ -463,6 +463,32 @@ return array(
 					'inverseRelationship' => 'checkIns'
 				)
 			)
+		),
+
+		'Meal' => array(
+			'attributes' => array(
+				'timestamp' => array('type' => 'datetime'),
+				'type' => array('type' => 'string')
+			),
+			'relationships' => array(
+				'elements' => array(
+					'type' => 'Many',
+					'model' => 'FoodElement',
+				)
+			)
+		),
+
+		'FoodElement' => array(
+			'attributes' => array(
+				'name' => array('type' => 'string'),
+			),
+
+			'relationships' => array(
+				'elements' => array(
+					'model' => 'FoodElement',
+					'type' => 'Many',
+				)
+			)
 		)
 
 		// 'SleepBe'
