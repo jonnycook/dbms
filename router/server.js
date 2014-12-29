@@ -129,6 +129,12 @@ Connection = (function() {
             return _this._respond(number, body);
           };
         })(this));
+      case 'U':
+        return request.get("http://127.0.0.1/dbms/core/clientReceivedUpdate.php?db=" + this.db + "&id=" + this.clientId + "&updates=" + params[0], (function(_this) {
+          return function(err, res, body) {
+            return _this._respond(number, body);
+          };
+        })(this));
     }
   };
 

@@ -78,6 +78,10 @@ class Connection
 				request.post "http://127.0.0.1:3000/?db=#{@db}&clientId=#{@clientId}", form:{update:params[0]}, (err, res, body) =>
 					@_respond number, body
 
+			when 'U'
+				request.get "http://127.0.0.1/dbms/core/clientReceivedUpdate.php?db=#{@db}&id=#{@clientId}&updates=#{params[0]}", (err, res, body) =>
+					@_respond number, body
+
 	close: ->
 		if !@closed
 			@closed = true

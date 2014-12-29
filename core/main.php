@@ -321,17 +321,20 @@ function executeUpdate($update, $databaseSchema) {
 	return array($mapping, $resolvedUpdate);
 }
 
-function sendToClient($clientId, $db, $update) {
+function sendToClient($clientId, $db, $update) {	
+	mongoClient()->clients->update(array('_id' => $clientId), array('$push' => array("updates.$db" => $update)));
+
 	$clientDocument = mongoClient()->clients->findOne(array('_id' => $clientId));
+
+
 	if ($clientDocument['connected']) {
 		httpPost('http://localhost:3001/push', array(
 			'clientIds' => array($clientId),
 			'update' => json_encode($update)
 		));
 	}
-	else {
-		mongoClient()->clients->update(array('_id' => $clientId), array('$push' => array("updates.$db" => $update)));
-	}
+	// else {
+	// }
 }
 
 if ($resource = $_GET['resource']) {
@@ -439,15 +442,28 @@ else if ($update = $_POST['update']) {
 	// 	}
 	// }
 
-	list($mapping, $resolvedUpdate) = executeUpdate($update, $databaseSchema);
 
-	distributeUpdate($databaseName, $resolvedUpdate, $clientId);
+	$updateDoc = mongoClient()->updates->findOne(array('_id' => array('id' => $update['id'], 'db' => $databaseName)));
+	if (!$updateDoc) {
+		list($mapping, $resolvedUpdate) = executeUpdate($update['data'], $databaseSchema);
 
-	$response = new stdClass();
-	if ($mapping) {
-		$response->mapping = $mapping;
+		distributeUpdate($databaseName, array('id' => $update['id'], 'data' => $resolvedUpdate), $clientId);
+
+		$response = new stdClass();
+		if ($mapping) {
+			$response->mapping = $mapping;
+		}
+
+		mongoClient()->updates->insert(array(
+			'_id' => array('db' => $databaseName, 'id' => $update['id']),
+			'response' => $response
+		));
+		echo json_encode($response);
 	}
-	echo json_encode($response);
+	else {
+		// mongoClient()->updates->delete(array('_id' => array('id' => $update['id'], 'db' => $databaseName)));
+		echo json_encode($updateDoc['response']);
+	}
 }
 else if ($_GET['schema']) {
 	$schema = array(
@@ -472,7 +488,7 @@ else if ($_GET['schema']) {
 }
 else if ($_GET['pull']) {
 	$clientDocument = mongoClient()->clients->findOne(array('_id' => $clientId));
-	mongoClient()->clients->update(array('_id' => $clientId), array('$unset' => array("updates.$databaseName" => 1)));
+	// mongoClient()->clients->update(array('_id' => $clientId), array('$unset' => array("updates.$databaseName" => 1)));
 	echo json_encode($clientDocument['updates'][$databaseName]);
 }
 else if ($backup = $_POST['backup']) {
