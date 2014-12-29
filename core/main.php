@@ -443,7 +443,7 @@ else if ($update = $_POST['update']) {
 	// }
 
 
-	$updateDoc = mongoClient()->updates->findOne(array('_id' => array('id' => $update['id'], 'db' => $databaseName)));
+	$updateDoc = mongoClient()->updates->findOne(array('_id' => array('db' => $databaseName, 'id' => $update['id'])));
 	if (!$updateDoc) {
 		list($mapping, $resolvedUpdate) = executeUpdate($update['data'], $databaseSchema);
 
