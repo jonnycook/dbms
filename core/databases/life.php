@@ -502,6 +502,14 @@ return array(
 					'type' => 'One'
 				)
 			)
+		),
+
+		'WaterContainer' => array(
+			'attributes' => array(
+				'volume' => array('type' => 'string'),
+				'started' => array('type' => 'datetime'),
+				'finished' => array('type' => 'datetime'),
+			)
 		)
 
 		// 'SleepBe'
