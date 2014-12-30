@@ -92,6 +92,9 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 	assert(is_string($model));
 	assert($changes !== null);
 	if ($changes == 'delete') {
+		if (isTemporaryId($id)) {
+			return;
+		}
 		$storageNames = schemaAllModelStorage($schema, $model);
 		foreach ($storageNames as $storageName) {
 			$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
