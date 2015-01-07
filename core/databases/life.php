@@ -414,6 +414,10 @@ return array(
 					'expense' => array(
 						'type' => 'One',
 						'model' => 'Expense'
+					),
+					'transfer' => array(
+						'model' => 'MoneyReserveTransfer',
+						'type' => 'One',
 					)
 				)
 			),

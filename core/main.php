@@ -72,6 +72,7 @@ function getObject(array $schema, $model, $id, &$results=null) {
 						break;
 
 					case 'Many':
+						// var_dump($value);
 						foreach ($value as $relId) {
 							if (!$results[$relSchema['model']][$relId]) {
 								getObject($schema, $relSchema['model'], $relId, $results);
@@ -116,7 +117,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 
 				$str = $matches[2];
 
-				if (preg_match('/(\[[\^$]?\]|\(\))$/', $str, $matches)) {
+				if (preg_match('/(\[[\^$]?\]|\([^(]*\))$/', $str, $matches)) {
 					$op = $matches[1];
 					$pathStr = substr($str, 0, -strlen($op));
 
@@ -131,7 +132,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 							$operation = 'unshift';
 							break;
 
-						case '()':
+						default:
 							$operation = array_shift($value);
 							break;
 					}

@@ -73,9 +73,9 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 				return !!$value;
 
 			case 'Many':
-				$foreignKey = $relSchema['storage']['foreignKey'] ? $relSchema['storage']['foreignKey'] : $relSchema['inverseRelationship'];
+				if (!$this->embeddedStorage($schema, $model, $relName)) {
+					$foreignKey = $relSchema['storage']['foreignKey'] ? $relSchema['storage']['foreignKey'] : $relSchema['inverseRelationship'];
 
-				if ($foreignKey) {
 					$relModelStorageConfig = schemaModelStorageConfig($schema, $relSchema['model']);
 
 					if ($relModelStorageConfig['collection']) {
@@ -106,6 +106,17 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 		}
 	}
 
+	private function embeddedStorage(array $schema, $model, $rel) {
+		$relSchema = $schema['models'][$model]['relationships'][$rel];
+
+		if ($relSchema['type'] == 'One' || $schema['models'][$relSchema['model']]['relationships'][$relSchema['inverseRelationship']]['type'] == 'Many') {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
 		if ($storageConfig['collection']) {
 			$collection = $storageConfig['collection'];
@@ -126,7 +137,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 		if ($relationships = $changes['relationships']) {
 			foreach ($relationships as $name => $value) {
 				$relSchema = $schema['models'][$model]['relationships'][$name];
-				if ($relSchema['type'] == 'One') {
+				if ($this->embeddedStorage($schema, $model, $name)) {
 					$data[$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $name] = $value;
 				}
 			}
@@ -135,6 +146,8 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 		$this->db->{$collection}->insert($data);
 		return $this->modelId($storageConfig, $data['_id']);
 	}
+
+
 
 	public function update(array $schema, array $storageConfig, $model, $id, array $changes) {
 		if ($storageConfig['collection']) {
@@ -152,14 +165,21 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 		if ($relationships = $changes['relationships']) {
 			foreach ($relationships as $name => $value) {
 				$relSchema = $schema['models'][$model]['relationships'][$name];
-				if ($relSchema['type'] == 'One') {
+				if ($this->embeddedStorage($schema, $model, $name)) {
 					$update['$set'][$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $name] = $value;
 				}
 			}
 		}
 
+		if ($update) {
+			$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));			
+		}
+
+
+
 		if ($changes['operations']) {
 			foreach ($changes['operations'] as $operation) {
+				$update = null;
 				switch ($operation['operation']) {
 					case 'assign':
 						$update['$set'][implode('.', $operation['path'])] = $operation['parameters'][0];
@@ -181,13 +201,13 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 					case 'remove':
 						$update['$pull'][implode('.', $operation['path'])] = $operation['parameters'][0];
 						break;
-
 				}
-			}
-		}
 
-		if ($update) {
-			$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));			
+				if ($update) {
+					$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));			
+				}
+
+			}
 		}
 	}
 

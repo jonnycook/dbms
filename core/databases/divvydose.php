@@ -84,9 +84,11 @@ return array(
 
 		'Prescription' => array(
 			'attributes' => array(
-				'packaging' => array('type' => 'string', 'values' => 'Packet', 'Bottle'),
+				'packaging' => array('type' => 'string', 'values' => array('In A Packet', 'Separate Bottle')),
+				'frequency' => array('type' => 'string'),
 				'autoRefill' => array('type' => 'bool'),
 				'days' => array('type' => 'string'),
+				'quantity' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'supplementStrength' => array(
