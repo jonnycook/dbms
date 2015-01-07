@@ -85,7 +85,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 						$collection = $relSchema['model'];
 					}
 
-					$cursor = $this->db->{$collection}->find(array(($foreignKey)  => $id));
+					$cursor = $this->db->{$collection}->find(array(($foreignKey) => $id));
 					foreach ($cursor as $document) {
 						$value[] = $this->modelId($relModelStorageConfig, $document['_id']);
 					}
@@ -109,7 +109,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 	private function embeddedStorage(array $schema, $model, $rel) {
 		$relSchema = $schema['models'][$model]['relationships'][$rel];
 
-		if ($relSchema['type'] == 'One' || $schema['models'][$relSchema['model']]['relationships'][$relSchema['inverseRelationship']]['type'] == 'Many') {
+		if ($relSchema['type'] == 'One' || $schema['models'][$relSchema['model']]['relationships'][$relSchema['inverseRelationship']]['type'] == 'Many' || $relSchema['type'] == 'Many' && !$relSchema['inverseRelationship']) {
 			return true;
 		}
 		else {
