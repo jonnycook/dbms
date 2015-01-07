@@ -224,7 +224,7 @@ return array(
 
 			'RecurringBill' => array(
 				'attributes' => array(
-					'date' => array('type' => 'string'),
+					'date' => array('type' => 'int'),
 					'label' => array('type' => 'string'),
 					'amount' => array('type' => 'float')
 				),

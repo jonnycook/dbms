@@ -12,7 +12,7 @@ return array(
 	'models' => array(
 		'Image' => array(
 			'attributes' => array(
-				'hash' => array('type' => 'string',),
+				'hash' => array('type' => 'string'),
 				'addedAt' => array('type' => 'datetime'),
 			),
 			'relationships' => array(
