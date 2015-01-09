@@ -74,12 +74,8 @@ return array(
 
 		'Instance' => array(
 			'attributes' => array(
-				'begin' => array(
-					'type' => 'datetime',
-				),
-				'end' => array(
-					'type' => 'datetime',
-				),
+				'begin' => array('type' => 'datetime'),
+				'end' => array('type' => 'datetime'),
 			),
 			'relationships' => array(
 				'activity' => array(
@@ -120,6 +116,154 @@ return array(
 				)
 			)
 		),
+
+		'ShuffleState' => array(
+			'attributes' => array(
+				'nextBlockTime' => array('type' => 'duration')
+			),
+			'relationships' => array(
+				'lastItem' => array(
+					'type' => 'One',
+					'model' => 'ShuffleItem',
+				),
+				'nextBlockItem' => array(
+					'type' => 'One',
+					'model' => 'ShuffleItem',
+				),
+			)
+		),
+
+		'ShuffleItem' => array(
+			'attributes' => array(
+				'label' => array('type' => 'string'),
+				'unit' => array('type' => 'duration'),
+			),
+			'relationships' => array(
+				'activities' => array(
+					'model' => 'Activity',
+					'type' => 'Many',
+				),
+				'rules' => array(
+					'model' => 'ShuffleItemRule',
+					'type' => 'Many',
+					'inverseRelationship' => 'item',
+				),
+				'bodyStateValues' => array(
+					'model' => 'BodyStateValue',
+					'type' => 'Many',
+					'inverseRelationship' => 'item'
+				),
+				'blocks' => array(
+					'model' => 'ShuffleItemBlock',
+					'type' => 'Many',
+					'inverseRelationship' => 'shuffleItem',
+				)
+			),
+		),
+
+		'ShuffleItemBlock' => array(
+			'attributes' => array(
+				'length' => array('type' => 'duration'),
+				'finished' => array('type' => 'bool'),
+
+				'begin' => array('type' => 'datetime'),
+				'end' => array('type' => 'datetime'),
+			),
+			'relationships' => array(
+				'shuffleItem' => array(
+					'model' => 'ShuffleItem',
+					'type' => 'One',
+					'inverseRelationship' => 'blocks'
+				)
+			)
+		),
+
+		// 'ShuffleItemInstance' => array(
+		// 	'attributes' => array(
+		// 		'begin' => array('type' => 'datetime'),
+		// 		'end' => array('type' => 'datetime'),
+		// 	),
+		// 	'relationships' => array(
+		// 		'shuffleItem' => array(
+		// 			'model' => 'ShuffleItem',
+		// 			'type' => 'One',
+		// 			'inverseRelationship' => 'instances',
+		// 		)
+		// 	)
+		// ),
+
+		'BodyState' => array(
+			'attributes' => array(
+				'label' => array('type' => 'string'),
+				'based' => array('type' => 'string', 'values' => array('time', 'unit'))
+			)
+		),
+
+		'CurrentBodyState' => array(
+			'attributes' => array(
+				'timestamp' => array('type' => 'datetime')
+			),
+			'relationships' => array(
+				'values' => array(
+					'model' => 'CurrentBodyStateValue',
+					'type' => 'Many',
+					'inverseRelationship' => 'currentBodyState'
+				),
+			)
+		),
+
+		'CurrentBodyStateValue' => array(
+			'attributes' => array(
+				'value' => array('type' => 'float')
+			),
+			'relationships' => array(
+				'state' => array(
+					'model' => 'BodyState',
+					'type' => 'One',
+				),
+				'currentBodyState' => array(
+					'model' => 'CurrentBodyState',
+					'type' => 'One',
+					'inverseRelationship' => 'values',
+				)
+			)
+		),
+
+		'BodyStateValue' => array(
+			'attributes' => array(
+				'value' => array('type' => 'float')
+			),
+			'relationships' => array(
+				'state' => array(
+					'model' => 'BodyState',
+					'type' => 'One',
+				),
+				'item' => array(
+					'model' => 'ShuffleItem',
+					'type' => 'One',
+					'inverseRelationship' => 'bodyStateValues'
+				)
+			)
+		),
+
+		'ShuffleItemRule' => array(
+			'attributes' => array(
+				'date' => array('type' => 'string'),
+				'minTime' => array('type' => 'duration'),
+				'maxTime' => array('type' => 'duration'),
+				'priority' => array('type' => 'int'),
+				'minBlockTime' => array('type' => 'duration'),
+				'maxBlockTime' => array('type' => 'duration'),
+			),
+			'relationships' => array(
+				'item' => array(
+					'model' => 'ShuffleItem',
+					'type' => 'One',
+					'inverseRelationship' => 'rules'
+				)
+			)
+		),
+
 		'Thought' => array(
 			'attributes' => array(
 				'content' => array(
@@ -252,9 +396,7 @@ return array(
 						'type' => 'One',
 						'model' => 'MoneyReserve',
 					),
-
 				),
-
 			),
 
 			'Income' => array(

@@ -62,6 +62,10 @@ return array(
 					'type' => 'One',
 					'inverseRelationship' => 'values'
 				),
+				'parentValue' => array(
+					'model' => 'DimensionValue',
+					'type' => 'One',
+				),
 				'points' => array(
 					'model' => 'Point',
 					'type' => 'Many',

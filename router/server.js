@@ -78,7 +78,7 @@ Connection = (function() {
           return ws.ping();
         }
       };
-    })(this)), 5000);
+    })(this)), 30000);
   }
 
   Connection.prototype._respond = function() {
