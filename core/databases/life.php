@@ -117,6 +117,90 @@ return array(
 			)
 		),
 
+		'ScheduleItemType' => array(
+			'attributes' => array(
+				'label' => array('type' => 'string'),
+				'sedentary' => array('type' => 'bool'),
+				'active' => array('type' => 'bool'),
+				'stimulating' => array('type' => 'bool'),
+			),
+			'relationships' => array(
+				'activities' => array(
+					'model' => 'Activity',
+					'type' => 'Many',
+				),
+				'rules' => array(
+					'model' => 'ScheduleItemTypeRule',
+					'type' => 'Many',
+					'inverseRelationship' => 'type'
+				)
+			)
+		),
+
+		'ScheduleItemTypeRule' => array(
+			'attributes' => array(
+				// fixed
+				'start' => array('type' => 'string'),
+				'length' => array('type' => 'duration'),
+				
+				// distributed
+				'weight' => array('type' => 'int'),
+				'priority' => array('type' => 'int'),
+				'minTime' => array('type' => 'duration'),
+				'maxTime' => array('type' => 'duration'),
+				'minBlockSize' => array('type' => 'duration'),
+				'maxBlockSize' => array('type' => 'duration'),
+			),
+			'relationships' => array(
+				'day' => array(
+					'model' => 'Day',
+					'type' => 'One',
+				),
+				'type' => array(
+					'model' => 'ScheduleItemType',
+					'type' => 'One',
+					'inverseRelationship' => 'rules'
+				)
+			)
+		),
+
+		'Schedule' => array(
+			'attributes' => array(
+				'begin' => array('type' => 'datetime'),
+				'end' => array('type' => 'datetime'),
+				'firstBlock' => array('type' => 'datetime'),
+			),
+			'relationships' => array(
+				'items' => array(
+					'model' => 'ScheduleItem',
+					'type' => 'Many',
+					'inverseRelationship' => 'schedule',
+				)
+			)
+		),
+
+		'ScheduleItem' => array(
+			'attributes' => array(
+				'begin' => array('type' => 'datetime'),
+				'end' => array('type' => 'datetime'),
+
+				'started' => array('type' => 'datetime'),
+				'finished' => array('type' => 'datetime'),
+			),
+			'relationships' => array(
+				'schedule' => array(
+					'model' => 'Schedule',
+					'type' => 'One',
+					'inverseRelationship' => 'items'
+				),
+				'type' => array(
+					'model' => 'ScheduleItemType',
+					'type' => 'One',
+					'inverseRelationship' => 'items',
+				),
+			)
+		),
+
 		'ShuffleState' => array(
 			'attributes' => array(
 				'nextBlockTime' => array('type' => 'duration')
@@ -187,7 +271,7 @@ return array(
 		// 		'shuffleItem' => array(
 		// 			'model' => 'ShuffleItem',
 		// 			'type' => 'One',
-		// 			'inverseRelationship' => 'instances',
+		// 			'inverseRelationship' => 'items',
 		// 		)
 		// 	)
 		// ),
@@ -583,6 +667,7 @@ return array(
 		'BodyCheckIn' => array(
 			'attributes' => array(
 				'timestamp' => array('type' => 'datetime'),
+				'comment' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'conditions' => array(
