@@ -76,6 +76,7 @@ return array(
 			'attributes' => array(
 				'begin' => array('type' => 'datetime'),
 				'end' => array('type' => 'datetime'),
+				'comment' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'activity' => array(

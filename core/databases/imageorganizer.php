@@ -20,6 +20,10 @@ return array(
 					'model' => 'Point',
 					'type' => 'Many',
 					'inverseRelationship' => 'image'
+				),
+				'nullValues' => array(
+					'model' => 'DimensionValue',
+					'type' => 'Many',
 				)
 			)
 		),
@@ -54,7 +58,7 @@ return array(
 
 		'DimensionValue' => array(
 			'attributes' => array(
-				'label' => array('type' => 'string')
+				'label' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'dimension' => array(
@@ -76,13 +80,17 @@ return array(
 
 		'Dimension' => array(
 			'attributes' => array(
-				'name' => array('type' => 'string')
+				'name' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'values' => array(
 					'model' => 'DimensionValue',
 					'type' => 'Many',
 					'inverseRelationship' => 'dimension'
+				),
+				'nullValue' => array(
+					'model' => 'DimensionValue',
+					'type' => 'One',
 				)
 			)
 		),

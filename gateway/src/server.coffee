@@ -30,5 +30,6 @@ app.get '*', (req, res) ->
 		res.send body
 
 app.post '/', (req, res) ->
+	console.log req.body.update
 	request.post "http://localhost/dbms/core/main.php?db=#{req.query.db}&clientId=#{req.query.clientId}", form:{update:req.body.update}, (err, httpResponse, body) ->
 		res.send body
