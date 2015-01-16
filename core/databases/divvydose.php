@@ -121,10 +121,10 @@ return array(
 		'ClientSchedule' => array(
 			'attributes' => array(
 				'clientId' => array('type' => 'string'),
-				
+
 				'everyDay' => array('type' => 'string'),
-				'everyOtherOddDay' => array('type' => 'string'),
-				'everyOtherEvenDay' => array('type' => 'string'),
+				'everyOddDay' => array('type' => 'string'),
+				'everyEvenDay' => array('type' => 'string'),
 
 				'monday' => array('type' => 'string'),
 				'tuesday' => array('type' => 'string'),
