@@ -89,6 +89,7 @@ return array(
 				'autoRefill' => array('type' => 'bool'),
 				'days' => array('type' => 'string'),
 				'quantity' => array('type' => 'string'),
+				'startedAt' => array('type' => 'datetime'),
 			),
 			'relationships' => array(
 				'supplementStrength' => array(
@@ -114,6 +115,24 @@ return array(
 					'model' => 'Prescription',
 					'inverseRelationship' => 'doses'
 				)
+			)
+		),
+
+		'ClientSchedule' => array(
+			'attributes' => array(
+				'clientId' => array('type' => 'string'),
+				
+				'everyDay' => array('type' => 'string'),
+				'everyOtherOddDay' => array('type' => 'string'),
+				'everyOtherEvenDay' => array('type' => 'string'),
+
+				'monday' => array('type' => 'string'),
+				'tuesday' => array('type' => 'string'),
+				'wednesday' => array('type' => 'string'),
+				'thursday' => array('type' => 'string'),
+				'friday' => array('type' => 'string'),
+				'saturday' => array('type' => 'string'),
+				'sunday' => array('type' => 'string'),
 			)
 		)
 	),

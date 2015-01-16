@@ -118,6 +118,8 @@ return array(
 			)
 		),
 
+		'JournalEntry' => array(),
+
 		'ScheduleItemType' => array(
 			'attributes' => array(
 				'label' => array('type' => 'string'),
