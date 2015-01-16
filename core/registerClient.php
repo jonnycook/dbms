@@ -10,7 +10,11 @@ if ($_GET['terminateOnDisconnect']) {
 	$opts['terminateOnDisconnect'] = true;
 }
 
-$mongo->clients->insert(array('_id' => $clientId, 'opts' => $opts, 'subscribedTo' => array()));
+if ($_GET['params']) {
+	$params = json_decode($_GET['params']);
+}
+
+$mongo->clients->insert(array('_id' => $clientId, 'opts' => $opts, 'subscribedTo' => array(), 'params' => $params));
 
 echo json_encode(array(
 	'id' => $clientId

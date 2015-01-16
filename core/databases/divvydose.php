@@ -118,7 +118,7 @@ return array(
 			)
 		),
 
-		'ClientSchedule' => array(
+		'Client' => array(
 			'attributes' => array(
 				'clientId' => array('type' => 'string'),
 
