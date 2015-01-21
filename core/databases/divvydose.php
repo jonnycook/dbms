@@ -86,7 +86,6 @@ return array(
 			'attributes' => array(
 
 			),
-
 			'relationships' => array(
 				'caregivers' => array(
 					'model' => 'User',
@@ -96,6 +95,11 @@ return array(
 					'type' => 'Many',
 					'model' => 'Prescription',
 					'inverseRelationship' => 'user',
+				),
+				'medicineLogEntries' => array(
+					'model' => 'MedicineLogEntry',
+					'type' => 'Many',
+					'inverseRelationship' => 'user'
 				)
 			)
 		),
@@ -136,6 +140,42 @@ return array(
 				'prescription' => array(
 					'type' => 'One',
 					'model' => 'Prescription',
+					'inverseRelationship' => 'doses'
+				)
+			)
+		),
+
+		'MedicineLogEntry' => array(
+			'attributes' => array(
+				'timestamp' => array('type' => 'datetime'),
+				'time' => array('type' => 'string'),
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'medicineLogEntries',
+				),
+				'doses' => array(
+					'model' => 'MedicineLogEntryDose',
+					'type' => 'Many',
+					'inverseRelationship' => 'medicineLogEntry'
+				)
+			)
+		),
+
+		'MedicineLogEntryDose' => array(
+			'attributes' => array(
+				'quantity' => array('type' => 'string'),
+			),
+			'relationships' => array(
+				'supplementStrength' => array(
+					'model' => 'SupplementStrength',
+					'type' => 'One'
+				),
+				'medicineLogEntry' => array(
+					'model' => 'MedicineLogEntry',
+					'type' => 'One',
 					'inverseRelationship' => 'doses'
 				)
 			)
