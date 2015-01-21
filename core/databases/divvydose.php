@@ -82,6 +82,20 @@ return array(
 			)
 		),
 
+		'User' => array(
+			'attributes' => array(
+
+			),
+
+			'relationships' => array(
+				'prescriptions' => array(
+					'type' => 'Many',
+					'model' => 'Prescription',
+					'inverseRelationship' => 'user',
+				)
+			)
+		),
+
 		'Prescription' => array(
 			'attributes' => array(
 				'packaging' => array('type' => 'string', 'values' => array('In A Packet', 'Separate Bottle')),
@@ -92,6 +106,11 @@ return array(
 				'startedAt' => array('type' => 'datetime'),
 			),
 			'relationships' => array(
+				'user' => array(
+					'type' => 'One',
+					'model' => 'User',
+					'inverseRelationship' => 'prescriptions'
+				),
 				'supplementStrength' => array(
 					'type' => 'One',
 					'model' => 'SupplementStrength',
@@ -121,6 +140,8 @@ return array(
 		'Client' => array(
 			'attributes' => array(
 				'clientId' => array('type' => 'string'),
+
+				'deviceToken' => array('type' => 'string'),
 
 				'everyDay' => array('type' => 'string'),
 				'everyOddDay' => array('type' => 'string'),
