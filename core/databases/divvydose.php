@@ -88,6 +88,10 @@ return array(
 			),
 
 			'relationships' => array(
+				'caregivers' => array(
+					'model' => 'User',
+					'type' => 'Many',
+				),
 				'prescriptions' => array(
 					'type' => 'Many',
 					'model' => 'Prescription',
