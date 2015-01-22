@@ -107,7 +107,6 @@ Connection = (function() {
           };
         })(this));
       case 'q':
-        console.log(this.db, this.clientId);
         return request.get("http://127.0.0.1:3000/pull?db=" + this.db + "&clientId=" + this.clientId, (function(_this) {
           return function(err, res, body) {
             return _this._respond(number, body);
@@ -131,6 +130,12 @@ Connection = (function() {
         })(this));
       case 'U':
         return request.get("http://127.0.0.1/dbms/core/clientReceivedUpdate.php?db=" + this.db + "&id=" + this.clientId + "&updates=" + params[0], (function(_this) {
+          return function(err, res, body) {
+            return _this._respond(number, body);
+          };
+        })(this));
+      case 'c':
+        return request.get("http://127.0.0.1/dbms/core/setClientParam.php?id=" + this.clientId + "&key=" + params[0] + "&value=" + params[1], (function(_this) {
           return function(err, res, body) {
             return _this._respond(number, body);
           };
