@@ -66,7 +66,7 @@ class Connection
 					@_respond number
 
 			when 'q'
-				console.log @db, @clientId
+				# console.log @db, @clientId
 				request.get "http://127.0.0.1:3000/pull?db=#{@db}&clientId=#{@clientId}", (err, res, body) =>
 					@_respond number, body
 
@@ -80,6 +80,10 @@ class Connection
 
 			when 'U'
 				request.get "http://127.0.0.1/dbms/core/clientReceivedUpdate.php?db=#{@db}&id=#{@clientId}&updates=#{params[0]}", (err, res, body) =>
+					@_respond number, body
+
+			when 'c'
+				request.get "http://127.0.0.1/dbms/core/setClientParam.php?id=#{@clientId}&key=#{params[0]}&value=#{params[1]}", (err, res, body) =>
 					@_respond number, body
 
 	close: ->
