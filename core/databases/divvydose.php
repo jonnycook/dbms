@@ -84,7 +84,7 @@ return array(
 
 		'User' => array(
 			'attributes' => array(
-
+				'fullName' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'caregivers' => array(
