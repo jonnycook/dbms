@@ -107,7 +107,10 @@ return array(
 
 		'Caregiver' => array(
 			'attributes' => array(
-
+				'notifiedWhenForgotten' => array('type' => 'bool'),
+				'notifiedWhenTaken' => array('type' => 'bool'),
+				'notifiedWhenOffline' => array('type' => 'bool'),
+				'notificationDelay' => array('type' => 'interval'),
 			),
 			'relationships' => array(
 				'caregiverUser' => array(
