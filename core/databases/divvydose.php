@@ -88,7 +88,7 @@ return array(
 			),
 			'relationships' => array(
 				'caregivers' => array(
-					'model' => 'User',
+					'model' => 'Caregiver',
 					'type' => 'Many',
 				),
 				'prescriptions' => array(
@@ -100,6 +100,22 @@ return array(
 					'model' => 'MedicineLogEntry',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
+				)
+			)
+		),
+
+		'Caregiver' => array(
+			'attributes' => array(
+
+			),
+			'relationships' => array(
+				'caregiverUser' => array(
+					'model' => 'User',
+					'type' => 'One'
+				),
+				'caregivingUser' => array(
+					'model' => 'User',
+					'type' => 'One'
 				)
 			)
 		),
