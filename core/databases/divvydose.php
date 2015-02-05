@@ -115,7 +115,8 @@ return array(
 				),
 				'caregivingUser' => array(
 					'model' => 'User',
-					'type' => 'One'
+					'type' => 'One',
+					'inverseRelationship' => 'caregivers'
 				)
 			)
 		),
