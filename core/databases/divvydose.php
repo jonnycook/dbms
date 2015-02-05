@@ -90,6 +90,7 @@ return array(
 				'caregivers' => array(
 					'model' => 'Caregiver',
 					'type' => 'Many',
+					'inverseRelationship' => 'caregivingUser'
 				),
 				'prescriptions' => array(
 					'type' => 'Many',
