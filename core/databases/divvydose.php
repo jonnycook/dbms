@@ -86,6 +86,7 @@ return array(
 			'attributes' => array(
 				'fullName' => array('type' => 'string'),
 				'timezone' => array('type' => 'int'),
+				'sex' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'caregivers' => array(
