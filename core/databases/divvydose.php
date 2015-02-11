@@ -173,6 +173,7 @@ return array(
 				'timestamp' => array('type' => 'datetime'),
 				'time' => array('type' => 'string'),
 				'date' => array('type' => 'string'),
+				'event' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'user' => array(
