@@ -66,8 +66,15 @@ function getObject(array $schema, $model, $id, &$results=null) {
 			if ($value !== null) {
 				switch ($relSchema['type']) {
 					case 'One':
-						if (!$results[$relSchema['model']][$value]) {
-							getObject($schema, $relSchema['model'], $value, $results);					
+						if (is_array($value)) {
+							if (!$results[$value['model']][$value['id']]) {
+								getObject($schema, $value['model'], $value['id'], $results);					
+							}							
+						}
+						else {
+							if (!$results[$relSchema['model']][$value]) {
+								getObject($schema, $relSchema['model'], $value, $results);					
+							}							
 						}
 						break;
 

@@ -87,6 +87,9 @@ return array(
 				'fullName' => array('type' => 'string'),
 				'timezone' => array('type' => 'int'),
 				'sex' => array('type' => 'string'),
+				'email' => array('type' => 'string'),
+				'dateOfBirth' => array('type' => 'string'),
+				'phoneNumber' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'caregivers' => array(
@@ -101,6 +104,11 @@ return array(
 				),
 				'medicineLogEntries' => array(
 					'model' => 'MedicineLogEntry',
+					'type' => 'Many',
+					'inverseRelationship' => 'user'
+				),
+				'addresses' => array(
+					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
 				)
@@ -223,6 +231,24 @@ return array(
 				'friday' => array('type' => 'string'),
 				'saturday' => array('type' => 'string'),
 				'sunday' => array('type' => 'string'),
+			)
+		),
+
+		'Address' => array(
+			'attributes' => array(
+				'street1' => array('type' => 'string'),
+				'street2' => array('type' => 'string'),
+				'name' => array('type' => 'string'),
+				'city' => array('type' => 'string'),
+				'state' => array('type' => 'string'),
+				'zipCode' => array('type' => 'string'),
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'addresses'
+				)
 			)
 		)
 	),
