@@ -111,6 +111,11 @@ return array(
 					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
+				),
+				'allergies' => array(
+					'model' => 'Allergy',
+					'type' => 'Many',
+					'inverseRelationship' => 'user'
 				)
 			)
 		),
@@ -248,6 +253,19 @@ return array(
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'addresses'
+				)
+			)
+		),
+
+		'Allergy' => array(
+			'attributes' => array(
+				'name' => array('type' => 'string'),
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'allergies'
 				)
 			)
 		)
