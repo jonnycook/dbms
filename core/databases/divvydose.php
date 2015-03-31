@@ -305,7 +305,7 @@ return array(
 				'user' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'paymetMethods'
+					'inverseRelationship' => 'paymentMethods'
 				)
 			)
 		)
