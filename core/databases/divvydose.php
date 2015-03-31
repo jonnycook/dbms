@@ -122,6 +122,11 @@ return array(
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
 				),
+				'paymentMethods' => array(
+					'model' => 'PaymentMethod',
+					'type' => 'Many',
+					'inverseRelationship' => 'user'
+				),
 			)
 		),
 
@@ -286,6 +291,24 @@ return array(
 				)
 			)
 		),
+
+		'PaymentMethod' => array(
+			'attributes' => array(
+				'nameOnCard' => array('type' => 'string'),
+				'address' => array('type' => 'string'),
+				'zip' => array('type' => 'string'),
+				'city' => array('type' => 'string'),
+				'state' => array('type' => 'string'),
+				'number' => array('type' => 'string'),
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'paymetMethods'
+				)
+			)
+		)
 	),
 
 	'routes' => array(
