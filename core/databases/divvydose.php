@@ -116,7 +116,12 @@ return array(
 					'model' => 'Allergy',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				)
+				),
+				'conditions' => array(
+					'model' => 'Condition',
+					'type' => 'Many',
+					'inverseRelationship' => 'user'
+				),
 			)
 		),
 
@@ -268,7 +273,19 @@ return array(
 					'inverseRelationship' => 'allergies'
 				)
 			)
-		)
+		),
+		'Condition' => array(
+			'attributes' => array(
+				'name' => array('type' => 'string'),
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'conditions'
+				)
+			)
+		),
 	),
 
 	'routes' => array(
