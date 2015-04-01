@@ -300,6 +300,7 @@ return array(
 				'city' => array('type' => 'string'),
 				'state' => array('type' => 'string'),
 				'number' => array('type' => 'string'),
+				'type' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'user' => array(
