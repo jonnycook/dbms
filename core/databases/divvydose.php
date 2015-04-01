@@ -127,6 +127,11 @@ return array(
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
 				),
+				'insurance' => array(
+					'model' => 'Insurance',
+					'type' => 'Many',
+					'inverseRelationship' => 'user'
+				),
 			)
 		),
 
@@ -307,6 +312,21 @@ return array(
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'paymentMethods'
+				)
+			)
+		),
+
+		'Insurance' => array(
+			'attributes' => array(
+				'idNumber' => array('type' => 'string'),
+				'groupNumber' => array('type' => 'string'),
+				'rxBin' => array('type' => 'string')
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'insurance'
 				)
 			)
 		)
