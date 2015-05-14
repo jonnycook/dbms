@@ -5,6 +5,7 @@ require_once('includes/schema.php');
 require_once('databaseEngines/MongoDbDatabaseEngine.class.php');
 require_once('databaseEngines/MysqlDatabaseEngine.class.php');
 require_once('databaseEngines/JsonDatabaseEngine.class.php');
+require_once('databaseEngines/AddressesDatabaseEngine.class.php');
 
 header('Content-Type: text/plain');
 
@@ -13,6 +14,7 @@ function createStorageEngine($type, array $config) {
 		case 'mysql': $class = 'MysqlDatabaseStorageEngine'; break;
 		case 'mongodb': $class = 'MongoDbDatabaseStorageEngine'; break;
 		case 'json': $class = 'JsonDatabaseStorageEngine'; break;
+		case 'addresses': $class = 'AddressesDatabaseStorageEngine'; break;
 		default: throw new Exception("Invalid storage engine $type");
 	}
 
@@ -44,6 +46,7 @@ function getObject(array $schema, $model, $id, &$results=null) {
 
 	$object = array();
 	foreach ($attributes as $name => $attrSchema) {
+		if ($results[$model][$id][$name]) continue;
 		$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $attrSchema));
 
 		$modelSchema = schemaModel($schema, $model);
@@ -52,46 +55,95 @@ function getObject(array $schema, $model, $id, &$results=null) {
 		$object[$name] = $storage->attribute($model, $id, $storageConfig, $name, $attrSchema);
 	}
 
-	$results[$model][$id] = true;
+	if (!$results[$model][$id]) $results[$model][$id] = true;
 
 	foreach ($relationships as $relName => $relSchema) {
-		$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $relSchema));
+		if ($value = $results[$model][$id][$relName]) {
+			switch ($relSchema['type']) {
+				case 'One':
+					if (is_array($value)) {
+						if (!$results[$value['model']][$value['id']]) {
+							getObject($schema, $value['model'], $value['id'], $results);					
+						}							
+					}
+					else {
+						if (!$results[$relSchema['model']][$value]) {
+							getObject($schema, $relSchema['model'], $value, $results);					
+						}							
+					}
+					break;
 
-		$modelSchema = schemaModel($schema, $model);
-		$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
+				case 'Many':
+					foreach ($value as $relId) {
+						if (!$results[$relSchema['model']][$relId]) {
+							getObject($schema, $relSchema['model'], $relId, $results);
+						}								
+					}
+					break;
+			}
+		}
+		else {
+			$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $relSchema));
 
-		unset($value);
-		if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
-			$object[$relName] = $value;
-			if ($value !== null) {
-				switch ($relSchema['type']) {
-					case 'One':
-						if (is_array($value)) {
-							if (!$results[$value['model']][$value['id']]) {
-								getObject($schema, $value['model'], $value['id'], $results);					
-							}							
-						}
-						else {
-							if (!$results[$relSchema['model']][$value]) {
-								getObject($schema, $relSchema['model'], $value, $results);					
-							}							
-						}
-						break;
+			$modelSchema = schemaModel($schema, $model);
+			$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
 
-					case 'Many':
-						// var_dump($value);
-						foreach ($value as $relId) {
-							if (!$results[$relSchema['model']][$relId]) {
-								getObject($schema, $relSchema['model'], $relId, $results);
+			unset($value);
+			if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
+				if ($value !== null) {
+					switch ($relSchema['type']) {
+						case 'One':
+							$object[$relName] = $value;
+							if (is_array($value)) {
+								if (!$results[$value['model']][$value['id']]) {
+									getObject($schema, $value['model'], $value['id'], $results);					
+								}							
 							}
-						}
-						break;
+							else {
+								if (!$results[$relSchema['model']][$value]) {
+									getObject($schema, $relSchema['model'], $value, $results);					
+								}							
+							}
+							break;
+
+						case 'Many':
+							$ids = array();
+							foreach ($value as $v) {
+								// if ($relName == 'addresses') {
+								// 	var_dump($v);
+								// }
+								if (is_array($v)) {
+									$relId = $v['id'];
+									unset($v['id']);
+									$results[$relSchema['model']][$relId] = $v;
+									getObject($schema, $relSchema['model'], $relId, $results);
+								}
+								else {
+									$relId = $v;
+									if (!$results[$relSchema['model']][$relId]) {
+										getObject($schema, $relSchema['model'], $relId, $results);
+									}								
+								}
+								$ids[] = $relId;
+							}
+							$object[$relName] = $ids;
+							break;
+					}
+				}
+				else {
+					$object[$relName] = $value;
 				}
 			}
+
 		}
 	}
 
-	$results[$model][$id] = $object;
+	if ($results[$model][$id] === true) {
+		$results[$model][$id] = $object;
+	}
+	else {
+		$results[$model][$id] = array_merge((array)$results[$model][$id], $object);
+	}
 
 	return $object;
 }
@@ -347,13 +399,13 @@ function sendToClient($clientId, $db, $update) {
 	// else {
 	// }
 }
+$params = array();
 
 if ($resource = $_GET['resource']) {
 	$models = array_keys($databaseSchema['models']);
 	foreach ($databaseSchema['routes'] as $route => $routeSchema) {
 		preg_match_all('/:([a-z]+)/', $route, $matches);
 		$paramNames = $matches[1];
-		$params = array();
 
 		$pattern = preg_replace_callback('/:([a-z]+)/', function($matches) use ($models) {
 			if ($matches[1] == 'model') {
@@ -374,37 +426,82 @@ if ($resource = $_GET['resource']) {
 	}
 
 	if ($matched) {
-		if ($routeSchema['type'] == 'db') {
-			foreach ($databaseSchema['models'] as $modelName => $modelSchema) {
-				$primaryStorageName = schemaModelStorage($databaseSchema, $modelName);
-				$storageConfig = schemaModelStorageConfig($databaseSchema, $modelName, $primaryStorageName);
-				$storage = storageEngine($databaseSchema, $primaryStorageName);
+		if (!$routeSchema[0]) {
+			$routeSchemas = array($routeSchema);
+		}
+		else {
+			$routeSchemas = $routeSchema;
+		}
+		$allResults = array();
+		foreach ($routeSchemas as $routeSchema) {
+			$results = array();
+			if (is_callable($routeSchema)) {
+				$routeSchema = $routeSchema();
+				// $params = array_merge($params, $routeSchema['params']);
+			}
 
-				$ids = $storage->ids($modelName, $storageConfig);
-				foreach ($ids as $id) {
-					getObject($databaseSchema, $modelName, $id, $results);
+			if ($routeSchema['params']) {
+				if (is_callable($routeSchema['params'])) {
+					$params = array_merge($params, $routeSchema['params']());
+				}
+				else {
+					$params = array_merge($params, $routeSchema['params']);			
+				}
+			}
+			
+			if ($routeSchema['type'] == 'db') {
+				foreach ($databaseSchema['models'] as $modelName => $modelSchema) {
+					$primaryStorageName = schemaModelStorage($databaseSchema, $modelName);
+					$storageConfig = schemaModelStorageConfig($databaseSchema, $modelName, $primaryStorageName);
+					$storage = storageEngine($databaseSchema, $primaryStorageName);
+
+					$ids = $storage->ids($modelName, $storageConfig);
+					if ($ids) {
+						foreach ($ids as $id) {
+							getObject($databaseSchema, $modelName, $id, $results);
+						}
+					}
+				}
+
+				$resolvedResource = array(
+					'type' => 'db',
+				);
+			}
+			else if ($routeSchema['type'] == 'model') {
+				if ($params['id']) {
+					getObject($databaseSchema, $params['model'], $params['id'], $results);
+					$resolvedResource = array(
+						'type' => 'model',
+						'model' => $params['model'],
+						'id' => $params['id'],
+					);
+				}
+				else {
+					$primaryStorageName = schemaModelStorage($databaseSchema, $params['model']);
+					$storageConfig = schemaModelStorageConfig($databaseSchema, $params['model'], $primaryStorageName);
+					$storage = storageEngine($databaseSchema, $primaryStorageName);
+
+					$ids = $storage->ids($params['model'], $storageConfig);
+					foreach ($ids as $id) {
+						getObject($databaseSchema, $params['model'], $id, $results);
+					}
+
 				}
 			}
 
-			$resolvedResource = array(
-				'type' => 'db',
-			);
+
+			addSubscriberToResource($databaseName, $resolvedResource, $clientId);
+
+			foreach ($results as $model => $instances) {
+				$allResults[$model] = array_merge((array)$allResults[$model], $instances);
+			}
 		}
-		else if ($routeSchema['type'] == 'model') {
-			getObject($databaseSchema, $params['model'], $params['id'], $results);
-			$resolvedResource = array(
-				'type' => 'model',
-				'model' => $params['model'],
-				'id' => $params['id'],
-			);
-		}
+
 
 		echo json_encode(array(
 			'path' => $resource,
-			'data' => $results
+			'data' => $allResults
 		) + $resolvedResource);
-
-		addSubscriberToResource($databaseName, $resolvedResource, $clientId);
 	}
 }
 else if ($update = $_POST['update']) {

@@ -11,6 +11,9 @@ return array(
 			'type' => 'json',
 			'file' => 'supplements.json',
 			'attributeNameMapping' => array('underscores' => 'camelCase'),
+		),
+		'addresses' => array(
+			'type' => 'addresses'
 		)
 	),
 
@@ -97,6 +100,11 @@ return array(
 					'type' => 'Many',
 					'inverseRelationship' => 'caregivingUser'
 				),
+				'caringFor' => array(
+					'model' => 'Caregiver',
+					'type' => 'Many',
+					'inverseRelationship' => 'caregiverUser',
+				),
 				'prescriptions' => array(
 					'type' => 'Many',
 					'model' => 'Prescription',
@@ -108,6 +116,9 @@ return array(
 					'inverseRelationship' => 'user'
 				),
 				'addresses' => array(
+					'storage' => array(
+						'db' => 'addresses'
+					),
 					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
@@ -255,6 +266,9 @@ return array(
 		),
 
 		'Address' => array(
+			'storage' => array(
+				'primary' => 'addresses'
+			),
 			'attributes' => array(
 				'street1' => array('type' => 'string'),
 				'street2' => array('type' => 'string'),
@@ -335,6 +349,26 @@ return array(
 	'routes' => array(
 		'/' => array(
 			'type' => 'db'
+		),
+
+		'/u' => array(
+			array(
+				'type' => 'model',
+				'params' => array('model' => 'Supplement'),
+			),
+			array(
+				'type' => 'model',
+				'params' => array('model' => 'SupplementStrength'),
+			),
+			array(
+				'type' => 'model',
+				'params' => function() {
+					return array(
+						'model' => 'User',
+						'id' => '5552476c6b3e13c0480041a7'
+					);
+				}
+			),
 		),
 
 		'/:model/:id' => array(
