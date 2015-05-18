@@ -54,7 +54,7 @@
 		"id": "C4",
 		"name": "FISH OIL + DHA",
 		"primary_name": "FISH OIL + DHA",
-		"image": "http://jonnycook.com/dd/images/3.png",
+		"image": "http://jonnycook.com/dd/images/4.png",
 		"strengths": [
 			{
 				"id": "C4.1",
@@ -71,7 +71,7 @@
 		"id": "C5",
 		"name": "MULTIVITAMIN",
 		"primary_name": "MULTIVITAMIN",
-		"image": "http://jonnycook.com/dd/images/4.png",
+		"image": "http://jonnycook.com/dd/images/5.png",
 		"strengths": [
 			{
 				"id": "C5.1",
@@ -88,7 +88,7 @@
 		"id": "C6",
 		"name": "PROBIOTIC",
 		"primary_name": "PROBIOTIC",
-		"image": "http://jonnycook.com/dd/images/5.png",
+		"image": "http://jonnycook.com/dd/images/6.png",
 		"strengths": [
 			{
 				"id": "C6.1",
@@ -105,7 +105,7 @@
 		"id": "C7",
 		"name": "LEVOTHYROXINE",
 		"primary_name": "LEVOTHYROXINE",
-		"image": "http://jonnycook.com/dd/images/6.png",
+		"image": "http://jonnycook.com/dd/images/7.png",
 		"strengths": [
 			{
 				"id": "C7.1",
@@ -122,7 +122,7 @@
 		"id": "C8",
 		"name": "OMEPRAZOLE",
 		"primary_name": "OMEPRAZOLE",
-		"image": "http://jonnycook.com/dd/images/7.png",
+		"image": "http://jonnycook.com/dd/images/8.png",
 		"strengths": [
 			{
 				"id": "C8.1",
