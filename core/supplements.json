@@ -1,11 +1,11 @@
 [
 	{
-		"id": "1",
+		"id": "C1",
 		"name": "ATORVOSTATIN",
 		"primary_name": "ATORVOSTATIN",
 		"strengths": [
 			{
-				"id": "1.1",
+				"id": "C1.1",
 				"name": "20 MG",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
@@ -16,12 +16,12 @@
 		]
 	},
 	{
-		"id": "2",
+		"id": "C2",
 		"name": "LISINOPRIL",
 		"primary_name": "LISINOPRIL",
 		"strengths": [
 			{
-				"id": "2.1",
+				"id": "C2.1",
 				"name": "20 MG",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
@@ -32,12 +32,12 @@
 		]
 	},
 	{
-		"id": "3",
+		"id": "C3",
 		"name": "ASPIRIN",
 		"primary_name": "ASPIRIN",
 		"strengths": [
 			{
-				"id": "3.1",
+				"id": "C3.1",
 				"name": "81 MG",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
@@ -48,12 +48,12 @@
 		]
 	},
 	{
-		"id": "4",
+		"id": "C4",
 		"name": "FISH OIL + DHA",
 		"primary_name": "FISH OIL + DHA",
 		"strengths": [
 			{
-				"id": "4.1",
+				"id": "C4.1",
 				"name": "500 MG",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
@@ -64,12 +64,12 @@
 		]
 	},
 	{
-		"id": "5",
+		"id": "C5",
 		"name": "MULTIVITAMIN",
 		"primary_name": "MULTIVITAMIN",
 		"strengths": [
 			{
-				"id": "5.1",
+				"id": "C5.1",
 				"name": "",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
@@ -80,12 +80,12 @@
 		]
 	},
 	{
-		"id": "6",
+		"id": "C6",
 		"name": "PROBIOTIC",
 		"primary_name": "PROBIOTIC",
 		"strengths": [
 			{
-				"id": "6.1",
+				"id": "C6.1",
 				"name": "",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
@@ -96,12 +96,12 @@
 		]
 	},
 	{
-		"id": "7",
+		"id": "C7",
 		"name": "LEVOTHYROXINE",
 		"primary_name": "LEVOTHYROXINE",
 		"strengths": [
 			{
-				"id": "7.1",
+				"id": "C7.1",
 				"name": "125 MCG",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
@@ -112,12 +112,12 @@
 		]
 	},
 	{
-		"id": "8",
+		"id": "C8",
 		"name": "OMEPRAZOLE",
 		"primary_name": "OMEPRAZOLE",
 		"strengths": [
 			{
-				"id": "8.1",
+				"id": "C8.1",
 				"name": "40 MG",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
