@@ -3,6 +3,7 @@
 		"id": "C1",
 		"name": "ATORVOSTATIN",
 		"primary_name": "ATORVOSTATIN",
+		"image": "http://jonnycook.com/dd/images/1.png",
 		"strengths": [
 			{
 				"id": "C1.1",
@@ -19,6 +20,7 @@
 		"id": "C2",
 		"name": "LISINOPRIL",
 		"primary_name": "LISINOPRIL",
+		"image": "http://jonnycook.com/dd/images/2.png",
 		"strengths": [
 			{
 				"id": "C2.1",
@@ -35,6 +37,7 @@
 		"id": "C3",
 		"name": "ASPIRIN",
 		"primary_name": "ASPIRIN",
+		"image": "http://jonnycook.com/dd/images/3.png",
 		"strengths": [
 			{
 				"id": "C3.1",
@@ -51,6 +54,7 @@
 		"id": "C4",
 		"name": "FISH OIL + DHA",
 		"primary_name": "FISH OIL + DHA",
+		"image": "http://jonnycook.com/dd/images/3.png",
 		"strengths": [
 			{
 				"id": "C4.1",
@@ -67,6 +71,7 @@
 		"id": "C5",
 		"name": "MULTIVITAMIN",
 		"primary_name": "MULTIVITAMIN",
+		"image": "http://jonnycook.com/dd/images/4.png",
 		"strengths": [
 			{
 				"id": "C5.1",
@@ -83,6 +88,7 @@
 		"id": "C6",
 		"name": "PROBIOTIC",
 		"primary_name": "PROBIOTIC",
+		"image": "http://jonnycook.com/dd/images/5.png",
 		"strengths": [
 			{
 				"id": "C6.1",
@@ -99,6 +105,7 @@
 		"id": "C7",
 		"name": "LEVOTHYROXINE",
 		"primary_name": "LEVOTHYROXINE",
+		"image": "http://jonnycook.com/dd/images/6.png",
 		"strengths": [
 			{
 				"id": "C7.1",
@@ -115,6 +122,7 @@
 		"id": "C8",
 		"name": "OMEPRAZOLE",
 		"primary_name": "OMEPRAZOLE",
+		"image": "http://jonnycook.com/dd/images/7.png",
 		"strengths": [
 			{
 				"id": "C8.1",

@@ -42,6 +42,7 @@ return array(
 			'attributes' => array(
 				'name' => array('type' => 'string'),
 				'primaryName' => array('type' => 'string'),
+				'image' => array('type' => 'string'),
 			),
 
 			'relationships' => array(
