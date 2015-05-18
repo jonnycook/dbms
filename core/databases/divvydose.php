@@ -14,6 +14,9 @@ return array(
 		),
 		'addresses' => array(
 			'type' => 'addresses'
+		),
+		'medications' => array(
+			'type' => 'medications'
 		)
 	),
 

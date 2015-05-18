@@ -19,7 +19,6 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
-		return false;
 		$response = json_decode(file_get_contents('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses?patientID=DEGESA'), true);
 		foreach ($response as $i => $obj) {
 			$addresses[] = array(
