@@ -178,6 +178,7 @@ return array(
 				'days' => array('type' => 'string'),
 				'quantity' => array('type' => 'string'),
 				'startedAt' => array('type' => 'datetime'),
+				'directions' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'user' => array(
