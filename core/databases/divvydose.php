@@ -254,6 +254,7 @@ return array(
 				'clientId' => array('type' => 'string'),
 
 				'deviceToken' => array('type' => 'string'),
+				'deviceId' => array('type' => 'string'),
 
 				'everyDay' => array('type' => 'string'),
 				'everyOddDay' => array('type' => 'string'),
