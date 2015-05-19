@@ -75,7 +75,7 @@
 		"strengths": [
 			{
 				"id": "C5.1",
-				"name": "",
+				"name": "!",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
         "unit_size": null,
@@ -92,7 +92,7 @@
 		"strengths": [
 			{
 				"id": "C6.1",
-				"name": "",
+				"name": "!",
 				"dose_type": "CAPSULE",
 				"container_type": "BOTTLE",
         "unit_size": null,
