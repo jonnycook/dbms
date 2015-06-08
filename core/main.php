@@ -39,6 +39,35 @@ function isTemporaryId($id) {
 	return $id[0] == '$';
 }
 
+class ComputeStorage {
+	public function __construct($opts) {
+		$this->opts = $opts;
+	}
+	public function attribute($model, $id, $storageConfig, $name, $attrSchema, $deps) {
+		return call_user_func_array($this->opts['compute'], $deps);
+	}
+
+	public function dependencies() {
+		return $this->opts['dependencies'];
+	}
+
+	public function resolveDep($dep, $config, $id) {
+
+	}
+}
+
+function propStorage($schema, $model, $prop) {
+	$propSchema = schemaModelProperty($schema, $model, $prop);
+	if ($propSchema['storage']['compute']) {
+		$obj = new ComputeStorage($propSchema['storage']);
+		return array($obj);
+	}
+	else {
+		$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $propSchema));
+		return array($storage, modelSchemaStorageConfig(schemaModel($schema, $model), $storageName));
+	}
+}
+
 function getObject(array $schema, $model, $id, &$results=null) {
 	// $storageType = schemaModelStorage($schema, $model);
 	$attributes = schemaModelAttributes($schema, $model);
@@ -47,12 +76,23 @@ function getObject(array $schema, $model, $id, &$results=null) {
 	$object = array();
 	foreach ($attributes as $name => $attrSchema) {
 		if ($results[$model][$id][$name]) continue;
-		$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $attrSchema));
+		list($storage, $storageConfig) = propStorage($schema, $model, $name);//storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $attrSchema));
 
 		$modelSchema = schemaModel($schema, $model);
-		$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
+		// $storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
 
-		$object[$name] = $storage->attribute($model, $id, $storageConfig, $name, $attrSchema);
+		$deps = $storage->dependencies($model, $name);
+		if ($deps) {
+			$resolvedDeps = array();
+			foreach ($deps as $i => $dep) {
+				list($db, $dbProp) = explode('.', $dep);
+				$s = storageEngine($schema, $db);
+				$c = modelSchemaStorageConfig($modelSchema, $db);
+				$resolvedDeps[$i] = $s->resolveDep($dbProp, $c, $id);
+			}
+		}
+
+		$object[$name] = $storage->attribute($model, $id, $storageConfig, $name, $attrSchema, $resolvedDeps);
 	}
 
 	if (!$results[$model][$id]) $results[$model][$id] = true;
@@ -456,6 +496,8 @@ if ($resource = $_GET['resource']) {
 					$storage = storageEngine($databaseSchema, $primaryStorageName);
 
 					$ids = $storage->ids($modelName, $storageConfig);
+					// var_dump($ids);
+
 					if ($ids) {
 						foreach ($ids as $id) {
 							getObject($databaseSchema, $modelName, $id, $results);
@@ -490,14 +532,17 @@ if ($resource = $_GET['resource']) {
 			}
 
 
-			addSubscriberToResource($databaseName, $resolvedResource, $clientId);
+			if ($clientId) addSubscriberToResource($databaseName, $resolvedResource, $clientId);
 
 			foreach ($results as $model => $instances) {
-				$allResults[$model] = array_merge((array)$allResults[$model], $instances);
+				foreach ($instances as $id => $instance) {
+					$allResults[$model][$id] = $instance;
+				}
+				// $allResults[$model] = array_merge((array)$allResults[$model], $instances);
 			}
 		}
 
-
+		// var_dump($allResults);
 		echo json_encode(array(
 			'path' => $resource,
 			'data' => $allResults

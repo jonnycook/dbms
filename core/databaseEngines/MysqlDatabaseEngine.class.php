@@ -12,6 +12,10 @@ class MysqlDatabaseStorageEngine extends DatabaseEngine {
 		return mysql_fetch_assoc(mysql_query("SELECT * FROM $table WHERE id = $id"));
 	}
 
+	public function resolveDep($dep, $config, $id) {
+		return $this->record($config['table'], $id);
+	}
+
 	private function setPart(array $schema, $model, array $changes) {
 		$setPart = array();
 		if ($attributes = $changes['attributes']) {

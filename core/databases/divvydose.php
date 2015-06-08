@@ -254,6 +254,7 @@ return array(
 			'attributes' => array(
 				'clientId' => array('type' => 'string'),
 
+				'devicePlatform' => array('type' => 'string'),
 				'deviceToken' => array('type' => 'string'),
 				'deviceId' => array('type' => 'string'),
 

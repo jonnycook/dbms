@@ -5,15 +5,15 @@ return array(
 		'default' => 'mysql',
 		'mysql' => array(
 			'type' => 'mysql',
-			'db' => 'knowledge',
+			'db' => 'srs',
 			'server' => '127.0.0.1',
 			'user' => 'root',
-			'password' => '9wo7bCrA'
+			'password' => ''
 		),
 
 		'mongodb' => array(
 			'type' => 'mongodb',
-			'db' => 'recuerdo',
+			'db' => 'srs',
 		),
 	),
 
@@ -68,24 +68,24 @@ return array(
 				'disabled' => array(
 					'type' => 'bool',
 				),
-				'front' => array(
+				'sides' => array(
 					'type' => 'string',
 					'storage' => array(
-						'dependencies' => array('mysql', 'mysql.record'),
-						'compute' => function($mysql, $entry) {
+						'dependencies' => array('mysql.record'),
+						'compute' => function($entry) {
 							switch ($entry['item_type']) {
-								case 1: $table = 'terms'; break;
+								case '1': $table = 'terms'; break;
 							}
 							$item = mysql_fetch_assoc(mysql_query("SELECT * FROM $table WHERE id = $entry[item_id]"));
 
 							switch ($entry['item_type']) {
-								case 1:
-									$front = "<span class='namespace'>($item[namespace])</span> $item[term]";
-									$back = $item['definition'];
+								case '1':
+									$front = utf8_encode("<span class='namespace'>($item[namespace])</span> $item[term]");
+									$back = utf8_encode($item['definition']);
 									break;
 							}
 
-							return $front;
+							return array('front' => $front, 'back' => $back);
 						}
 					)
 				)
