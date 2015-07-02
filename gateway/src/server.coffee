@@ -7,7 +7,7 @@ app.use bodyParser limit:'50mb'
 app.listen 3000
 
 app.get '/client/connected', (req, res) ->
-	request "http://localhost/dbms/core/clientConnected.php?id=#{req.query.id}", (err, httpRes, body) ->
+	request "http://localhost/dbms/core/clientConnected.php?id=#{req.query.id}&token=#{req.query.token}", (err, httpRes, body) ->
 		res.end()
 
 app.get '/client/disconnected', (req, res) ->

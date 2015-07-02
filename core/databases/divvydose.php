@@ -91,12 +91,33 @@ return array(
 
 		'User' => array(
 			'attributes' => array(
-				'fullName' => array('type' => 'string'),
-				'timezone' => array('type' => 'int'),
+				// 'fullName' => array('type' => 'string'),
+				'firstName' => array('type' => 'string'),
+				'lastName' => array('type' => 'string'),
+
 				'sex' => array('type' => 'string'),
 				'email' => array('type' => 'string'),
-				'dateOfBirth' => array('type' => 'string'),
+				'dateOfBirth' => array('type' => 'date'),
 				'phoneNumber' => array('type' => 'string'),
+				'ssn' => array('type' => 'string'),
+
+				'timezone' => array('type' => 'int'),
+
+				'lastShipment' => array('type' => 'date'),
+				'lastShipmentTrackingUrl' => array('type' => 'string'),
+				'nextShipment' => array('type' => 'date'),
+
+				'outstandingBalance' => array('type' => 'float'),
+
+				'lastPayment' => array('type' => 'float'),
+				'lastPaymentTime' => array('type' => 'datetime'),
+
+				'divvyPacks' => array('type' => 'object'),
+
+				'picture' => array('type' => 'string'),
+
+				// 'passwordHash' => array('type' => 'string'),
+				// 'passwordSalt' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'caregivers' => array(
@@ -110,6 +131,9 @@ return array(
 					'inverseRelationship' => 'caregiverUser',
 				),
 				'prescriptions' => array(
+					'storage' => array(
+						'db' => 'medications'
+					),
 					'type' => 'Many',
 					'model' => 'Prescription',
 					'inverseRelationship' => 'user',
@@ -120,9 +144,9 @@ return array(
 					'inverseRelationship' => 'user'
 				),
 				'addresses' => array(
-					'storage' => array(
-						'db' => 'addresses'
-					),
+					// 'storage' => array(
+					// 	'db' => 'addresses'
+					// ),
 					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
@@ -147,6 +171,22 @@ return array(
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
 				),
+
+				'payments' => array(
+					'model' => 'Payment',
+					'type' => 'Many',
+					'inverseRelationship' => 'user'
+				),
+				'bills' => array(
+					'model' => 'Bill',
+					'type' => 'Many',
+					'inverseRelationship' => 'user',
+				),
+
+				'currentAddress' => array(
+					'model' => 'Address',
+					'type' => 'One',
+				)
 			)
 		),
 
@@ -171,14 +211,25 @@ return array(
 		),
 
 		'Prescription' => array(
+			'storage' => array(
+				'primary' => 'medications'
+			),
+
 			'attributes' => array(
 				'packaging' => array('type' => 'string', 'values' => array('In A Packet', 'Separate Bottle')),
 				'frequency' => array('type' => 'string'),
 				'autoRefill' => array('type' => 'bool'),
 				'days' => array('type' => 'string'),
 				'quantity' => array('type' => 'string'),
-				'startedAt' => array('type' => 'datetime'),
+				'startedAt' => array('type' => 'date'),
+
+				'image' => array('type' => 'string'),
+
 				'directions' => array('type' => 'string'),
+				'name' => array('type' => 'string'),
+				'prescriber' => array('type' => 'string'),
+				'rxNumber' => array('type' => 'string'),
+				'endDate' => array('type' => 'date'),
 			),
 			'relationships' => array(
 				'user' => array(
@@ -187,10 +238,12 @@ return array(
 					'inverseRelationship' => 'prescriptions'
 				),
 				'supplementStrength' => array(
+					'storage' => array('ignore' => true),
 					'type' => 'One',
 					'model' => 'SupplementStrength',
 				),
 				'doses' => array(
+					'storage' => array('ignore' => true),
 					'type' => 'Many',
 					'model' => 'PrescriptionDose',
 					'inverseRelationship' => 'prescription'
@@ -198,19 +251,19 @@ return array(
 			),
 		),
 
-		'PrescriptionDose' => array(
-			'attributes' => array(
-				'time' => array('type' => 'string'),
-				'quantity' => array('type' => 'string')
-			),
-			'relationships' => array(
-				'prescription' => array(
-					'type' => 'One',
-					'model' => 'Prescription',
-					'inverseRelationship' => 'doses'
-				)
-			)
-		),
+		// 'PrescriptionDose' => array(
+		// 	'attributes' => array(
+		// 		'time' => array('type' => 'string'),
+		// 		'quantity' => array('type' => 'string')
+		// 	),
+		// 	'relationships' => array(
+		// 		'prescription' => array(
+		// 			'type' => 'One',
+		// 			'model' => 'Prescription',
+		// 			'inverseRelationship' => 'doses'
+		// 		)
+		// 	)
+		// ),
 
 		'MedicineLogEntry' => array(
 			'attributes' => array(
@@ -258,6 +311,8 @@ return array(
 				'deviceToken' => array('type' => 'string'),
 				'deviceId' => array('type' => 'string'),
 
+				'schedule' => array('type' => 'string'),
+
 				'everyDay' => array('type' => 'string'),
 				'everyOddDay' => array('type' => 'string'),
 				'everyEvenDay' => array('type' => 'string'),
@@ -273,9 +328,9 @@ return array(
 		),
 
 		'Address' => array(
-			'storage' => array(
-				'primary' => 'addresses'
-			),
+			// 'storage' => array(
+			// 	'primary' => 'addresses'
+			// ),
 			'attributes' => array(
 				'street1' => array('type' => 'string'),
 				'street2' => array('type' => 'string'),
@@ -321,12 +376,17 @@ return array(
 		'PaymentMethod' => array(
 			'attributes' => array(
 				'nameOnCard' => array('type' => 'string'),
-				'address' => array('type' => 'string'),
+				'number' => array('type' => 'string'),
+				'type' => array('type' => 'string'),
+				'cvc' => array('type' => 'string'),
+				'expMonth' => array('type' => 'string'),
+				'expYear' => array('type' => 'string'),
+
+				'street1' => array('type' => 'string'),
+				'street2' => array('type' => 'string'),
 				'zip' => array('type' => 'string'),
 				'city' => array('type' => 'string'),
 				'state' => array('type' => 'string'),
-				'number' => array('type' => 'string'),
-				'type' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'user' => array(
@@ -350,7 +410,39 @@ return array(
 					'inverseRelationship' => 'insurance'
 				)
 			)
-		)
+		),
+
+		'Payment' => array(
+			'attributes' => array(
+				'timestamp' => array('type' => 'datetime'),
+				'amount' => array('type' => 'float'),
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'payments'
+				),
+				'paymentMethod' => array(
+					'model' => 'PaymentMethod',
+					'type' => 'One'
+				)
+			)
+		),
+
+		'Bill' => array(
+			'attributes' => array(
+				'timestamp' => array('type' => 'datetime'),
+				'amount' => array('type' => 'float'),
+			),
+			'relationships' => array(
+				'user' => array(
+					'model' => 'User',
+					'type' => 'One',
+					'inverseRelationship' => 'bills',
+				)
+			)
+		),
 	),
 
 	'routes' => array(
@@ -369,10 +461,12 @@ return array(
 			),
 			array(
 				'type' => 'model',
-				'params' => function() {
+				'params' => function($client) {
+					$session = _mongoClient()->divvydose->sessions->findOne(array('_id' => new MongoId($client['token'])));
+
 					return array(
 						'model' => 'User',
-						'id' => '5552476c6b3e13c0480041a7'
+						'id' => $session['userId']
 					);
 				}
 			),

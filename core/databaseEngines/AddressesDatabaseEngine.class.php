@@ -2,12 +2,6 @@
 
 require_once(__DIR__.'/DatabaseEngine.class.php');
 
-function def($value, $default) {
-	if (!$value) return $default;
-	return $value;
-}
-
-
 class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	public function __construct(array $config) {
 	}
@@ -19,8 +13,8 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
-		return false;
-		$response = json_decode(file_get_contents('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses?patientID=DEGESA'), true);
+		// return false;
+		$response = json_decode(file_get_contents('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses?patientID=YOUNDAV'), true);
 		foreach ($response as $i => $obj) {
 			$addresses[] = array(
 				'id' => $id . '-' . $obj['AddressID'],
@@ -45,7 +39,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 			'State' => def($changes['attributes']['state'], 'SS'),
 			'Zip' => def($changes['attributes']['zipCode'], '12345'),
 			'Name' => def($changes['attributes']['name'], 'Name'),
-			'PatientID' => 'DEGESA'
+			'PatientID' => 'YOUNDAV'
 		);
 
 		$fieldsStr = array();
@@ -61,7 +55,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
 		$response = curl_exec($ch);
 		$response = json_decode($response, true);
-		// var_dump($changes);
+
 		return "{$changes['relationships']['user']}-$response[AddressID]";
 	}
 
@@ -80,7 +74,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 
 		list(, $addressId) = explode('-', $id);
 		$fields['AddressID'] = $addressId;
-		$fields['PatientID'] = 'DEGESA';
+		$fields['PatientID'] = 'YOUNDAV';
 
 		foreach ($fields as $key => $value) {
 			$fieldsStr[] = "$key=$value";

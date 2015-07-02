@@ -2,13 +2,9 @@
 
 require_once(__DIR__.'/DatabaseEngine.class.php');
 
-function def($value, $default) {
-	if (!$value) return $default;
-	return $value;
-}
 
 
-class AddressesDatabaseStorageEngine extends DatabaseEngine {
+class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 	public function __construct(array $config) {
 	}
 
@@ -19,21 +15,28 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
-		$response = json_decode(file_get_contents('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses?patientID=DEGESA'), true);
-		foreach ($response as $i => $obj) {
-			$addresses[] = array(
-				'id' => $id . '-' . $obj['AddressID'],
-				'street1' => $obj['Address'],
-				'street2' => $obj['Address2'],
-				'city' => $obj['City'],
-				'state' => $obj['State'],
-				'zipCode' => $obj['Zip'],
-				'name' => $obj['Name'],
-				'user' => $id,
-			);
+		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
+		if ($user['patientId']) {
+			$response = json_decode(file_get_contents("http://sandbox.qs1api.com/api/Patient/VendorTest/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
+			foreach ($response as $i => $obj) {
+				$addresses[] = array(
+					'id' => $id . '-' . $obj['RxNumber'],
+					'name' => $obj['DispensedDrugName'],
+					'rxNumber' => $obj['RxNumber'],
+					'prescriber' => $obj['PrescriberName'],
+					'endDate' => substr($obj['LastFillDate'], 0, 4) . '-' . substr($obj['LastFillDate'], 4, 2) . '-' . substr($obj['LastFillDate'], 6, 2),
+					'directions' => $obj['SIG'],
+					'user' => $id,
+					'packaging' => 'In A Packet',
+					// 'doses' => array()
+				);
+			}
+			$value = $addresses;
+			return true;
 		}
-		$value = $addresses;
-		return true;
+		else {
+			return false;
+		}
 	}
 
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {

@@ -67,7 +67,6 @@ class Connection
 					@_respond number
 
 			when 'q'
-				# console.log @db, @clientId
 				request.get "http://127.0.0.1:3000/pull?db=#{@db}&clientId=#{@clientId}", (err, res, body) =>
 					@_respond number, body
 

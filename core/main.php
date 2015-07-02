@@ -6,6 +6,13 @@ require_once('databaseEngines/MongoDbDatabaseEngine.class.php');
 require_once('databaseEngines/MysqlDatabaseEngine.class.php');
 require_once('databaseEngines/JsonDatabaseEngine.class.php');
 require_once('databaseEngines/AddressesDatabaseEngine.class.php');
+require_once('databaseEngines/MedicationsDatabaseEngine.class.php');
+
+function def($value, $default) {
+	if (!$value) return $default;
+	return $value;
+}
+
 
 header('Content-Type: text/plain');
 
@@ -15,6 +22,7 @@ function createStorageEngine($type, array $config) {
 		case 'mongodb': $class = 'MongoDbDatabaseStorageEngine'; break;
 		case 'json': $class = 'JsonDatabaseStorageEngine'; break;
 		case 'addresses': $class = 'AddressesDatabaseStorageEngine'; break;
+		case 'medications': $class = 'MedicationsDatabaseStorageEngine'; break;
 		default: throw new Exception("Invalid storage engine $type");
 	}
 
@@ -127,54 +135,66 @@ function getObject(array $schema, $model, $id, &$results=null) {
 
 			$modelSchema = schemaModel($schema, $model);
 			$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
-
 			unset($value);
-			if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
-				if ($value !== null) {
-					switch ($relSchema['type']) {
-						case 'One':
-							$object[$relName] = $value;
-							if (is_array($value)) {
-								if (!$results[$value['model']][$value['id']]) {
-									getObject($schema, $value['model'], $value['id'], $results);					
-								}							
-							}
-							else {
-								if (!$results[$relSchema['model']][$value]) {
-									getObject($schema, $relSchema['model'], $value, $results);					
-								}							
-							}
-							break;
 
-						case 'Many':
-							$ids = array();
-							foreach ($value as $v) {
-								// if ($relName == 'addresses') {
-								// 	var_dump($v);
-								// }
-								if (is_array($v)) {
-									$relId = $v['id'];
-									unset($v['id']);
-									$results[$relSchema['model']][$relId] = $v;
-									getObject($schema, $relSchema['model'], $relId, $results);
+			if (!$relSchema['storage']['ignore']) {
+				if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
+					if ($value !== null) {
+						switch ($relSchema['type']) {
+							case 'One':
+								$object[$relName] = $value;
+								if (is_array($value)) {
+									if (!$results[$value['model']][$value['id']]) {
+										getObject($schema, $value['model'], $value['id'], $results);					
+									}							
 								}
 								else {
-									$relId = $v;
-									if (!$results[$relSchema['model']][$relId]) {
-										getObject($schema, $relSchema['model'], $relId, $results);
-									}								
+									if (!$results[$relSchema['model']][$value]) {
+										getObject($schema, $relSchema['model'], $value, $results);					
+									}							
 								}
-								$ids[] = $relId;
-							}
-							$object[$relName] = $ids;
-							break;
+								break;
+
+							case 'Many':
+								$ids = array();
+								foreach ($value as $v) {
+									// if ($relName == 'addresses') {
+									// 	var_dump($v);
+									// }
+									if (is_array($v)) {
+										$relId = $v['id'];
+										unset($v['id']);
+										$results[$relSchema['model']][$relId] = $v;
+										getObject($schema, $relSchema['model'], $relId, $results);
+									}
+									else {
+										$relId = $v;
+										if (!$results[$relSchema['model']][$relId]) {
+											getObject($schema, $relSchema['model'], $relId, $results);
+										}								
+									}
+									$ids[] = $relId;
+								}
+								$object[$relName] = $ids;
+								break;
+						}
+					}
+					else {
+						$object[$relName] = $value;
 					}
 				}
-				else {
-					$object[$relName] = $value;
+			}
+			else {
+				switch ($relSchema['type']) {
+					case 'One':
+						$object[$relName] = null;
+						break;
+
+					case 'Many':
+						$object[$relName] = array();
+						break;
 				}
 			}
-
 		}
 	}
 
@@ -441,6 +461,8 @@ function sendToClient($clientId, $db, $update) {
 }
 $params = array();
 
+$clientDocument = mongoClient()->clients->findOne(array('_id' => $clientId));
+
 if ($resource = $_GET['resource']) {
 	$models = array_keys($databaseSchema['models']);
 	foreach ($databaseSchema['routes'] as $route => $routeSchema) {
@@ -482,7 +504,7 @@ if ($resource = $_GET['resource']) {
 
 			if ($routeSchema['params']) {
 				if (is_callable($routeSchema['params'])) {
-					$params = array_merge($params, $routeSchema['params']());
+					$params = array_merge($params, $routeSchema['params']($clientDocument));
 				}
 				else {
 					$params = array_merge($params, $routeSchema['params']);			
