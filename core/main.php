@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: text/plain');
+
 require_once('includes/header.php');
 require_once('includes/schema.php');
 require_once('databaseEngines/MongoDbDatabaseEngine.class.php');
@@ -12,9 +14,6 @@ function def($value, $default) {
 	if (!$value) return $default;
 	return $value;
 }
-
-
-header('Content-Type: text/plain');
 
 function createStorageEngine($type, array $config) {
 	switch ($type) {
@@ -205,7 +204,13 @@ function getObject(array $schema, $model, $id, &$results=null) {
 		$results[$model][$id] = array_merge((array)$results[$model][$id], $object);
 	}
 
-	return $object;
+	$modelSchema = schemaModel($schema, $model);
+	
+	if ($modelSchema['storage']['filter']) {
+		$modelSchema['storage']['filter']($results[$model][$id]);
+	}
+
+	return $results[$model][$id];
 }
 
 function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, array $allChanges=array(), $whatToUpdate='both') {

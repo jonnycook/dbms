@@ -17,7 +17,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 		if ($user['patientId']) {
-			$response = json_decode(file_get_contents("http://sandbox.qs1api.com/api/Patient/VendorTest/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
+			$response = json_decode(file_get_contents("http://" . QS1_SERVER . "/api/Patient/" . QS1_PHARMACY . "/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
 			foreach ($response as $i => $obj) {
 				$addresses[] = array(
 					'id' => $id . '-' . $obj['RxNumber'],
@@ -57,7 +57,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 		}
 		$fieldsStr = implode('&', $fieldsStr);
 
-		$ch = curl_init('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses');
+		$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
@@ -91,7 +91,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 
 		// var_dump($fields);
 
-		$ch = curl_init('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses');
+		$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);

@@ -1,5 +1,8 @@
 <?php
 
+define('QS1_SERVER', '52.27.135.117');
+define('QS1_PHARMACY', 'divvyDOSE');
+
 return array(
 	'databases' => array(
 		'default' => 'mongodb',
@@ -90,6 +93,28 @@ return array(
 		),
 
 		'User' => array(
+			'storage' => array(
+				'filter' => function(&$user) {
+					if ($user['divvyPacks']) {
+						foreach ($user['divvyPacks'] as $beginDate => $divvyPack) {
+							$rxs = array();
+							foreach ($divvyPack as $dose) {
+								if (!$rxs[$rxNumber = $dose['rxNumber']]) {
+									$rxs[$rxNumber] = array(
+										'prescriber' => 'Prescriber',
+										'name' => 'Fiddle Sticks ' . $rxNumber,
+										'sig' => 'Just do it. &tm'
+									);
+								}
+							}
+							$user['divvyPacks'][$beginDate] = array(
+								'prescriptions' => $rxs,
+								'doses' => $divvyPack,
+							);
+						}
+					}
+				}
+			),
 			'attributes' => array(
 				// 'fullName' => array('type' => 'string'),
 				'firstName' => array('type' => 'string'),

@@ -14,7 +14,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		// return false;
-		$response = json_decode(file_get_contents('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses?patientID=YOUNDAV'), true);
+		$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=YOUNDAV'), true);
 		foreach ($response as $i => $obj) {
 			$addresses[] = array(
 				'id' => $id . '-' . $obj['AddressID'],
@@ -49,7 +49,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 		}
 		$fieldsStr = implode('&', $fieldsStr);
 
-		$ch = curl_init('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses');
+		$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
@@ -83,7 +83,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 
 		// var_dump($fields);
 
-		$ch = curl_init('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses');
+		$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
