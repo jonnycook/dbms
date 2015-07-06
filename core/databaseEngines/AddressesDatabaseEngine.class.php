@@ -73,7 +73,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 
 	public function update(array $schema, array $storageConfig, $model, $id, array $changes) {
 		list($userId, $addressId) = explode('-', $id);
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($changes['relationships']['user'])));
+		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($userId)));
 
 		if ($user['patientId']) {
 			foreach ((array)$changes['attributes'] as $key => $value) {
