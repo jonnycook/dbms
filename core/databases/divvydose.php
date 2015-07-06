@@ -171,9 +171,9 @@ return array(
 					'inverseRelationship' => 'user'
 				),
 				'addresses' => array(
-					// 'storage' => array(
-					// 	'db' => 'addresses'
-					// ),
+					'storage' => array(
+						'db' => 'addresses'
+					),
 					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
@@ -359,9 +359,9 @@ return array(
 		),
 
 		'Address' => array(
-			// 'storage' => array(
-			// 	'primary' => 'addresses'
-			// ),
+			'storage' => array(
+				'primary' => 'addresses'
+			),
 			'attributes' => array(
 				'street1' => array('type' => 'string'),
 				'street2' => array('type' => 'string'),
