@@ -19,6 +19,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 		if ($user['patientId']) {
 			$response = json_decode(file_get_contents("http://" . QS1_SERVER . "/api/Patient/" . QS1_PHARMACY . "/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
 			foreach ($response as $i => $obj) {
+				$ndc = substr($obj['DispensedDrugNDC'], 0, 9);
 				$addresses[] = array(
 					'id' => $id . '-' . $obj['RxNumber'],
 					'name' => $obj['DispensedDrugName'],
@@ -28,7 +29,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 					'directions' => $obj['SIG'],
 					'user' => $id,
 					'packaging' => 'In A Packet',
-					// 'doses' => array()
+					'image' => "https://s3-us-west-2.amazonaws.com/divvydose/pills/$ndc.png",
 				);
 			}
 			$value = $addresses;
