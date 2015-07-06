@@ -22,6 +22,9 @@ return array(
 		),
 		'medications' => array(
 			'type' => 'medications'
+		),
+		'patients' => array(
+			'type' => 'patients',
 		)
 	),
 
@@ -126,7 +129,8 @@ return array(
 				'email' => array('type' => 'string'),
 				'dateOfBirth' => array('type' => 'date'),
 				'phoneNumber' => array('type' => 'string'),
-				'ssn' => array('type' => 'string'),
+				'ssn' => array(
+					'type' => 'string'),
 
 				'timezone' => array('type' => 'int'),
 

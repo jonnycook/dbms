@@ -8,6 +8,7 @@ require_once('databaseEngines/MongoDbDatabaseEngine.class.php');
 require_once('databaseEngines/MysqlDatabaseEngine.class.php');
 require_once('databaseEngines/JsonDatabaseEngine.class.php');
 require_once('databaseEngines/AddressesDatabaseEngine.class.php');
+require_once('databaseEngines/InsuranceDatabaseEngine.class.php');
 require_once('databaseEngines/MedicationsDatabaseEngine.class.php');
 
 function def($value, $default) {
@@ -21,6 +22,7 @@ function createStorageEngine($type, array $config) {
 		case 'mongodb': $class = 'MongoDbDatabaseStorageEngine'; break;
 		case 'json': $class = 'JsonDatabaseStorageEngine'; break;
 		case 'addresses': $class = 'AddressesDatabaseStorageEngine'; break;
+		case 'insurance': $class = 'InsuranceDatabaseStorageEngine'; break;
 		case 'medications': $class = 'MedicationsDatabaseStorageEngine'; break;
 		default: throw new Exception("Invalid storage engine $type");
 	}
