@@ -13,7 +13,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 		$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Profile?patientID=' . $user['patientId']), true);
 		if ($attrName == 'ssn') {
-			return $response['SSN'] . 'asdf';
+			return $response['SSN'];
 		}
 		else if ($attrName == 'firstName') {
 			return $response['FirstName'];
@@ -80,31 +80,22 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function update(array $schema, array $storageConfig, $model, $id, array $changes) {
-		list($userId, $addressId) = explode('-', $id);
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($userId)));
+		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 
 		if ($user['patientId']) {
 			foreach ((array)$changes['attributes'] as $key => $value) {
 				switch ($key) {
-					case 'street1': $fields['Address'] = def($value, 'Address'); break;
-					case 'street2': $fields['Address2'] = def($value, ''); break;
-					case 'city': $fields['City'] = def($value, 'SS'); break;
-					case 'state': $fields['State'] = def($value, 'City'); break;
-					case 'zip': $fields['Zip'] = def($value, '12345'); break;
-					case 'name': $fields['Name'] = def($value, 'Name'); break;
+					case 'ssn': $fields['SSN'] = def($value, ''); break;
 				}
 			}
 			$fieldsStr = '';
-
-			$fields['AddressID'] = $addressId;
-			$fields['PatientID'] = $user['patientId'];
 
 			foreach ($fields as $key => $value) {
 				$fieldsStr[] = "$key=$value";
 			}
 			$fieldsStr = implode('&', $fieldsStr);
 
-			$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
+			$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Profile?patientID='.$user['patientId']);
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
