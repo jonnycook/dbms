@@ -38,6 +38,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
+		var_dump($changes);
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($changes['relationships']['user'])));
 
 		if ($user['patientId']) {
