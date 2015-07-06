@@ -1,9 +1,9 @@
 <?php
 
-// define('QS1_SERVER', '52.27.135.117');
-// define('QS1_PHARMACY', 'divvyDOSE');
-define('QS1_SERVER', 'sandbox.qs1api.com');
-define('QS1_PHARMACY', 'VendorTest');
+define('QS1_SERVER', '52.27.135.117');
+define('QS1_PHARMACY', 'divvyDOSE');
+// define('QS1_SERVER', 'sandbox.qs1api.com');
+// define('QS1_PHARMACY', 'VendorTest');
 
 return array(
 	'databases' => array(
