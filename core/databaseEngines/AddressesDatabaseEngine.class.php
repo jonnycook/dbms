@@ -67,6 +67,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
 			$response = curl_exec($ch);
 			$response = json_decode($response, true);
+			var_dump($response);
 
 			return "{$changes['relationships']['user']}-$response[AddressID]";
 		}
