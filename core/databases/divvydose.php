@@ -132,9 +132,9 @@ return array(
 				'dateOfBirth' => array('type' => 'date'),
 				'phoneNumber' => array('type' => 'string'),
 				'ssn' => array(
-					'storage' => array(
-						'db' => 'patients',
-					),
+					// 'storage' => array(
+					// 	'db' => 'patients',
+					// ),
 					'type' => 'string'
 				),
 
