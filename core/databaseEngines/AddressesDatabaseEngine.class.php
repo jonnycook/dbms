@@ -72,35 +72,36 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function update(array $schema, array $storageConfig, $model, $id, array $changes) {
-		foreach ((array)$changes['attributes'] as $key => $value) {
-			switch ($key) {
-				case 'street1': $fields['Address'] = def($value, 'Address'); break;
-				case 'street2': $fields['Address2'] = def($value, ''); break;
-				case 'city': $fields['City'] = def($value, 'SS'); break;
-				case 'state': $fields['State'] = def($value, 'City'); break;
-				case 'zip': $fields['Zip'] = def($value, '12345'); break;
-				case 'name': $fields['Name'] = def($value, 'Name'); break;
+		list($userId, $addressId) = explode('-', $id);
+		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($changes['relationships']['user'])));
+
+		if ($user['patientId']) {
+			foreach ((array)$changes['attributes'] as $key => $value) {
+				switch ($key) {
+					case 'street1': $fields['Address'] = def($value, 'Address'); break;
+					case 'street2': $fields['Address2'] = def($value, ''); break;
+					case 'city': $fields['City'] = def($value, 'SS'); break;
+					case 'state': $fields['State'] = def($value, 'City'); break;
+					case 'zip': $fields['Zip'] = def($value, '12345'); break;
+					case 'name': $fields['Name'] = def($value, 'Name'); break;
+				}
 			}
+			$fieldsStr = '';
+
+			$fields['AddressID'] = $addressId;
+			$fields['PatientID'] = $user['patientId'];
+
+			foreach ($fields as $key => $value) {
+				$fieldsStr[] = "$key=$value";
+			}
+			$fieldsStr = implode('&', $fieldsStr);
+
+			$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
+			$response = curl_exec($ch);
 		}
-		$fieldsStr = '';
-
-		list(, $addressId) = explode('-', $id);
-		$fields['AddressID'] = $addressId;
-		$fields['PatientID'] = 'YOUNDAV';
-
-		foreach ($fields as $key => $value) {
-			$fieldsStr[] = "$key=$value";
-		}
-		$fieldsStr = implode('&', $fieldsStr);
-
-		// var_dump($fields);
-
-		$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
-		$response = curl_exec($ch);
-		echo $response;
 	}
 
 	public function delete(array $schema, array $storageConfig, $model, $id) {
