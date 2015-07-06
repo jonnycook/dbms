@@ -40,7 +40,6 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
-		var_dump($changes);
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($changes['relationships']['user'])));
 
 		if ($user['patientId']) {
@@ -67,7 +66,6 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
 			$response = curl_exec($ch);
 			$response = json_decode($response, true);
-			var_dump($response);
 
 			return "{$changes['relationships']['user']}-$response[AddressID]";
 		}
