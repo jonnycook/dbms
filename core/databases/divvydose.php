@@ -130,7 +130,11 @@ return array(
 				'dateOfBirth' => array('type' => 'date'),
 				'phoneNumber' => array('type' => 'string'),
 				'ssn' => array(
-					'type' => 'string'),
+					'storage' => array(
+						'db' => 'patients',
+					)
+					'type' => 'string'
+					),
 
 				'timezone' => array('type' => 'int'),
 
