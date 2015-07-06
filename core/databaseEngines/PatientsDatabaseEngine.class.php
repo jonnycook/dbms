@@ -10,11 +10,10 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function attribute($model, $id, array $storageConfig, $attrName, array $attrSchema) {
-		return 'asdf';
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 		$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Profile?patientID=' . $user['patientId']), true);
 		if ($attrName == 'ssn') {
-			return $response['SSN'];
+			return $response['SSN'] . 'asdf';
 		}
 		else if ($attrName == 'firstName') {
 			return $response['FirstName'];
