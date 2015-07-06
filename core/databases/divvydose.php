@@ -132,9 +132,9 @@ return array(
 				'ssn' => array(
 					'storage' => array(
 						'db' => 'patients',
-					)
-					'type' => 'string'
 					),
+					'type' => 'string'
+				),
 
 				'timezone' => array('type' => 'int'),
 
