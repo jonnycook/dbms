@@ -15,6 +15,9 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 		if ($attrName == 'ssn') {
 			return $response['SSN'];
 		}
+		else if ($attrName == 'firstName') {
+			return $response['FirstName'];
+		}
 	}
 
 	public function singleInsert() { return true; }

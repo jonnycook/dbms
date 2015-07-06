@@ -122,7 +122,9 @@ return array(
 			),
 			'attributes' => array(
 				// 'fullName' => array('type' => 'string'),
-				'firstName' => array('type' => 'string'),
+				'firstName' => array('type' => 'string', 'storage' => array(
+						'db' => 'patients',
+					)),
 				'lastName' => array('type' => 'string'),
 
 				'sex' => array('type' => 'string'),
