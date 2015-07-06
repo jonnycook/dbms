@@ -121,10 +121,12 @@ return array(
 				}
 			),
 			'attributes' => array(
-				// 'fullName' => array('type' => 'string'),
-				'firstName' => array('type' => 'string', 'storage' => array(
-						'db' => 'patients',
-					)),
+				'firstName' => array(
+					'type' => 'string', 
+					// 'storage' => array(
+					// 	'db' => 'patients',
+					// )
+				),
 				'lastName' => array('type' => 'string'),
 
 				'sex' => array('type' => 'string'),
@@ -132,9 +134,9 @@ return array(
 				'dateOfBirth' => array('type' => 'date'),
 				'phoneNumber' => array('type' => 'string'),
 				'ssn' => array(
-					// 'storage' => array(
-					// 	'db' => 'patients',
-					// ),
+					'storage' => array(
+						'db' => 'patients',
+					),
 					'type' => 'string'
 				),
 
