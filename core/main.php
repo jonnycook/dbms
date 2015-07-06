@@ -205,7 +205,7 @@ function getObject(array $schema, $model, $id, &$results=null) {
 	}
 
 	$modelSchema = schemaModel($schema, $model);
-	
+
 	if ($modelSchema['storage']['filter']) {
 		$modelSchema['storage']['filter']($results[$model][$id]);
 	}
@@ -403,6 +403,21 @@ function distributeUpdate($db, $update, $clientId) {
 
 function executeUpdate($update, $databaseSchema) {
 	$mapping = array();
+
+	foreach ($update as $model => &$modelChanges) {
+		$storage = storageEngine($databaseSchema, schemaModelStorage($databaseSchema, $model));
+		if ($storage->singleInsert()) {
+			foreach ($modelChanges as $id => &$changes) {
+				if (isTemporaryId($id) && !$mapping[$id]) {
+					updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
+				}
+			}
+			unset($changes);
+		}
+		unset($update['model']);
+	}
+	unset($modelChanges);
+
 
 	foreach ($update as $model => &$modelChanges) {
 		foreach ($modelChanges as $id => &$changes) {

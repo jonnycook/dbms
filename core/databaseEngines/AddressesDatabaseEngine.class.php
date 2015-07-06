@@ -12,6 +12,8 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	public function attribute($model, $id, array $storageConfig, $attrName, array $attrSchema) {
 	}
 
+	public function singleInsert() { return true; }
+
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		// return false;
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
