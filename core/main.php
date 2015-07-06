@@ -10,6 +10,7 @@ require_once('databaseEngines/JsonDatabaseEngine.class.php');
 require_once('databaseEngines/AddressesDatabaseEngine.class.php');
 require_once('databaseEngines/InsuranceDatabaseEngine.class.php');
 require_once('databaseEngines/MedicationsDatabaseEngine.class.php');
+require_once('databaseEngines/PatientsDatabaseEngine.class.php');
 
 function def($value, $default) {
 	if (!$value) return $default;
@@ -24,6 +25,7 @@ function createStorageEngine($type, array $config) {
 		case 'addresses': $class = 'AddressesDatabaseStorageEngine'; break;
 		case 'insurance': $class = 'InsuranceDatabaseStorageEngine'; break;
 		case 'medications': $class = 'MedicationsDatabaseStorageEngine'; break;
+		case 'patients': $class = 'PatientsDatabaseStorageEngine'; break;
 		default: throw new Exception("Invalid storage engine $type");
 	}
 
