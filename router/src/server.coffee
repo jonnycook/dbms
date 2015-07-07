@@ -1,7 +1,20 @@
 {Server:WebSocketServer, OPEN:OPEN} = require 'ws'
 request = require 'request'
 
-wss = new WebSocketServer port:8080
+fs = require 'fs'
+
+
+
+https = require 'https'
+
+httpsServer = https.createServer
+	key:fs.readFileSync '/home/ec2-user/ssl.key'
+	cert:fs.readFileSync '/home/ec2-user/ssl_certificate.crt'
+httpsServer.listen 8080
+
+wss = new WebSocketServer server:httpsServer
+
+
 
 express = require 'express'
 bodyParser = require 'body-parser'
