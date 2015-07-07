@@ -1,10 +1,15 @@
+http = require 'http'
 express = require 'express'
 bodyParser = require 'body-parser'
 request = require 'request'
 
 app = express()
 app.use bodyParser limit:'50mb'
-app.listen 3000
+# app.listen 3000
+
+http.createServer(app).listen 3000
+
+
 
 app.get '/client/connected', (req, res) ->
 	request "http://localhost/dbms/core/clientConnected.php?id=#{req.query.id}&token=#{req.query.token}", (err, httpRes, body) ->
