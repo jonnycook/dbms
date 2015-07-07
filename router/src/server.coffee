@@ -8,7 +8,7 @@ fs = require 'fs'
 https = require 'https'
 
 httpsServer = https.createServer
-	key:fs.readFileSync '/home/ec2-user/ssl.key'
+	key:fs.readFileSync '/home/ec2-user/ssl_np.key'
 	cert:fs.readFileSync '/home/ec2-user/ssl_certificate.crt'
 httpsServer.listen 8080
 
