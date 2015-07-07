@@ -118,7 +118,11 @@ return array(
 							);
 						}
 					}
+					if ($user['picture']) {
+						$user['picture'] = substr($user['picture'], 5);
+					}
 				}
+
 			),
 			'attributes' => array(
 				'firstName' => array(
