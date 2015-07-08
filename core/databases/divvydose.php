@@ -101,14 +101,31 @@ return array(
 			'storage' => array(
 				'filter' => function(&$user) {
 					if ($user['divvyPacks']) {
+						$rxProfile = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']), true);
+						foreach ($rxProfile as $rx) {
+							if (strpos($rx['PrescriberName'], ', ')) {
+								$parts = explode(', ', $rx['PrescriberName']);
+								$prescriber = "$parts[1] $parts[0]";
+							}
+							else {
+								$prescriber = $rx['PrescriberName'];
+							}
+							$rxData[$rx['RxNumber']] = array(
+								'ndc' => substr($rx['DispensedDrugNDC'], 0, 9),
+								'name' => $rx['DispensedDrugName'],
+								'sig' => $rx['SIG'],
+								'prescriber' => $prescriber,
+							);
+						}
+
 						foreach ($user['divvyPacks'] as $beginDate => $divvyPack) {
 							$rxs = array();
 							foreach ($divvyPack as $dose) {
 								if (!$rxs[$rxNumber = $dose['rxNumber']]) {
 									$rxs[$rxNumber] = array(
-										'prescriber' => 'Prescriber',
-										'name' => 'Fiddle Sticks ' . $rxNumber,
-										'sig' => 'Just do it. &tm'
+										'prescriber' => $rxData[$rxNumber]['prescriber'],
+										'name' => $rxData[$rxNumber]['name']
+										'sig' => $rxData[$rxNumber]['sig']
 									);
 								}
 							}
