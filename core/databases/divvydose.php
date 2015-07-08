@@ -172,6 +172,7 @@ return array(
 				'divvyPacks' => array('type' => 'object'),
 
 				'picture' => array('type' => 'string'),
+				'patientId' => array('type' => 'string'),
 
 				// 'passwordHash' => array('type' => 'string'),
 				// 'passwordSalt' => array('type' => 'string'),
