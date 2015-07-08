@@ -124,7 +124,7 @@ return array(
 								if (!$rxs[$rxNumber = $dose['rxNumber']]) {
 									$rxs[$rxNumber] = array(
 										'prescriber' => $rxData[$rxNumber]['prescriber'],
-										'name' => $rxData[$rxNumber]['name']
+										'name' => $rxData[$rxNumber]['name'],
 										'sig' => $rxData[$rxNumber]['sig']
 									);
 								}
