@@ -10,12 +10,22 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	private function document($collection, $id) {
-		return $this->db->{$collection}->findOne(array('_id' => $id));
+		try {
+			return $this->db->{$collection}->findOne(array('_id' => $id));			
+		}
+		catch (Exception $e) {
+			return null;
+		}
 	}
 
 	private function storageId(array $storageConfig, $modelId) {
 		if ($storageConfig['id']['auto'] || !isset($storageConfig['id']['auto'])) {
-			return new MongoId($modelId);
+			try {
+				return new MongoId($modelId);
+			}
+			catch (Exception $e) {
+				return null;
+			}
 		}
 		else {
 			return $modelId;
