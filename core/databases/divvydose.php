@@ -101,8 +101,6 @@ return array(
 			'storage' => array(
 				'filter' => function(&$user) {
 					if ($user['divvyPacks']) {
-						$user['divvyPacks'] = null;
-						return;
 						$rxProfile = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']), true);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
@@ -154,9 +152,9 @@ return array(
 				'dateOfBirth' => array('type' => 'date'),
 				'phoneNumber' => array('type' => 'string'),
 				'ssn' => array(
-					// 'storage' => array(
-					// 	'db' => 'patients',
-					// ),
+					'storage' => array(
+						'db' => 'patients',
+					),
 					'type' => 'string'
 				),
 
@@ -191,9 +189,9 @@ return array(
 					'inverseRelationship' => 'caregiverUser',
 				),
 				'prescriptions' => array(
-					// 'storage' => array(
-					// 	'db' => 'medications'
-					// ),
+					'storage' => array(
+						'db' => 'medications'
+					),
 					'type' => 'Many',
 					'model' => 'Prescription',
 					'inverseRelationship' => 'user',
@@ -204,9 +202,9 @@ return array(
 					'inverseRelationship' => 'user'
 				),
 				'addresses' => array(
-					// 'storage' => array(
-					// 	'db' => 'addresses'
-					// ),
+					'storage' => array(
+						'db' => 'addresses'
+					),
 					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
@@ -275,9 +273,9 @@ return array(
 		),
 
 		'Prescription' => array(
-			// 'storage' => array(
-			// 	'primary' => 'medications'
-			// ),
+			'storage' => array(
+				'primary' => 'medications'
+			),
 
 			'attributes' => array(
 				'packaging' => array('type' => 'string', 'values' => array('In A Packet', 'Separate Bottle')),
@@ -392,9 +390,9 @@ return array(
 		),
 
 		'Address' => array(
-			// 'storage' => array(
-			// 	'primary' => 'addresses'
-			// ),
+			'storage' => array(
+				'primary' => 'addresses'
+			),
 			'attributes' => array(
 				'street1' => array('type' => 'string'),
 				'street2' => array('type' => 'string'),
