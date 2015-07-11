@@ -174,6 +174,8 @@ return array(
 				'picture' => array('type' => 'string'),
 				'patientId' => array('type' => 'string'),
 
+				'agreedToTerms' => array('type' => 'bool'),
+
 				// 'passwordHash' => array('type' => 'string'),
 				// 'passwordSalt' => array('type' => 'string'),
 			),
