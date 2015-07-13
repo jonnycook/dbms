@@ -29,6 +29,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 					'directions' => $obj['SIG'],
 					'user' => $id,
 					'packaging' => 'In A Packet',
+					'type' => 'Packet',
 					'image' => "https://s3-us-west-2.amazonaws.com/divvydose/pills/$ndc.png",
 				);
 			}

@@ -287,6 +287,8 @@ return array(
 				'quantity' => array('type' => 'string'),
 				'startedAt' => array('type' => 'date'),
 
+				'type' => array('type' => 'string'),
+
 				'image' => array('type' => 'string'),
 
 				'directions' => array('type' => 'string'),
