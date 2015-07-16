@@ -4,10 +4,11 @@ request = require 'request'
 fs = require 'fs'
 
 trunc = (message) ->
+	response = []
 	for m, i in message
 		if m.length > 20
-			message[i] = m.substr(0, 20) + '...'
-	message
+			response[i] = m.substr(0, 20) + '...'
+	response
 
 
 https = require 'https'

@@ -9,14 +9,15 @@ request = require('request');
 fs = require('fs');
 
 trunc = function(message) {
-  var i, m, _i, _len;
+  var i, m, response, _i, _len;
+  response = [];
   for (i = _i = 0, _len = message.length; _i < _len; i = ++_i) {
     m = message[i];
     if (m.length > 20) {
-      message[i] = m.substr(0, 20) + '...';
+      response[i] = m.substr(0, 20) + '...';
     }
   }
-  return message;
+  return response;
 };
 
 https = require('https');
