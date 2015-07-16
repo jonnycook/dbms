@@ -3,6 +3,11 @@ request = require 'request'
 
 fs = require 'fs'
 
+trunc = (message) ->
+	for m, i in message
+		if m.length > 20
+			message[i] = m.substr(0, 20) + '...'
+	message
 
 
 https = require 'https'
@@ -73,7 +78,7 @@ class Connection
 		@send 'r', number, response...
 
 	send: (message...) ->
-		console.log 'send', @clientId, message
+		console.log 'send', @clientId, trunc message
 		@ws.send message.join "\t"
 
 	onMessage: (number, code, params) ->
