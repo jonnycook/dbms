@@ -71,6 +71,7 @@ Connection = (function() {
     ws.on('message', (function(_this) {
       return function(message) {
         var code, messageId, params, _ref1;
+        console.log(message);
         if (!_this.version) {
           _this.version = message;
           return console.log('version', _this.version);
