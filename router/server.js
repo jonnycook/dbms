@@ -71,8 +71,14 @@ Connection = (function() {
     ws.on('message', (function(_this) {
       return function(message) {
         var code, messageId, params, _ref1;
-        _ref1 = message.split('\t'), messageId = _ref1[0], code = _ref1[1], params = 3 <= _ref1.length ? __slice.call(_ref1, 2) : [];
-        return _this.onMessage(messageId, code, params);
+        if (!_this.version) {
+          return _this.version = message;
+        } else if (_this.version === '1') {
+          _ref1 = message.split('\t'), messageId = _ref1[0], code = _ref1[1], params = 3 <= _ref1.length ? __slice.call(_ref1, 2) : [];
+          return _this.onMessage(messageId, code, params);
+        } else {
+          return console.log('invalid version');
+        }
       };
     })(this));
     counter = 0;
@@ -110,28 +116,29 @@ Connection = (function() {
     console.log('message', code, params);
     switch (code) {
       case '1':
-        this.clientId = params[0];
+        this.dbmsVersion = params[0];
+        this.clientId = params[1];
+        this.db = params[2];
         connections[this.clientId] = this;
-        this.db = params[1];
-        return request.get("http://127.0.0.1:3000/client/connected?id=" + this.clientId, (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientConnected.php?id=" + this.clientId, (function(_this) {
           return function() {
             return _this._respond(number);
           };
         })(this));
       case 'q':
-        return request.get("http://127.0.0.1:3000/pull?db=" + this.db + "&clientId=" + this.clientId, (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&clientId=" + this.clientId + "&pull=1", (function(_this) {
           return function(err, res, body) {
             return _this._respond(number, body);
           };
         })(this));
       case 'g':
-        return request.get("http://127.0.0.1:3000" + params[0] + "?db=" + this.db + "&clientId=" + this.clientId, (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?resource=" + params[0] + "&db=" + this.db + "&clientId=" + this.clientId, (function(_this) {
           return function(err, res, body) {
             return _this._respond(number, body);
           };
         })(this));
       case 'u':
-        return request.post("http://127.0.0.1:3000/?db=" + this.db + "&clientId=" + this.clientId, {
+        return request.post("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&clientId=" + req.query.clientId, {
           form: {
             update: params[0]
           }
@@ -141,13 +148,13 @@ Connection = (function() {
           };
         })(this));
       case 'U':
-        return request.get("http://127.0.0.1/dbms/core/clientReceivedUpdate.php?db=" + this.db + "&id=" + this.clientId + "&updates=" + params[0], (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientReceivedUpdate.php?db=" + this.db + "&id=" + this.clientId + "&updates=" + params[0], (function(_this) {
           return function(err, res, body) {
             return _this._respond(number, body);
           };
         })(this));
       case 'c':
-        return request.get("http://127.0.0.1/dbms/core/setClientParam.php?id=" + this.clientId + "&key=" + params[0] + "&value=" + params[1], (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/setClientParam.php?id=" + this.clientId + "&key=" + params[0] + "&value=" + params[1], (function(_this) {
           return function(err, res, body) {
             return _this._respond(number, body);
           };
@@ -162,7 +169,7 @@ Connection = (function() {
       this.ws.close();
       delete connections[this.clientId];
       console.log('close', this.clientId);
-      return request.get("http://127.0.0.1:3000/client/disconnected?id=" + this.clientId, function(err, res, body) {
+      return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientDisconnected.php?id=" + this.clientId, function(err, res, body) {
         return console.log(body);
       });
     }
