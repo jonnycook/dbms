@@ -287,7 +287,7 @@ return array(
 				'quantity' => array('type' => 'string'),
 				'startedAt' => array('type' => 'date'),
 
-				'type' => array('type' => 'string'),
+				'type' => array('type')
 
 				'image' => array('type' => 'string'),
 
@@ -335,7 +335,7 @@ return array(
 			'attributes' => array(
 				'timestamp' => array('type' => 'datetime'),
 				'time' => array('type' => 'string'),
-				// 'date' => array('type' => 'string'),
+				'date' => array('type' => 'string'),
 				'event' => array('type' => 'string'),
 			),
 			'relationships' => array(

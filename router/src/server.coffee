@@ -43,8 +43,13 @@ class Connection
 			@close()
 
 		ws.on 'message', (message) =>
-			[messageId, code, params...] = message.split '\t'
-			@onMessage messageId, code, params
+			if !@version
+				@version = message
+			else if @version == '1'
+				[messageId, code, params...] = message.split '\t'
+				@onMessage messageId, code, params
+			else
+				console.log 'invalid version'
 
 		counter = 0
 		ws.on 'pong', ->
@@ -73,30 +78,33 @@ class Connection
 		console.log 'message', code, params
 		switch code
 			when '1'
-				@clientId = params[0]
+				@dbmsVersion = params[0]
+				@clientId = params[1]
+				@db = params[2]
+
 				connections[@clientId] = @
-				@db = params[1]
-				request.get "http://127.0.0.1:3000/client/connected?id=#{@clientId}", =>
+
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientConnected.php?id=#{@clientId}", =>
 					@_respond number
 
 			when 'q'
-				request.get "http://127.0.0.1:3000/pull?db=#{@db}&clientId=#{@clientId}", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&clientId=#{@clientId}&pull=1", (err, res, body) =>
 					@_respond number, body
 
 			when 'g'
-				request.get "http://127.0.0.1:3000#{params[0]}?db=#{@db}&clientId=#{@clientId}", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?resource=#{params[0]}&db=#{@db}&clientId=#{@clientId}", (err, res, body) =>
 					@_respond number, body
 
 			when 'u'
-				request.post "http://127.0.0.1:3000/?db=#{@db}&clientId=#{@clientId}", form:{update:params[0]}, (err, res, body) =>
+				request.post "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&clientId=#{req.query.clientId}", form:{update:params[0]}, (err, res, body) =>
 					@_respond number, body
 
 			when 'U'
-				request.get "http://127.0.0.1/dbms/core/clientReceivedUpdate.php?db=#{@db}&id=#{@clientId}&updates=#{params[0]}", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientReceivedUpdate.php?db=#{@db}&id=#{@clientId}&updates=#{params[0]}", (err, res, body) =>
 					@_respond number, body
 
 			when 'c'
-				request.get "http://127.0.0.1/dbms/core/setClientParam.php?id=#{@clientId}&key=#{params[0]}&value=#{params[1]}", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/setClientParam.php?id=#{@clientId}&key=#{params[0]}&value=#{params[1]}", (err, res, body) =>
 					@_respond number, body
 
 	close: ->
@@ -106,7 +114,7 @@ class Connection
 			@ws.close()
 			delete connections[@clientId]
 			console.log 'close', @clientId
-			request.get "http://127.0.0.1:3000/client/disconnected?id=#{@clientId}", (err, res, body) ->
+			request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientDisconnected.php?id=#{@clientId}", (err, res, body) ->
 				console.log body
 
 connections = {}
