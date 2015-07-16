@@ -48,7 +48,7 @@ class Connection
 			@close()
 
 		ws.on 'message', (message) =>
-			console.log message
+			# console.log message
 			if !@version
 				@version = message
 				console.log 'version', @version
