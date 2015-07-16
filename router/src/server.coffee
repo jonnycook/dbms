@@ -45,6 +45,7 @@ class Connection
 		ws.on 'message', (message) =>
 			if !@version
 				@version = message
+				console.log 'version', @version
 			else if @version == '1'
 				[messageId, code, params...] = message.split '\t'
 				@onMessage messageId, code, params

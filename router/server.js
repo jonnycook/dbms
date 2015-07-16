@@ -72,7 +72,8 @@ Connection = (function() {
       return function(message) {
         var code, messageId, params, _ref1;
         if (!_this.version) {
-          return _this.version = message;
+          _this.version = message;
+          return console.log('version', _this.version);
         } else if (_this.version === '1') {
           _ref1 = message.split('\t'), messageId = _ref1[0], code = _ref1[1], params = 3 <= _ref1.length ? __slice.call(_ref1, 2) : [];
           return _this.onMessage(messageId, code, params);
