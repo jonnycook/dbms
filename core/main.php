@@ -581,7 +581,10 @@ if ($resource = $_GET['resource']) {
 						getObject($databaseSchema, $params['model'], $id, $results);
 					}
 
-					$resolvedResource = $routeSchema;
+					$resolvedResource = array(
+						'type' => 'model',
+						'model' => $params['model'],
+					);
 				}
 			}
 
