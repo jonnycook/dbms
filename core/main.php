@@ -541,6 +541,7 @@ if ($resource = $_GET['resource']) {
 				}
 			}
 			
+			unset($resolvedResource);
 			if ($routeSchema['type'] == 'db') {
 				foreach ($databaseSchema['models'] as $modelName => $modelSchema) {
 					$primaryStorageName = schemaModelStorage($databaseSchema, $modelName);
@@ -580,11 +581,12 @@ if ($resource = $_GET['resource']) {
 						getObject($databaseSchema, $params['model'], $id, $results);
 					}
 
+					$resolvedResource = $routeSchema;
 				}
 			}
 
 
-			if ($clientId) addSubscriberToResource($databaseName, $schemaVersion, $resolvedResource, $clientId);
+			if ($clientId && $resolvedResource) addSubscriberToResource($databaseName, $schemaVersion, $resolvedResource, $clientId);
 
 			foreach ($results as $model => $instances) {
 				foreach ($instances as $id => $instance) {
@@ -603,50 +605,6 @@ if ($resource = $_GET['resource']) {
 }
 else if ($update = $_POST['update']) {
 	$update = json_decode($update, true);
-	// $mapping = array();
-
-	// foreach ($update as $model => &$modelChanges) {
-	// 	foreach ($modelChanges as $id => &$changes) {
-	// 		if (isTemporaryId($id) && !$mapping[$id]) {
-	// 			updateObject($databaseSchema, $model, $id, $changes, $mapping, $update, 'attributes');
-	// 		}
-	// 	}
-	// 	unset($changes);
-	// }
-	// unset($modelChanges);
-
-	// foreach ($update as $model => &$modelChanges) {
-	// 	foreach ($modelChanges as $id => &$changes) {
-	// 		if (isTemporaryId($id)) {
-	// 			updateObject($databaseSchema, $model, $mapping[$id], $changes, $mapping, $update, 'relationships');
-	// 		}
-	// 	}
-	// 	unset($changes);
-	// }
-	// unset($modelChanges);
-
-	// foreach ($update as $model => &$modelChanges) {
-	// 	foreach ($modelChanges as $id => &$changes) {
-	// 		if (!isTemporaryId($id)) {
-	// 			updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
-	// 		}
-	// 	}
-	// 	unset($changes);
-	// }
-	// unset($modelChanges);
-
-
-	// foreach ($update as $model => $modelChanges) {
-	// 	foreach ($modelChanges as $id => $changes) {
-	// 		if ($newId = $mapping[$id]) {
-	// 			$resolvedUpdate[$model][$newId] = $changes;
-	// 		}
-	// 		else {
-	// 			$resolvedUpdate[$model][$id] = $changes;
-	// 		}
-	// 	}
-	// }
-
 
 	$updateDoc = mongoClient()->updates->findOne(array('_id' => array('db' => $databaseName, 'id' => $update['id'])));
 	if (!$updateDoc) {
