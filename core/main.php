@@ -375,22 +375,28 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 }
 
 $databaseName = $_REQUEST['db'];
+if ($_REQUEST['schemaVersion']) {
+	$schemaVersion = $_REQUEST['schemaVersion'];
+}
+else {
+	$schemaVersion = 1;
+}
 $databaseSchema = require("databases/$databaseName.php");
 $clientId = $_GET['clientId'];
 
-function addSubscriberToResource($db, $resource, $clientId) {
+function addSubscriberToResource($db, $schemaVersion, $resource, $clientId) {
 	$mongo = mongoClient();
 	$id = array('db' => $db, 'resource' => $resource);
 	$resourceDocument = $mongo->resources->findOne(array('_id' => $id));
 	if ($resourceDocument) {
 		if (!in_array($clientId, $resourceDocument['subscribers'])) {
 			$mongo->resources->update(array('_id' => $id), array('$push' => array('subscribers' => $clientId)));
-			$mongo->clients->update(array('_id' => $clientId), array('$push' => array('subscribedTo' => array('db' => $db, 'resource' => $resource))));
+			$mongo->clients->update(array('_id' => $clientId), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
 		}
 	}
 	else {
 		$mongo->resources->insert(array('_id' => $id, 'subscribers' => array($clientId)));
-		$mongo->clients->update(array('_id' => $clientId), array('$push' => array('subscribedTo' => array('db' => $db, 'resource' => $resource))));
+		$mongo->clients->update(array('_id' => $clientId), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
 	}
 }
 
@@ -578,7 +584,7 @@ if ($resource = $_GET['resource']) {
 			}
 
 
-			if ($clientId) addSubscriberToResource($databaseName, $resolvedResource, $clientId);
+			if ($clientId) addSubscriberToResource($databaseName, $schemaVersion, $resolvedResource, $clientId);
 
 			foreach ($results as $model => $instances) {
 				foreach ($instances as $id => $instance) {
@@ -666,6 +672,7 @@ else if ($update = $_POST['update']) {
 }
 else if ($_GET['schema']) {
 	$schema = array(
+		'version' => $databaseSchema['version'] ? $databaseSchema['version'] : 1,
 		'models' => $databaseSchema['models']
 	);
 
