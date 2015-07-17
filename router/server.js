@@ -127,7 +127,7 @@ Connection = (function() {
   };
 
   Connection.prototype.onMessage = function(number, code, params) {
-    console.log('message', code, params);
+    console.log('message', number, code, params);
     switch (code) {
       case '1':
         this.dbmsVersion = params[0];

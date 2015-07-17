@@ -85,7 +85,7 @@ class Connection
 		@ws.send message.join "\t"
 
 	onMessage: (number, code, params) ->
-		console.log 'message', code, params
+		console.log 'message', number, code, params
 		switch code
 			when '1'
 				@dbmsVersion = params[0]
