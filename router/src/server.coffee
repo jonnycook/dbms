@@ -105,7 +105,7 @@ class Connection
 					@_respond number, body
 
 			when 'u'
-				request.post "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{req.query.clientId}", form:{update:params[0]}, (err, res, body) =>
+				request.post "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{@clientId}", form:{update:params[0]}, (err, res, body) =>
 					@_respond number, body
 
 			when 'U'

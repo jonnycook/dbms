@@ -152,7 +152,7 @@ Connection = (function() {
           };
         })(this));
       case 'u':
-        return request.post("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&clientId=" + req.query.clientId, {
+        return request.post("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&clientId=" + this.clientId, {
           form: {
             update: params[0]
           }
