@@ -15,6 +15,8 @@ trunc = function(message) {
     m = message[i];
     if (m.length > 20) {
       response[i] = m.substr(0, 20) + '...';
+    } else {
+      response[i] = m;
     }
   }
   return response;

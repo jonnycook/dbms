@@ -8,6 +8,8 @@ trunc = (message) ->
 	for m, i in message
 		if m.length > 20
 			response[i] = m.substr(0, 20) + '...'
+		else
+			response[i] = m
 	response
 
 
