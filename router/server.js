@@ -116,7 +116,6 @@ Connection = (function() {
   Connection.prototype._respond = function() {
     var number, response;
     number = arguments[0], response = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    console.log("response " + number);
     return this.send.apply(this, ['r', number].concat(__slice.call(response)));
   };
 

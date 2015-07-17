@@ -77,7 +77,7 @@ class Connection
 
 	_respond: (number, response...) ->
 		# @ws.send "r\t#{number}\t#{response.join '\t'}"
-		console.log "response #{number}"
+		# console.log "response #{number}"
 		@send 'r', number, response...
 
 	send: (message...) ->
