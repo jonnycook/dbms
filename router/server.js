@@ -122,12 +122,12 @@ Connection = (function() {
   Connection.prototype.send = function() {
     var message;
     message = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    console.log("[" + clientId + "]", 'send', trunc(message));
+    console.log("[" + this.clientId + "]", 'send', trunc(message));
     return this.ws.send(message.join("\t"));
   };
 
   Connection.prototype.onMessage = function(number, code, params) {
-    console.log("[" + clientId + "]", 'message', number, code, params);
+    console.log("[" + this.clientId + "]", 'message', number, code, params);
     switch (code) {
       case '1':
         this.dbmsVersion = params[0];

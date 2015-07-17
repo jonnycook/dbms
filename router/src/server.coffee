@@ -81,11 +81,11 @@ class Connection
 		@send 'r', number, response...
 
 	send: (message...) ->
-		console.log "[#{clientId}]", 'send', trunc message
+		console.log "[#{@clientId}]", 'send', trunc message
 		@ws.send message.join "\t"
 
 	onMessage: (number, code, params) ->
-		console.log "[#{clientId}]", 'message', number, code, params
+		console.log "[#{@clientId}]", 'message', number, code, params
 		switch code
 			when '1'
 				@dbmsVersion = params[0]
