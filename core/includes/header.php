@@ -23,6 +23,7 @@ function terminateClient($clientId) {
 	$clientDocument = $mongo->clients->findOne(array('_id' => $clientId));
 	if ($clientDocument['subscribedTo']) {
 		foreach ($clientDocument['subscribedTo'] as $resource) {
+			unset($resource['schemaVersion']);
 			$mongo->resources->update(array('_id' => $resource), array('$pull' => array('subscribers' => $clientId)));
 		}
 	}
