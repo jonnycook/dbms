@@ -1,1 +1,3 @@
-core/includes/env.php
+/core/includes/env.php
+/router/env.js
+/router/src/env.coffee

@@ -1,6 +1,8 @@
 {Server:WebSocketServer, OPEN:OPEN} = require 'ws'
 request = require 'request'
 
+env = require './env'
+
 fs = require 'fs'
 
 trunc = (message) ->
@@ -13,14 +15,20 @@ trunc = (message) ->
 	response
 
 
-https = require 'https'
+wss = null
 
-httpsServer = https.createServer
-	key:fs.readFileSync '/home/ec2-user/ssl_np.key'
-	cert:fs.readFileSync '/home/ec2-user/ssl_certificate.crt'
-httpsServer.listen 8080
+switch env
+	when 'prod'
+		https = require 'https'
 
-wss = new WebSocketServer server:httpsServer
+		httpsServer = https.createServer
+			key:fs.readFileSync '/home/ec2-user/ssl_np.key'
+			cert:fs.readFileSync '/home/ec2-user/ssl_certificate.crt'
+		httpsServer.listen 8080
+
+		wss = new WebSocketServer server:httpsServer
+	when 'dev'
+		wss = new WebSocketServer port:8080
 
 
 

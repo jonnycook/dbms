@@ -1,11 +1,17 @@
 <?php
 
-define('QS1_SERVER', '52.27.135.117');
-define('QS1_PHARMACY', 'divvyDOSE');
-// define('QS1_SERVER', 'sandbox.qs1api.com');
-// define('QS1_PHARMACY', 'VendorTest');
 
 return array(
+	'init' => function($client) {
+		if ($client['params']['dev'] && false) {
+			define('QS1_SERVER', 'sandbox.qs1api.com');
+			define('QS1_PHARMACY', 'VendorTest');
+		}
+		else {
+			define('QS1_SERVER', '52.27.135.117');
+			define('QS1_PHARMACY', 'divvyDOSE');
+		}
+	},
 	'databases' => array(
 		'default' => 'mongodb',
 		'mongodb' => array(
@@ -101,6 +107,7 @@ return array(
 			'storage' => array(
 				'filter' => function(&$user) {
 					if ($user['divvyPacks']) {
+						// var_dump($user['divvyPacks']);
 						$rxProfile = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']), true);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
@@ -128,15 +135,19 @@ return array(
 										'sig' => $rxData[$rxNumber]['sig']
 									);
 								}
+								if ($packets[$dose['time']]) {
+									$packets[$dose['time']]['time'] = $dose['time'];
+								}
+								$packets[$dose['time']]['doses'][] = $dose;
 							}
+
 							$user['divvyPacks'][$beginDate] = array(
 								'prescriptions' => $rxs,
-								'doses' => $divvyPack,
+								'packets' => $packets,
 							);
 						}
 					}
 				}
-
 			),
 			'attributes' => array(
 				'firstName' => array(
@@ -301,7 +312,8 @@ return array(
 				'user' => array(
 					'type' => 'One',
 					'model' => 'User',
-					'inverseRelationship' => 'prescriptions'
+					'inverseRelationship' => 'prescriptions',
+					'owner' => true,
 				),
 				'supplementStrength' => array(
 					'storage' => array('ignore' => true),
@@ -343,6 +355,7 @@ return array(
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'medicineLogEntries',
+					'owner' => true,
 				),
 				'doses' => array(
 					'model' => 'MedicineLogEntryDose',
@@ -364,7 +377,8 @@ return array(
 				'medicineLogEntry' => array(
 					'model' => 'MedicineLogEntry',
 					'type' => 'One',
-					'inverseRelationship' => 'doses'
+					'inverseRelationship' => 'doses',
+					'owner' => true
 				)
 			)
 		),
@@ -409,7 +423,8 @@ return array(
 				'user' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'addresses'
+					'inverseRelationship' => 'addresses',
+					'owner' => true
 				)
 			)
 		),
@@ -422,7 +437,8 @@ return array(
 				'user' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'allergies'
+					'inverseRelationship' => 'allergies',
+					'owner' => true,
 				)
 			)
 		),
@@ -434,7 +450,8 @@ return array(
 				'user' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'conditions'
+					'inverseRelationship' => 'conditions',
+					'owner' => true,
 				)
 			)
 		),
@@ -458,7 +475,8 @@ return array(
 				'user' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'paymentMethods'
+					'inverseRelationship' => 'paymentMethods',
+					'owner' => true,
 				)
 			)
 		),
@@ -473,7 +491,8 @@ return array(
 				'user' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'insurance'
+					'inverseRelationship' => 'insurance',
+					'owner' => true,
 				)
 			)
 		),
@@ -487,7 +506,8 @@ return array(
 				'user' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'payments'
+					'inverseRelationship' => 'payments',
+					'owner' => true,
 				),
 				'paymentMethod' => array(
 					'model' => 'PaymentMethod',
@@ -506,6 +526,7 @@ return array(
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'bills',
+					'owner' => true,
 				)
 			)
 		),
