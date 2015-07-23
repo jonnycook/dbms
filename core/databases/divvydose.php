@@ -140,6 +140,7 @@ return array(
 								}
 								$time = $dose['time'];
 								unset($dose['time']);
+								$dose['quantity'] = floatval($dose['quantity']);
 								$packets[$time]['doses'][] = $dose;
 							}
 
