@@ -349,8 +349,7 @@ return array(
 		'MedicineLogEntry' => array(
 			'attributes' => array(
 				'timestamp' => array('type' => 'datetime'),
-				'time' => array('type' => 'string'),
-				'date' => array('type' => 'string'),
+				'time' => array('type' => 'datetime'),
 				'event' => array('type' => 'string'),
 			),
 			'relationships' => array(
