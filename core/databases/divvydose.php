@@ -138,7 +138,9 @@ return array(
 								if (!$packets[$dose['time']]) {
 									$packets[$dose['time']]['time'] = $dose['time'];
 								}
-								$packets[$dose['time']]['doses'][] = $dose;
+								$time = $dose['time'];
+								unset($dose['time']);
+								$packets[$time]['doses'][] = $dose;
 							}
 
 							$user['divvyPacks'][$beginDate] = array(
