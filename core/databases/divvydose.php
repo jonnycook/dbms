@@ -143,7 +143,7 @@ return array(
 
 							$user['divvyPacks'][$beginDate] = array(
 								'prescriptions' => $rxs,
-								'packets' => $packets,
+								'packets' => array_values($packets),
 							);
 						}
 					}
