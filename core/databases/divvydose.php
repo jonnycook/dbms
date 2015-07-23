@@ -135,7 +135,7 @@ return array(
 										'sig' => $rxData[$rxNumber]['sig']
 									);
 								}
-								if ($packets[$dose['time']]) {
+								if (!$packets[$dose['time']]) {
 									$packets[$dose['time']]['time'] = $dose['time'];
 								}
 								$packets[$dose['time']]['doses'][] = $dose;
