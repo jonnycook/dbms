@@ -192,7 +192,7 @@ Connection = (function() {
       clearInterval(this.pingTimerId);
       this.ws.close();
       delete connections[this.clientId];
-      console.log('close', 'reason', this.clientId);
+      console.log('close', reason, this.clientId);
       return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientDisconnected.php?id=" + this.clientId, function(err, res, body) {
         return console.log(body);
       });
