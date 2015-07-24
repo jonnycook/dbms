@@ -53,10 +53,10 @@ class Connection
 		console.log 'new connection'
 
 		ws.on 'close', =>
-			@close()
+			@close 'close'
 
 		ws.on 'error', =>
-			@close()
+			@close 'error'
 
 		ws.on 'message', (message) =>
 			# console.log message
@@ -76,7 +76,7 @@ class Connection
 		@pingTimerId = setInterval (=>
 			if counter >= 2
 				console.log 'timeout', @clientId
-				@close()
+				@close 'timeout'
 			else
 				++ counter
 				ws.ping()
@@ -126,13 +126,13 @@ class Connection
 				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/setClientParam.php?id=#{@clientId}&key=#{params[0]}&value=#{params[1]}", (err, res, body) =>
 					@_respond number, body
 
-	close: ->
+	close: (reason) ->
 		if !@closed
 			@closed = true
 			clearInterval @pingTimerId
 			@ws.close()
 			delete connections[@clientId]
-			console.log 'close', @clientId
+			console.log 'close', 'reason', @clientId
 			request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientDisconnected.php?id=#{@clientId}", (err, res, body) ->
 				console.log body
 

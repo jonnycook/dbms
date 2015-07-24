@@ -83,12 +83,12 @@ Connection = (function() {
     console.log('new connection');
     ws.on('close', (function(_this) {
       return function() {
-        return _this.close();
+        return _this.close('close');
       };
     })(this));
     ws.on('error', (function(_this) {
       return function() {
-        return _this.close();
+        return _this.close('error');
       };
     })(this));
     ws.on('message', (function(_this) {
@@ -113,7 +113,7 @@ Connection = (function() {
       return function() {
         if (counter >= 2) {
           console.log('timeout', _this.clientId);
-          return _this.close();
+          return _this.close('timeout');
         } else {
           ++counter;
           return ws.ping();
@@ -186,13 +186,13 @@ Connection = (function() {
     }
   };
 
-  Connection.prototype.close = function() {
+  Connection.prototype.close = function(reason) {
     if (!this.closed) {
       this.closed = true;
       clearInterval(this.pingTimerId);
       this.ws.close();
       delete connections[this.clientId];
-      console.log('close', this.clientId);
+      console.log('close', 'reason', this.clientId);
       return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientDisconnected.php?id=" + this.clientId, function(err, res, body) {
         return console.log(body);
       });
