@@ -225,7 +225,7 @@ else if ($_GET['schema']) {
 else if ($_GET['pull']) {
 	// $clientDocument = mongoClient()->clients->findOne(array('_id' => $clientId));
 	// mongoClient()->clients->update(array('_id' => $clientId), array('$unset' => array("updates.$databaseName" => 1)));
-	echo json_encode($clientDocument['updates'][$databaseName]);
+	echo json_encode((array)$clientDocument['updates'][$databaseName]);
 }
 else if ($backup = $_POST['backup']) {
 	$backup = json_decode($backup, true);
