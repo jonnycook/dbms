@@ -105,7 +105,8 @@ class Connection
 
 				connections[@clientId] = @
 
-				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientConnected.php?id=#{@clientId}", =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientConnected.php?id=#{@clientId}",(err, res, body) =>
+					console.log body
 					@_respond number
 
 			when 'q'

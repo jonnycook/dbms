@@ -148,7 +148,8 @@ Connection = (function() {
         this.schemaSchema = params[3];
         connections[this.clientId] = this;
         return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientConnected.php?id=" + this.clientId, (function(_this) {
-          return function() {
+          return function(err, res, body) {
+            console.log(body);
             return _this._respond(number);
           };
         })(this));
