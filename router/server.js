@@ -83,7 +83,7 @@ Connection = (function() {
     console.log('new connection');
     ws.on('close', (function(_this) {
       return function() {
-        return _this.close('close');
+        return _this.close('connectionEnded');
       };
     })(this));
     ws.on('error', (function(_this) {

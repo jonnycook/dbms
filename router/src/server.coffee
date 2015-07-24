@@ -53,7 +53,7 @@ class Connection
 		console.log 'new connection'
 
 		ws.on 'close', =>
-			@close 'close'
+			@close 'connectionEnded'
 
 		ws.on 'error', =>
 			@close 'error'
