@@ -120,7 +120,7 @@ Connection = (function() {
           return ws.ping();
         }
       };
-    })(this)), 30000);
+    })(this)), 1000 * 5);
   }
 
   Connection.prototype._respond = function() {

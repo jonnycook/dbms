@@ -81,7 +81,7 @@ class Connection
 			else
 				++ counter
 				ws.ping()
-		), 30000
+		), 1000*5
 
 
 	_respond: (number, response...) ->
