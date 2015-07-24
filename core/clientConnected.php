@@ -3,4 +3,6 @@
 require_once('includes/header.php');
 
 $mongo = mongoClient();
-var_dump($mongo->clients->update(array('_id' => $_GET['id']), array('$set' => array('connected' => true))));
+$result = $mongo->clients->update(array('_id' => $_GET['id']), array('$set' => array('connected' => true)));
+
+echo json_encode($result['n'] > 0);
