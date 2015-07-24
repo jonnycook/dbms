@@ -83,6 +83,7 @@ Connection = (function() {
     console.log('new connection');
     ws.on('close', (function(_this) {
       return function() {
+        console.log(ws.readyState);
         return _this.close('connectionEnded');
       };
     })(this));
