@@ -134,10 +134,11 @@ class Connection
 			@closed = true
 			clearInterval @pingTimerId
 			@ws.close()
-			delete connections[@clientId]
-			console.log 'close', reason, @clientId
-			request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientDisconnected.php?id=#{@clientId}", (err, res, body) ->
-				console.log body
+			if connections[@clientId] == @
+				delete connections[@clientId]
+				console.log 'close', reason, @clientId
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientDisconnected.php?id=#{@clientId}", (err, res, body) ->
+					console.log body
 
 connections = {}
 
