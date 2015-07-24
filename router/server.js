@@ -126,9 +126,9 @@ Connection = (function() {
   }
 
   Connection.prototype._respond = function() {
-    var number, response;
-    number = arguments[0], response = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    return this.send.apply(this, ['r', number].concat(__slice.call(response)));
+    var code, number, response;
+    number = arguments[0], code = arguments[1], response = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+    return this.send.apply(this, ['r', number, code].concat(__slice.call(response)));
   };
 
   Connection.prototype.send = function() {
@@ -149,20 +149,31 @@ Connection = (function() {
         connections[this.clientId] = this;
         return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientConnected.php?id=" + this.clientId, (function(_this) {
           return function(err, res, body) {
-            console.log(body);
-            return _this._respond(number);
+            if (body === 'invalidClientId') {
+              return _this._respond(number, 1);
+            } else {
+              return _this._respond(number, 0);
+            }
           };
         })(this));
       case 'q':
         return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&clientId=" + this.clientId + "&pull=1", (function(_this) {
           return function(err, res, body) {
-            return _this._respond(number, body);
+            if (body === 'invalidClientId') {
+              return _this._respond(number, 1);
+            } else {
+              return _this._respond(number, 0, body);
+            }
           };
         })(this));
       case 'g':
         return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?resource=" + params[0] + "&db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&clientId=" + this.clientId, (function(_this) {
           return function(err, res, body) {
-            return _this._respond(number, body);
+            if (body === 'invalidClientId') {
+              return _this._respond(number, 1);
+            } else {
+              return _this._respond(number, 0, body);
+            }
           };
         })(this));
       case 'u':
@@ -172,19 +183,31 @@ Connection = (function() {
           }
         }, (function(_this) {
           return function(err, res, body) {
-            return _this._respond(number, body);
+            if (body === 'invalidClientId') {
+              return _this._respond(number, 1);
+            } else {
+              return _this._respond(number, 0, body);
+            }
           };
         })(this));
       case 'U':
         return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientReceivedUpdate.php?db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&id=" + this.clientId + "&updates=" + params[0], (function(_this) {
           return function(err, res, body) {
-            return _this._respond(number, body);
+            if (body === 'invalidClientId') {
+              return _this._respond(number, 1);
+            } else {
+              return _this._respond(number, 0);
+            }
           };
         })(this));
       case 'c':
         return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/setClientParam.php?id=" + this.clientId + "&key=" + params[0] + "&value=" + params[1], (function(_this) {
           return function(err, res, body) {
-            return _this._respond(number, body);
+            if (body === 'invalidClientId') {
+              return _this._respond(number, 1);
+            } else {
+              return _this._respond(number, 0);
+            }
           };
         })(this));
     }

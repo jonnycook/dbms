@@ -27,6 +27,9 @@ $databaseSchema = require("databases/$databaseName.php");
 
 if ($clientId) {
 	$clientDocument = mongoClient()->clients->findOne(array('_id' => $clientId));
+	if (!$clientDocument) {
+		die('invalidClientId');
+	}
 }
 
 if ($databaseSchema['init']) {

@@ -85,10 +85,10 @@ class Connection
 		), 1000*5
 
 
-	_respond: (number, response...) ->
+	_respond: (number, code, response...) ->
 		# @ws.send "r\t#{number}\t#{response.join '\t'}"
 		# console.log "response #{number}"
-		@send 'r', number, response...
+		@send 'r', number, code, response...
 
 	send: (message...) ->
 		console.log "[#{@clientId}]", 'send', trunc message
@@ -106,28 +106,47 @@ class Connection
 				connections[@clientId] = @
 
 				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientConnected.php?id=#{@clientId}",(err, res, body) =>
-					console.log body
-					@_respond number
+					if body == 'invalidClientId'
+						@_respond number, 1
+					else
+						@_respond number, 0
 
 			when 'q'
 				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{@clientId}&pull=1", (err, res, body) =>
-					@_respond number, body
+					if body == 'invalidClientId'
+						@_respond number, 1
+					else
+						@_respond number, 0, body
 
 			when 'g'
 				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?resource=#{params[0]}&db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{@clientId}", (err, res, body) =>
-					@_respond number, body
+					if body == 'invalidClientId'
+						@_respond number, 1
+					else
+						@_respond number, 0, body
 
 			when 'u'
 				request.post "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{@clientId}", form:{update:params[0]}, (err, res, body) =>
-					@_respond number, body
+					if body == 'invalidClientId'
+						@_respond number, 1
+					else
+						@_respond number, 0, body
 
 			when 'U'
 				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientReceivedUpdate.php?db=#{@db}&schemaSchema=#{@schemaSchema}&id=#{@clientId}&updates=#{params[0]}", (err, res, body) =>
-					@_respond number, body
+					if body == 'invalidClientId'
+						@_respond number, 1
+					else
+						@_respond number, 0
 
 			when 'c'
 				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/setClientParam.php?id=#{@clientId}&key=#{params[0]}&value=#{params[1]}", (err, res, body) =>
-					@_respond number, body
+					if body == 'invalidClientId'
+						@_respond number, 1
+					else
+						@_respond number, 0
+
+
 
 	close: (reason) ->
 		console.log "CLOSE #{@id} #{reason}"
