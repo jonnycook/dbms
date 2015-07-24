@@ -52,7 +52,7 @@ class Connection
 	@id: 1
 	constructor: (@ws) ->
 		@id = Connection.id++
-		console.log 'new connection'
+		console.log 'new connection', @id
 
 		ws.on 'close', =>
 			@close 'connectionEnded'

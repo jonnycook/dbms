@@ -83,7 +83,7 @@ Connection = (function() {
     var counter;
     this.ws = ws;
     this.id = Connection.id++;
-    console.log('new connection');
+    console.log('new connection', this.id);
     ws.on('close', (function(_this) {
       return function() {
         return _this.close('connectionEnded');
