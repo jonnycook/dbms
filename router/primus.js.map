@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "primus.js",
+  "sourceRoot": "",
+  "sources": [
+    "src/primus.coffee"
+  ],
+  "names": [],
+  "mappings": ";AA8IyB"
+}

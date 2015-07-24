@@ -77,13 +77,15 @@ app.post('/push', function(req, res) {
 });
 
 Connection = (function() {
+  Connection.id = 1;
+
   function Connection(ws) {
     var counter;
     this.ws = ws;
+    this.id = Connection.id++;
     console.log('new connection');
     ws.on('close', (function(_this) {
       return function() {
-        console.log(ws.readyState);
         return _this.close('connectionEnded');
       };
     })(this));
@@ -188,6 +190,7 @@ Connection = (function() {
   };
 
   Connection.prototype.close = function(reason) {
+    console.log("CLOSE " + this.id + " " + reason);
     if (!this.closed) {
       this.closed = true;
       clearInterval(this.pingTimerId);

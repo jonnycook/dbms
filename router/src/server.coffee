@@ -49,11 +49,12 @@ app.post '/push', (req, res) ->
 	res.end()
 
 class Connection
+	@id: 1
 	constructor: (@ws) ->
+		@id = Connection.id++
 		console.log 'new connection'
 
 		ws.on 'close', =>
-			console.log ws.readyState
 			@close 'connectionEnded'
 
 		ws.on 'error', =>
@@ -128,6 +129,7 @@ class Connection
 					@_respond number, body
 
 	close: (reason) ->
+		console.log "CLOSE #{@id} #{reason}"
 		if !@closed
 			@closed = true
 			clearInterval @pingTimerId
