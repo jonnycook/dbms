@@ -106,6 +106,8 @@ return array(
 		'User' => array(
 			'storage' => array(
 				'filter' => function(&$user) {
+					if (!$user['_id']->{'$id'} == '55b4225ed4c62d576b515636') return;
+					
 					if ($user['divvyPacks']) {
 						// var_dump($user['divvyPacks']);
 						$rxProfile = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']), true);
