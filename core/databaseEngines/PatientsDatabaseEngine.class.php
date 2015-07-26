@@ -11,7 +11,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 
 	public function attribute($model, $id, array $storageConfig, $attrName, array $attrSchema) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
-		if ($user['patientId']) {
+		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Profile?patientID=' . $user['patientId']), true);
 			if ($attrName == 'ssn') {
 				return $response['SSN'];
@@ -27,7 +27,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		// return false;
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
-		if ($user['patientId']) {
+		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
 			foreach ($response as $i => $obj) {
 				$addresses[] = array(
@@ -52,7 +52,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($changes['relationships']['user'])));
 
-		if ($user['patientId']) {
+		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			$fields = array(
 				'Address' => def($changes['attributes']['street1'], 'Address'),
 				'Address2' => def($changes['attributes']['street2'], ''),
@@ -84,7 +84,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	public function update(array $schema, array $storageConfig, $model, $id, array $changes) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 
-		if ($user['patientId']) {
+		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			foreach ((array)$changes['attributes'] as $key => $value) {
 				switch ($key) {
 					case 'ssn': $fields['SSN'] = def($value, ''); break;
