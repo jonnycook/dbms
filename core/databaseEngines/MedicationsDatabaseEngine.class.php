@@ -35,7 +35,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'name' => $p[0],
 						'rxNumber' => $p[1],
 						'prescriber' => 'Doctor Jones',
-						'endDate' => 'XXXX-XX-XX',
+						'endDate' => date('Y-m-d'),
 						'directions' => $p[2],
 						'user' => $id,
 						'type' => 'Packet',
