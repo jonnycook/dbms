@@ -106,7 +106,41 @@ return array(
 		'User' => array(
 			'storage' => array(
 				'filter' => function(&$user) {
-					if (!$user['patientId']) return;
+					if ($user['patientId'] == 'DUMMY') {
+						$user['divvyPacks'] => array(
+			        date('Y-m-d') => array(
+			            "prescriptions" => array(
+			                "1" => array(
+			                    "name" => "ASDF", 
+			                    "prescriber" => "ARVIND MOVVA", 
+			                    "sig" => "ASDF"
+			                )
+			            ), 
+			            "packets" => array(
+			                array(
+			                    "time" => date('Y-m-d H:i:s', mktime(date('m'), date('d'), date('Y'), date('H') + 1, date('i'), date('s'))), 
+			                    "doses" => array(
+			                        array(
+			                            "rxNumber" => "1", 
+			                            "quantity" => "1.00"
+			                        )
+			                    )
+			                ), 
+			                array(
+			                    "time" => date('Y-m-d H:i:s', mktime(date('m'), date('d') + 1, date('Y'), date('H'), date('i'), date('s'))), 
+			                    "doses" => array(
+			                        array(
+			                            "rxNumber" => "1", 
+			                            "quantity" => "1.00"
+			                        )
+			                    )
+			                )
+			            )
+			        )
+		       	);
+
+						return;
+					}
 
 					if ($user['divvyPacks']) {
 						// var_dump($user['divvyPacks']);
