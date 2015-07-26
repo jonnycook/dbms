@@ -35,7 +35,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 			$value = $addresses;
 			return true;
 		}
-		else if ($patientId == 'DUMMY') {
+		else if ($user['patientId'] == 'DUMMY') {
 			$value = array(
 				array(
 					'id' => "$id-PERM",
