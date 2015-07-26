@@ -106,7 +106,6 @@ return array(
 		'User' => array(
 			'storage' => array(
 				'filter' => function(&$user) {
-					var_dump($user);
 					if (!$user['patientId']) return;
 
 					if ($user['divvyPacks']) {
