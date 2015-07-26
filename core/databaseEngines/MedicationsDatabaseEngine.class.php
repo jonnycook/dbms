@@ -33,7 +33,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 					$addresses[] = array(
 						'id' => $id . '-' . $i,
 						'name' => $p[0],
-						'rxNumber' => $[1],
+						'rxNumber' => $p[1],
 						'prescriber' => 'Doctor Jones',
 						'endDate' => 'XXXX-XX-XX',
 						'directions' => $p[2],
