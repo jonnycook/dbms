@@ -40,6 +40,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'user' => $id,
 						'type' => 'Packet',
 						'image' => 'http://jonnycook.com/dd/images/' . ($i + 1) . '.png',
+						'packaging' => 'In A Packet',
 					);
 				}
 			}
