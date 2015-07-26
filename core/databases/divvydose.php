@@ -107,9 +107,9 @@ return array(
 			'storage' => array(
 				'filter' => function(&$user) {
 					if ($user['patientId'] == 'DUMMY') {
-						$date = date('Y-m-d');
-						$user['divvyPacks'] => array(
-			        $date => array(
+						// $date = ;
+						$user['divvyPacks'] = array(
+			        date('Y-m-d') => array(
 			            "prescriptions" => array(
 			                "1" => array(
 			                    "name" => "ASDF", 
