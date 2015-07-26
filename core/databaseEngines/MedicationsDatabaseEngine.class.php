@@ -17,22 +17,50 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 
-		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
-			$response = json_decode(file_get_contents("http://" . QS1_SERVER . "/api/Patient/" . QS1_PHARMACY . "/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
-			foreach ($response as $i => $obj) {
-				$ndc = substr($obj['DispensedDrugNDC'], 0, 9);
-				$addresses[] = array(
-					'id' => $id . '-' . $obj['RxNumber'],
-					'name' => $obj['DispensedDrugName'],
-					'rxNumber' => $obj['RxNumber'],
-					'prescriber' => $obj['PrescriberName'],
-					'endDate' => substr($obj['LastFillDate'], 0, 4) . '-' . substr($obj['LastFillDate'], 4, 2) . '-' . substr($obj['LastFillDate'], 6, 2),
-					'directions' => $obj['SIG'],
-					'user' => $id,
-					'packaging' => 'In A Packet',
-					'type' => 'Packet',
-					'image' => "https://s3-us-west-2.amazonaws.com/divvydose/pills/$ndc.png",
+		if ($user['patientId']) {
+			if ($user['patientId'] == 'DUMMY') {
+				$prescriptions = array(
+					array('ATORVOSTATIN 20 MG', '3141592', 'Take once daily by mouth'),	
+					array('LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth'),	
+					array('ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'),	
+					array('FISH OIL + DHA 500 MG', '6022141', 'Take three times daily by mouth'),	
+					array('MULTIVITAMIN', '1618033', 'Take once daily by mouth'),	
+					array('PROBIOTIC', '7973010', 'Take once daily by mouth'),	
+					array('LEVOTHYROXINE 125 MCG', '3182008', 'Take once daily by mouth'),	
+					array('OMEPRAZOLE 40 MG', '6934889', 'Take once daily at bedtime'),	
 				);
+				foreach ($prescriptions as $i => $p) {
+					$addresses[] = array(
+						'id' => $id . '-' . $i,
+						'name' => $p[0],
+						'rxNumber' => $[1],
+						'prescriber' => 'Doctor Jones',
+						'endDate' => 'XXXX-XX-XX',
+						'directions' => $p[2],
+						'user' => $id,
+						'type' => 'Packet',
+						'image' => 'http://jonnycook.com/dd/images/' . ($i + 1) . '.png',
+					);
+				}
+			}
+			else {
+				$response = json_decode(file_get_contents("http://" . QS1_SERVER . "/api/Patient/" . QS1_PHARMACY . "/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
+				foreach ($response as $i => $obj) {
+					$ndc = substr($obj['DispensedDrugNDC'], 0, 9);
+					$addresses[] = array(
+						'id' => $id . '-' . $obj['RxNumber'],
+						'name' => $obj['DispensedDrugName'],
+						'rxNumber' => $obj['RxNumber'],
+						'prescriber' => $obj['PrescriberName'],
+						'endDate' => substr($obj['LastFillDate'], 0, 4) . '-' . substr($obj['LastFillDate'], 4, 2) . '-' . substr($obj['LastFillDate'], 6, 2),
+						'directions' => $obj['SIG'],
+						'user' => $id,
+						'packaging' => 'In A Packet',
+						'type' => 'Packet',
+						'image' => "https://s3-us-west-2.amazonaws.com/divvydose/pills/$ndc.png",
+					);
+				}
+
 			}
 			$value = $addresses;
 			return true;

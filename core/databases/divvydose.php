@@ -107,7 +107,6 @@ return array(
 			'storage' => array(
 				'filter' => function(&$user) {
 					if ($user['patientId'] == 'DUMMY') {
-						// $date = ;
 						$timezone = date_default_timezone_get();
 						date_default_timezone_set(timezone_name_from_abbr('', -$user['timezone']*60, 0));
 						$user['divvyPacks'] = array(
@@ -209,7 +208,6 @@ return array(
 					}
 
 					if ($user['divvyPacks']) {
-						// var_dump($user['divvyPacks']);
 						$rxProfile = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']), true);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
