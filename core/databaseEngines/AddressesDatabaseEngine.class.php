@@ -16,6 +16,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		// return false;
+
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
@@ -32,6 +33,20 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 				);
 			}
 			$value = $addresses;
+			return true;
+		}
+		else if ($patientId == 'DUMMY') {
+			$value = array(
+				array(
+					'id' => "$id-PERM",
+					'street1' => '10 WINDY POINT',
+					'city' => 'ROCK ISLAND',
+					'state' => 'IL',
+					'zip' => 61201,
+					'user' => $id,
+					'name' => 'ROSALIND FRANKLIN',
+				)
+			);
 			return true;
 		}
 		else {
