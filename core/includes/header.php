@@ -1,7 +1,7 @@
 <?php
 
 header('Access-Control-Allow-Origin: *');
-
+date_default_timezone_set('UTC');
 require_once(__DIR__.'/env.php');
 
 function _mongoClient() {

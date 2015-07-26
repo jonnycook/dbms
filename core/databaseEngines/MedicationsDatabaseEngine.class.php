@@ -16,7 +16,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
-		var_dump($user);
+
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			$response = json_decode(file_get_contents("http://" . QS1_SERVER . "/api/Patient/" . QS1_PHARMACY . "/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
 			foreach ($response as $i => $obj) {
