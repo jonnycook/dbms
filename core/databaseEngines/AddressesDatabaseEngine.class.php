@@ -17,40 +17,47 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		// return false;
 
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
-		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
-			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
-			foreach ($response as $i => $obj) {
-				$addresses[] = array(
-					'id' => $id . '-' . $obj['AddressID'],
-					'street1' => $obj['Address'],
-					'street2' => $obj['Address2'],
-					'city' => $obj['City'],
-					'state' => $obj['State'],
-					'zip' => $obj['Zip'],
-					'name' => $obj['Name'],
-					'user' => $id,
-				);
+		if ($model == 'User' && $relName == 'addresses') {
+			$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
+			if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
+				$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
+				foreach ($response as $i => $obj) {
+					$addresses[] = array(
+						'id' => $id . '-' . $obj['AddressID'],
+						'street1' => $obj['Address'],
+						'street2' => $obj['Address2'],
+						'city' => $obj['City'],
+						'state' => $obj['State'],
+						'zip' => $obj['Zip'],
+						'name' => $obj['Name'],
+						'user' => $id,
+					);
+				}
+				$value = $addresses;
+				return true;
 			}
-			$value = $addresses;
-			return true;
+			else if ($user['patientId'] == 'DUMMY') {
+				$value = array(
+					array(
+						'id' => "$id-PERM",
+						'street1' => '10 WINDY POINT',
+						'city' => 'ROCK ISLAND',
+						'state' => 'IL',
+						'zip' => 61201,
+						'user' => $id,
+						'name' => 'ROSALIND FRANKLIN',
+					)
+				);
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
-		else if ($user['patientId'] == 'DUMMY') {
-			$value = array(
-				array(
-					'id' => "$id-PERM",
-					'street1' => '10 WINDY POINT',
-					'city' => 'ROCK ISLAND',
-					'state' => 'IL',
-					'zip' => 61201,
-					'user' => $id,
-					'name' => 'ROSALIND FRANKLIN',
-				)
-			);
+		else if ($model == 'Address' && $relName == 'user') {
+			$parts = explode('-', $id);
+			$value = $parts[0];
 			return true;
-		}
-		else {
-			return false;
 		}
 	}
 

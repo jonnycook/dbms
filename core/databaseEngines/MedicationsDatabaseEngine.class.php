@@ -61,7 +61,6 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'image' => "https://s3-us-west-2.amazonaws.com/divvydose/pills/$ndc.png",
 					);
 				}
-
 			}
 			$value = $addresses;
 			return true;
