@@ -109,6 +109,7 @@ return array(
 					if ($user['patientId'] == 'DUMMY') {
 						// $date = ;
 						$timezone = date_default_timezone_get();
+						var_dump(timezone_name_from_abbr('', $user['timezone']*3600));
 						date_default_timezone_set(timezone_name_from_abbr('', $user['timezone']*3600));
 						$user['divvyPacks'] = array(
 			        date('Y-m-d') => array(
