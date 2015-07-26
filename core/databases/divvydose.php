@@ -114,10 +114,45 @@ return array(
 			        date('Y-m-d') => array(
 			            "prescriptions" => array(
 			                "1" => array(
-			                    "name" => "ASDF", 
-			                    "prescriber" => "ARVIND MOVVA", 
-			                    "sig" => "ASDF"
-			                )
+			                    "name" => "ATORVOSTATIN 20 MG", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take once daily by mouth"
+			                ),
+			                "2" => array(
+			                    "name" => "LISINOPRIL 20 MG", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take once daily by mouth"
+			                ),
+			                "3" => array(
+			                    "name" => "ASPIRIN 81 MG", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take once daily by mouth"
+			                ),
+			                "4" => array(
+			                    "name" => "FISH OIL + DHA 500 MG", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take three times daily by mouth"
+			                ),
+			                "5" => array(
+			                    "name" => "MULTIVITAMIN", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take once daily by mouth"
+			                ),
+			                "6" => array(
+			                    "name" => "PROBIOTIC", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take once daily by mouth"
+			                ),
+			                "7" => array(
+			                    "name" => "LEVOTHYROXINE 125 MCG", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take once daily by mouth"
+			                ),
+			                "8" => array(
+			                    "name" => "OMEPRAZOLE 40 MG", 
+			                    "prescriber" => "Doctor Jones", 
+			                    "sig" => "Take once daily at bedtime"
+			                ),
 			            ), 
 			            "packets" => array(
 			                array(
@@ -126,7 +161,35 @@ return array(
 			                        array(
 			                            "rxNumber" => "1", 
 			                            "quantity" => "1.00"
-			                        )
+			                        ),
+			                        array(
+			                            "rxNumber" => "2", 
+			                            "quantity" => "1.00"
+			                        ),
+			                        array(
+			                            "rxNumber" => "3", 
+			                            "quantity" => "1.00"
+			                        ),
+			                        array(
+			                            "rxNumber" => "4", 
+			                            "quantity" => "1.00"
+			                        ),
+			                        array(
+			                            "rxNumber" => "5", 
+			                            "quantity" => "1.00"
+			                        ),
+			                        array(
+			                            "rxNumber" => "6", 
+			                            "quantity" => "1.00"
+			                        ),
+			                        array(
+			                            "rxNumber" => "7", 
+			                            "quantity" => "1.00"
+			                        ),
+			                        array(
+			                            "rxNumber" => "8", 
+			                            "quantity" => "1.00"
+			                        ),
 			                    )
 			                ), 
 			                array(
