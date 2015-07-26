@@ -140,8 +140,6 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 				if (!$relSchema['storage']['ignore']) {
 					if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
-						var_dump($relName);
-						var_dump($value);
 						if ($value !== null) {
 							switch ($relSchema['type']) {
 								case 'One':
