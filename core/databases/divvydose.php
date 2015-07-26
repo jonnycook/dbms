@@ -106,6 +106,7 @@ return array(
 		'User' => array(
 			'storage' => array(
 				'filter' => function(&$user) {
+					var_dump($user);
 					if ($user['dummy']) return;
 
 					if ($user['divvyPacks']) {
