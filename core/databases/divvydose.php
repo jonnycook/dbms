@@ -205,6 +205,7 @@ return array(
 		       	);
 						date_default_timezone_set($timezone);
 						// $user['lastShipment'] = date('Y-m-d H:i:s', mktime(date('H'), 0, 0, date('m'), 3, date('Y')));
+						$user['ssn'] = '5555';
 						return;
 					}
 
