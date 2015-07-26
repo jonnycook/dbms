@@ -121,7 +121,7 @@ return array(
 			            ), 
 			            "packets" => array(
 			                array(
-			                    "time" => date('Y-m-d H:i:s', mktime(date('m'), date('d'), date('Y'), date('H') + 1, date('i'), date('s'))), 
+			                    "time" => date('Y-m-d H:i:s', mktime(date('H') + 1, date('i'), date('s'), date('m'), date('d'), date('Y'))), 
 			                    "doses" => array(
 			                        array(
 			                            "rxNumber" => "1", 
@@ -130,7 +130,7 @@ return array(
 			                    )
 			                ), 
 			                array(
-			                    "time" => date('Y-m-d H:i:s', mktime(date('m'), date('d') + 1, date('Y'), date('H'), date('i'), date('s'))), 
+			                    "time" => date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') + 1, date('Y'))), 
 			                    "doses" => array(
 			                        array(
 			                            "rxNumber" => "1", 
