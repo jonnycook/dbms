@@ -17,7 +17,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		// return false;
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
-		if ($user['patientId']) {
+		if ($user['patientId'] && !$user['dummy']) {
 			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
 			foreach ($response as $i => $obj) {
 				$addresses[] = array(
