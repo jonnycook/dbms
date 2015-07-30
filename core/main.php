@@ -26,7 +26,7 @@ else {
 $databaseSchema = require("databases/$databaseName.php");
 
 if ($clientId) {
-	$clientDocument = mongoClient()->clients->findOne(array('_id' => $clientId));
+	$clientDocument = mongoClient()->clients->findOne(array('_id' => new MongoId($clientId)));
 	if (!$clientDocument) {
 		die('invalidClientId');
 	}

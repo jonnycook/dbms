@@ -20,7 +20,7 @@ function mongoClient() {
 
 function terminateClient($clientId) {
 	$mongo = mongoClient();
-	$clientDocument = $mongo->clients->findOne(array('_id' => $clientId));
+	$clientDocument = $mongo->clients->findOne(array('_id' => new MongoId($clientId)));
 	if ($clientDocument['subscribedTo']) {
 		foreach ($clientDocument['subscribedTo'] as $resource) {
 			unset($resource['schemaVersion']);
@@ -28,7 +28,7 @@ function terminateClient($clientId) {
 		}
 	}
 
-	$mongo->clients->remove(array('_id' => $clientId));
+	$mongo->clients->remove(array('_id' => new MongoId($clientId)));
 }
 
 function httpPost($url, $data) {

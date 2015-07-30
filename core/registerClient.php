@@ -6,28 +6,18 @@ $clientId = md5(rand());
 
 $mongo = mongoClient();
 
-if ($_GET['terminateOnDisconnect']) {
-	$opts['terminateOnDisconnect'] = true;
-}
 
-if ($_GET['params']) {
-	$params = json_decode($_GET['params']);
-}
-
-if ($_GET['device']) {
-	$device = json_decode($_GET['device']);
-}
-
-$mongo->clients->insert(array(
-	'_id' => $clientId,
-	'token' => $_GET['token'],
-	'device' => $device,
-	'opts' => $opts,
+$client = array(
 	'subscribedTo' => array(),
-	'params' => $params,
 	'registeredAt' => gmdate('Y-m-d H:i:s'),
-));
+);
+
+if ($_GET['client']) {
+	$client += json_decode($_GET['client'], true);
+}
+
+$mongo->clients->insert($client);
 
 echo json_encode(array(
-	'id' => $clientId
+	'id' => $client['_id']->{'$id'}
 ));
