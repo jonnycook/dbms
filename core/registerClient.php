@@ -14,9 +14,14 @@ if ($_GET['params']) {
 	$params = json_decode($_GET['params']);
 }
 
+if ($_GET['device']) {
+	$device = json_decode($_GET['device']);
+}
+
 $mongo->clients->insert(array(
 	'_id' => $clientId,
 	'token' => $_GET['token'],
+	'device' => $device,
 	'opts' => $opts,
 	'subscribedTo' => array(),
 	'params' => $params,
