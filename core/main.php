@@ -11,6 +11,7 @@ require_once('databaseEngines/AddressesDatabaseEngine.class.php');
 require_once('databaseEngines/InsuranceDatabaseEngine.class.php');
 require_once('databaseEngines/MedicationsDatabaseEngine.class.php');
 require_once('databaseEngines/PatientsDatabaseEngine.class.php');
+require_once('databaseEngines/PaymentMethodsDatabaseEngine.class.php');
 
 require_once('includes/main.php');
 

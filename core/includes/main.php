@@ -14,6 +14,7 @@ function createStorageEngine($type, array $config) {
 		case 'insurance': $class = 'InsuranceDatabaseStorageEngine'; break;
 		case 'medications': $class = 'MedicationsDatabaseStorageEngine'; break;
 		case 'patients': $class = 'PatientsDatabaseStorageEngine'; break;
+		case 'paymentMethods': $class = 'PaymentMethodsStorageEngine'; break;
 		default: throw new Exception("Invalid storage engine $type");
 	}
 

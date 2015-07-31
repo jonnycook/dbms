@@ -31,6 +31,10 @@ return array(
 		),
 		'patients' => array(
 			'type' => 'patients',
+		),
+		'paymentMethods' => array(
+			'type' => 'paymentMethods',
+			'db' => 'divvydose',
 		)
 	),
 
@@ -561,8 +565,13 @@ return array(
 		),
 
 		'PaymentMethod' => array(
+			'storage' => array(
+				'primary' => 'paymentMethods',
+			),
 			'attributes' => array(
 				'nameOnCard' => array('type' => 'string'),
+				'firstName' => array('type' => 'string'),
+				'lastName' => array('type' => 'string'),
 				'number' => array('type' => 'string'),
 				'type' => array('type' => 'string'),
 				'cvc' => array('type' => 'string'),
@@ -574,6 +583,8 @@ return array(
 				'zip' => array('type' => 'string'),
 				'city' => array('type' => 'string'),
 				'state' => array('type' => 'string'),
+
+				// 'customerVaultid' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'user' => array(
