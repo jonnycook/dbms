@@ -384,12 +384,12 @@ function addSubscriberToResource($db, $schemaVersion, $resource, $clientId) {
 	if ($resourceDocument) {
 		if (!in_array($clientId, $resourceDocument['subscribers'])) {
 			$mongo->resources->update(array('_id' => $id), array('$push' => array('subscribers' => $clientId)));
-			$mongo->clients->update(array('_id' => new MongoId($clientId)), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
+			$mongo->clients->update(array('_id' => makeClientId($clientId)), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
 		}
 	}
 	else {
 		$mongo->resources->insert(array('_id' => $id, 'subscribers' => array($clientId)));
-		$mongo->clients->update(array('_id' => new MongoId($clientId)), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
+		$mongo->clients->update(array('_id' => makeClientId($clientId)), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
 	}
 }
 
@@ -500,9 +500,9 @@ function executeUpdate($update, $databaseSchema) {
 }
 
 function sendToClient($clientId, $db, $update) {	
-	mongoClient()->clients->update(array('_id' => new MongoId($clientId)), array('$push' => array("updates.$db" => $update)));
+	mongoClient()->clients->update(array('_id' => makeClientId($clientId)), array('$push' => array("updates.$db" => $update)));
 
-	$clientDocument = mongoClient()->clients->findOne(array('_id' => new MongoId($clientId)));
+	$clientDocument = mongoClient()->clients->findOne(array('_id' => makeClientId($clientId)));
 
 
 	if ($clientDocument['connected']) {

@@ -292,8 +292,6 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 			$response = $this->gw->execute($gwUpdate);
 		}
 
-
-
 		if ($changes['operations']) {
 			foreach ($changes['operations'] as $operation) {
 				$update = null;

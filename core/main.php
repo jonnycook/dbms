@@ -28,7 +28,7 @@ $databaseSchema = require("databases/$databaseName.php");
 
 if ($clientId) {
 	try {
-		$id = new MongoId($clientId);
+		$id = makeClientId($clientId);
 	}
 	catch (Exception $e) {
 		die('invalidClientId');

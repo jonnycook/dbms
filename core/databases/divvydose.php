@@ -664,11 +664,11 @@ return array(
 			array(
 				'type' => 'model',
 				'params' => function($client) {
-					$session = _mongoClient()->divvydose->sessions->findOne(array('_id' => new MongoId($client['token'])));
+					// $session = _mongoClient()->divvydose->sessions->findOne(array('_id' => new MongoId($client['token'])));
 
 					return array(
 						'model' => 'User',
-						'id' => $session['userId']
+						'id' => $client['userId']
 					);
 				}
 			),
