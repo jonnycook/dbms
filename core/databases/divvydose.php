@@ -491,29 +491,29 @@ return array(
 			)
 		),
 
-		'Client' => array(
-			'attributes' => array(
-				'clientId' => array('type' => 'string'),
+		// 'Client' => array(
+		// 	'attributes' => array(
+		// 		'clientId' => array('type' => 'string'),
 
-				'devicePlatform' => array('type' => 'string'),
-				'deviceToken' => array('type' => 'string'),
-				'deviceId' => array('type' => 'string'),
+		// 		'devicePlatform' => array('type' => 'string'),
+		// 		'deviceToken' => array('type' => 'string'),
+		// 		'deviceId' => array('type' => 'string'),
 
-				'schedule' => array('type' => 'string'),
+		// 		'schedule' => array('type' => 'string'),
 
-				'everyDay' => array('type' => 'string'),
-				'everyOddDay' => array('type' => 'string'),
-				'everyEvenDay' => array('type' => 'string'),
+		// 		'everyDay' => array('type' => 'string'),
+		// 		'everyOddDay' => array('type' => 'string'),
+		// 		'everyEvenDay' => array('type' => 'string'),
 
-				'monday' => array('type' => 'string'),
-				'tuesday' => array('type' => 'string'),
-				'wednesday' => array('type' => 'string'),
-				'thursday' => array('type' => 'string'),
-				'friday' => array('type' => 'string'),
-				'saturday' => array('type' => 'string'),
-				'sunday' => array('type' => 'string'),
-			)
-		),
+		// 		'monday' => array('type' => 'string'),
+		// 		'tuesday' => array('type' => 'string'),
+		// 		'wednesday' => array('type' => 'string'),
+		// 		'thursday' => array('type' => 'string'),
+		// 		'friday' => array('type' => 'string'),
+		// 		'saturday' => array('type' => 'string'),
+		// 		'sunday' => array('type' => 'string'),
+		// 	)
+		// ),
 
 		'Address' => array(
 			'storage' => array(
