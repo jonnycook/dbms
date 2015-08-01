@@ -109,6 +109,15 @@ return array(
 
 		'User' => array(
 			'storage' => array(
+				'distributeUpdate' => function($db, $id, $model, $oid) {
+					if ($model == 'User') {
+						return $db->subscribers($db->resolveRel('User', $id, array('caringFor.caredForUser', 'caregivers.caregiverUser')));
+					}
+					else if ($model != 'Caregiver') {
+						return $db->subscribers($db->resolveRel('User', $id, array('caregivers.caregiverUser')));
+					}
+				},
+
 				'filter' => function(&$user) {
 					if ($user['patientId'] == 'DUMMY') {
 						$timezone = date_default_timezone_get();
@@ -303,12 +312,35 @@ return array(
 				'caregivers' => array(
 					'model' => 'Caregiver',
 					'type' => 'Many',
-					'inverseRelationship' => 'caregivingUser'
+					'inverseRelationship' => 'caredForUser',
+					'access' => 'owner',
+					// 'owner' => true,
+					'storage' => array(
+						'objectOptions' => array(
+							'propertyOptions' => array(
+								'caregiverUser' => array(
+									'getRelationships' => false
+								)
+							),
+						)
+					),
 				),
 				'caringFor' => array(
 					'model' => 'Caregiver',
 					'type' => 'Many',
 					'inverseRelationship' => 'caregiverUser',
+
+					// 'storage' => array(
+					// 	'objectObjects' => array(
+					// 		'propertyOptions' => array(
+					// 			'caredForUser' => array(
+					// 				'getRelationships' => false
+					// 			)
+					// 		),
+					// 	)
+					// ),
+
+					'access' => 'owner',
 				),
 				'prescriptions' => array(
 					'storage' => array(
@@ -384,12 +416,16 @@ return array(
 			'relationships' => array(
 				'caregiverUser' => array(
 					'model' => 'User',
-					'type' => 'One'
+					'type' => 'One',
+					'inverseRelationship' => 'caringFor',
+					'owner' => true,
 				),
-				'caregivingUser' => array(
+
+				'caredForUser' => array(
 					'model' => 'User',
 					'type' => 'One',
-					'inverseRelationship' => 'caregivers'
+					'inverseRelationship' => 'caregivers',
+					'owner' => true,
 				)
 			)
 		),
@@ -653,14 +689,14 @@ return array(
 		),
 
 		'/u' => array(
-			array(
-				'type' => 'model',
-				'params' => array('model' => 'Supplement'),
-			),
-			array(
-				'type' => 'model',
-				'params' => array('model' => 'SupplementStrength'),
-			),
+			// array(
+			// 	'type' => 'model',
+			// 	'params' => array('model' => 'Supplement'),
+			// ),
+			// array(
+			// 	'type' => 'model',
+			// 	'params' => array('model' => 'SupplementStrength'),
+			// ),
 			array(
 				'type' => 'model',
 				'params' => function($client) {

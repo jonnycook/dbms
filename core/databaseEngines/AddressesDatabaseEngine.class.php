@@ -34,6 +34,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 					);
 				}
 				$value = $addresses;
+				// var_dump($addresses);
 				return true;
 			}
 			else if ($user['patientId'] == 'DUMMY') {

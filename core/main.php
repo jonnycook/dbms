@@ -1,6 +1,6 @@
 <?php
 
-header('Content-Type: text/plain');
+// header('Content-Type: text/plain');
 
 require_once('includes/header.php');
 require_once('includes/schema.php');
@@ -121,7 +121,7 @@ if ($resource = $_GET['resource']) {
 			}
 			else if ($routeSchema['type'] == 'model') {
 				if ($params['id']) {
-					getObject($databaseSchema, $params['model'], $params['id'], $results);
+					getObject($databaseSchema, $params['model'], $params['id'], $results, array('owner' => true));
 					$resolvedResource = array(
 						'type' => 'model',
 						'model' => $params['model'],
@@ -156,6 +156,9 @@ if ($resource = $_GET['resource']) {
 			}
 		}
 
+		// if ($clientId) {
+		// 	addSubscriberToResources($databaseName, $schemaVersion, $clientId, $allResults);
+		// }
 		echo json_encode(array(
 			'path' => $resource,
 			'data' => $allResults
@@ -177,8 +180,6 @@ else if ($update = $_POST['update']) {
 				}
 			}
 		}
-
-
 
 		if ($withoutDelete) {
 			list($mapping, $resolvedUpdate) = executeUpdate($withoutDelete, $databaseSchema);		
@@ -259,8 +260,12 @@ else if ($backup = $_POST['backup']) {
 	executeUpdate($backup, $databaseSchema);
 }
 else if ($_GET['test']) {
-	$model = 'Allergy';
-	$id = '55a93de56b3e1311030041a7';
+	// $model = 'Allergy';
+	// $id = '55a93de56b3e1311030041a7';
 
-	var_dump(ancestors($databaseSchema, $model, $id));
+	// var_dump(ancestors($databaseSchema, $model, $id));
+
+	$dbUtil = new DbUtil($databaseName, $databaseSchema);
+	var_dump($dbUtil->subscribers($dbUtil->resolveRel('User', '55bc216d6b3e1382ae0041a8', array('caringFor.caredForUser', 'caregivers.caregiverUser'))));
+	// var_dump($dbUtil->resolveRel('User', '55bc216d6b3e1382ae0041a8', 'caringFor.caredForUser'));
 }

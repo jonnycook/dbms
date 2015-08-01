@@ -69,6 +69,9 @@ function propStorage($schema, $model, $prop) {
 }
 
 function getObject(array $schema, $model, $id, &$results=null, $options=null) {
+
+		// var_dump($model, $id, $options);
+
 	// $storageType = schemaModelStorage($schema, $model);
 	$attributes = schemaModelAttributes($schema, $model);
 	$relationships = schemaModelRelationships($schema, $model);
@@ -103,105 +106,123 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 		$results[$model][$id] = true;
 	}
 
-		foreach ($relationships as $relName => $relSchema) {
-			if (isset($options['properties']) && !$options['properties'][$relName]) continue;
+	foreach ($relationships as $relName => $relSchema) {
+		// TODO: this is a huge hack!!!
+		if ($relSchema['access'] == 'owner' && $options['child']) continue;
 
-			if ($value = $results[$model][$id][$relName]) {
-				if ($options['getRelationships'] || !isset($options['getRelationships'])) {
-					switch ($relSchema['type']) {
-						case 'One':
-							if (is_array($value)) {
-								if (!$results[$value['model']][$value['id']]) {
-									getObject($schema, $value['model'], $value['id'], $results);
-								}
-							}
-							else {
-								if (!$results[$relSchema['model']][$value]) {
-									getObject($schema, $relSchema['model'], $value, $results);
-								}
-							}
-							break;
+		if (isset($options['properties']) && !$options['properties'][$relName]) continue;
+		// var_dump($relName);
 
-						case 'Many':
-							foreach ($value as $relId) {
-								if (!$results[$relSchema['model']][$relId]) {
-									getObject($schema, $relSchema['model'], $relId, $results);
-								}
+		$relOptions = (array)$options['propertyOptions'][$relName] + (array)$relSchema['storage']['objectOptions'];
+		// if ($relOptions) {
+		// 	var_dump($model, $id, $relName);
+		// 	var_dump($relOptions);
+		// }
+
+		$relOptions += array(
+			'child' => true,
+			'from' => array('model' => $model, 'id' => $id, 'relName' => $relName),
+		);
+
+		// var_dump($relName, $relOptions);
+
+
+		if ($value = $results[$model][$id][$relName]) {
+			if ($options['getRelationships'] || !isset($options['getRelationships'])) {
+				switch ($relSchema['type']) {
+					case 'One':
+						if (is_array($value)) {
+							if (!$results[$value['model']][$value['id']]) {
+								getObject($schema, $value['model'], $value['id'], $results, $relOptions);
 							}
-							break;
+						}
+						else {
+							if (!$results[$relSchema['model']][$value]) {
+								getObject($schema, $relSchema['model'], $value, $results, $relOptions);
+							}
+						}
+						break;
+
+					case 'Many':
+						foreach ($value as $relId) {
+							if (!$results[$relSchema['model']][$relId]) {
+								getObject($schema, $relSchema['model'], $relId, $results, $relOptions);
+							}
+						}
+						break;
+				}
+			}
+		}
+		else {
+			$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $relSchema));
+
+			$modelSchema = schemaModel($schema, $model);
+			$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
+			unset($value);
+
+			if (!$relSchema['storage']['ignore']) {
+				if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
+					if ($value !== null) {
+						switch ($relSchema['type']) {
+							case 'One':
+								$object[$relName] = $value;
+								if ($options['getRelationships'] || !isset($options['getRelationships'])) {
+									if (is_array($value)) {
+										if (!$results[$value['model']][$value['id']]) {
+											getObject($schema, $value['model'], $value['id'], $results, $relOptions);
+										}
+									}
+									else {
+										if (!$results[$relSchema['model']][$value]) {
+											getObject($schema, $relSchema['model'], $value, $results, $relOptions);
+										}
+									}
+								}
+								break;
+
+							case 'Many':
+								$ids = array();
+								foreach ($value as $v) {
+									if (is_array($v)) {
+										$relId = $v['id'];
+										unset($v['id']);
+										$results[$relSchema['model']][$relId] = $v;
+										if ($options['getRelationships'] || !isset($options['getRelationships'])) {
+											getObject($schema, $relSchema['model'], $relId, $results, $relOptions);
+										}
+									}
+									else {
+										$relId = $v;
+										if ($options['getRelationships'] || !isset($options['getRelationships'])) {
+											if (!$results[$relSchema['model']][$relId]) {
+												getObject($schema, $relSchema['model'], $relId, $results, $relOptions);
+											}
+										}
+									}
+									$ids[] = $relId;
+								}
+								$object[$relName] = $ids;
+								break;
+						}
+					}
+					else {
+						$object[$relName] = $value;
 					}
 				}
 			}
 			else {
-				$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $relSchema));
+				switch ($relSchema['type']) {
+					case 'One':
+						$object[$relName] = null;
+						break;
 
-				$modelSchema = schemaModel($schema, $model);
-				$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
-				unset($value);
-
-				if (!$relSchema['storage']['ignore']) {
-					if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
-						if ($value !== null) {
-							switch ($relSchema['type']) {
-								case 'One':
-									$object[$relName] = $value;
-									if ($options['getRelationships'] || !isset($options['getRelationships'])) {
-										if (is_array($value)) {
-											if (!$results[$value['model']][$value['id']]) {
-												getObject($schema, $value['model'], $value['id'], $results);
-											}
-										}
-										else {
-											if (!$results[$relSchema['model']][$value]) {
-												getObject($schema, $relSchema['model'], $value, $results);
-											}
-										}
-									}
-									break;
-
-								case 'Many':
-									$ids = array();
-									foreach ($value as $v) {
-										if (is_array($v)) {
-											$relId = $v['id'];
-											unset($v['id']);
-											$results[$relSchema['model']][$relId] = $v;
-											if ($options['getRelationships'] || !isset($options['getRelationships'])) {
-												getObject($schema, $relSchema['model'], $relId, $results);
-											}
-										}
-										else {
-											$relId = $v;
-											if ($options['getRelationships'] || !isset($options['getRelationships'])) {
-												if (!$results[$relSchema['model']][$relId]) {
-													getObject($schema, $relSchema['model'], $relId, $results);
-												}
-											}
-										}
-										$ids[] = $relId;
-									}
-									$object[$relName] = $ids;
-									break;
-							}
-						}
-						else {
-							$object[$relName] = $value;
-						}
-					}
-				}
-				else {
-					switch ($relSchema['type']) {
-						case 'One':
-							$object[$relName] = null;
-							break;
-
-						case 'Many':
-							$object[$relName] = array();
-							break;
-					}
+					case 'Many':
+						$object[$relName] = array();
+						break;
 				}
 			}
 		}
+	}
 	
 	if ($results[$model][$id] === true) {
 		$results[$model][$id] = $object;
@@ -393,12 +414,156 @@ function addSubscriberToResource($db, $schemaVersion, $resource, $clientId) {
 	}
 }
 
+function addSubscriberToResources($db, $schemaVersion, $clientId, $resources) {
+	foreach ($resources as $modelName => $instances) {
+		foreach ($instances as $id => $instance) {
+			addSubscriberToResource($db, $schemaVersion, array('type' => 'model', 'model' => $modelName, 'id' => $id), $clientId);
+		}
+	}
+}
+
+
+/*
 function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 	$clientChanges = array();
 	foreach ($update['data'] as $model => $modelChanges) {
 		foreach ($modelChanges as $id => $instanceChanges) {
+			$resourceDocument = mongoClient()->resources->findOne(array(
+				'_id' => array(
+					'db' => $db, 
+					'resource' => array(
+						'type' => 'model',
+						'model' => $model,
+						'id' => $id,
+					),
+				)
+			));
+			if ($resourceDocument['subscribers']) {
+				foreach ($resourceDocument['subscribers'] as $subscriber) {
+					if ($subscriber != $clientId) {
+						$clientChanges[$subscriber][$model][$id] = $instanceChanges;					
+					}
+				}	
+			}
+		}
+	}
+
+	// var_dump($clientChanges);
+
+	foreach ($clientChanges as $clientId => $changes) {
+		sendToClient($clientId, $db, array('id' => $update['id'], 'data' => $changes));
+	}
+
+	// $resourceDocument = mongoClient()->resources->findOne(array('_id' => array('db' => $db, 'resource' => array('type' => 'db'))));
+	// if ($resourceDocument['subscribers']) {
+	// 	foreach ($resourceDocument['subscribers'] as $subscriber) {
+	// 		if ($subscriber != $clientId) {
+	// 			sendToClient($subscriber, $db, $update);
+	// 		}
+	// 	}
+	// }
+}
+
+*/
+
+class DbUtil {
+	public function __construct($db, $schema) {
+		$this->db = $db;
+		$this->schema = $schema;
+	}
+
+	public function resolveRel($model, $id, $prop) {
+		$results = array();
+		if (is_array($prop)) {
+			foreach ($prop as $p) {
+				$results = array_merge($results, $this->resolveRel($model, $id, $p));
+			}
+		}
+		else {
+			$dot = strpos($prop, '.');
+			if ($dot === false) {
+				$obj = getObject($this->schema, $model, $id, $_, array('getRelationships' => false, 'properties' => array($prop => true)));
+				// var_dump($obj);
+
+				$relModel = $this->schema['models'][$model]['relationships'][$prop]['model'];
+				if (is_array($obj[$prop])) {
+					foreach ($obj[$prop] as $relId) {
+						$results[] = array('model' => $relModel, 'id' => $relId);
+					}
+				}
+				else if ($obj[$prop]) {
+					$results[] = array('model' => $relModel, 'id' => $obj[$prop]);
+				}
+			}
+			else {
+				$p = substr($prop, 0, $dot);
+				$rest = substr($prop, $dot + 1);
+				$relModel = $this->schema['models'][$model]['relationships'][$p]['model'];
+				$obj = getObject($this->schema, $model, $id, $_, array('getRelationships' => false, 'properties' => array($p => true)));
+				// var_dump($obj);
+
+				if (is_array($obj[$p])) {
+					foreach ($obj[$p] as $relId) {
+						$results = array_merge($results, $this->resolveRel($relModel, $relId, $rest));
+					}
+				}
+				else if ($obj[$p]) {
+					$results = $this->resolveRel($relModel, $obj[$p], $rest);
+				}
+			}
+		}
+
+		return $results;
+	}
+
+	public function subscribers($instances) {
+		$clientIds = array();
+
+		// var_dump($instances);
+
+		foreach ($instances as $instance) {
+			$resourceDocument = mongoClient()->resources->findOne(array(
+				'_id' => array(
+					'db' => $this->db, 
+					'resource' => array(
+						'type' => 'model',
+						'model' => $instance['model'],
+						'id' => $instance['id'],
+					),
+				)
+			));
+			// var_dump($resourceDocument);
+			if ($resourceDocument['subscribers']) {
+				$clientIds = array_merge($clientIds, $resourceDocument['subscribers']);
+			}
+		}
+
+		return array_unique($clientIds);
+	}
+}
+
+function distributeUpdate($db, $databaseSchema, $update, $clientId) {
+
+	$dbUtil = new DbUtil($db, $databaseSchema);
+
+	$clientChanges = array();
+	foreach ($update['data'] as $model => $modelChanges) {
+		foreach ($modelChanges as $id => $instanceChanges) {
+			$storage = $databaseSchema['models'][$model]['storage'];
+			if ($storage['distributeUpdate']) {
+				$clientIds = $storage['distributeUpdate']($dbUtil, $id, $model, $id);
+				// var_dump($clientIds);
+			}
+
 			$lineage = ancestors($databaseSchema, $model, $id);
+
 			foreach ($lineage as $instance) {
+				$storage = $databaseSchema['models'][$instance['model']]['storage'];
+
+				if ($storage['distributeUpdate']) {
+					$clientIds = $storage['distributeUpdate']($dbUtil, $instance['id'], $model, $id);
+				}
+
 				$resourceDocument = mongoClient()->resources->findOne(array(
 					'_id' => array(
 						'db' => $db, 
@@ -409,8 +574,11 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 						),
 					)
 				));
-				if ($resourceDocument['subscribers']) {
-					foreach ($resourceDocument['subscribers'] as $subscriber) {
+
+				$clientIds = array_merge((array)$clientIds, (array)$resourceDocument['subscribers']);
+
+				if ($clientIds) {
+					foreach ($clientIds as $subscriber) {
 						if ($subscriber != $clientId) {
 							$clientChanges[$subscriber][$model][$id] = $instanceChanges;					
 						}
@@ -514,6 +682,32 @@ function sendToClient($clientId, $db, $update) {
 	// else {
 	// }
 }
+
+function parents($databaseSchema, $model, $id) {
+	$properties = array();
+	foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
+		if ($schema['owner']) {
+			$properties[$name] = true;
+		}
+	}
+
+	$objects = array(
+		array(
+			'model' => $model,
+			'id' => $id,
+		)
+	);
+	if ($properties) {
+		$object = getObject($databaseSchema, $model, $id, $results, array('getRelationships' => false, 'properties' => $properties));
+		foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
+			if ($schema['owner']) {
+				$objects = array_merge($objects, ancestors($databaseSchema, $schema['model'], $object[$name]));
+			}
+		}
+	}
+	return $objects;
+}
+
 
 function ancestors($databaseSchema, $model, $id) {
 	$properties = array();
