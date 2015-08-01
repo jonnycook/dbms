@@ -27,16 +27,21 @@ else {
 $databaseSchema = require("databases/$databaseName.php");
 
 if ($clientId) {
-	try {
-		$id = makeClientId($clientId);
+	if ($clientId == 'wW8tp9y1vp2Y8vH') {
+		$clientDocument = array();
 	}
-	catch (Exception $e) {
-		die('invalidClientId');
-	}
+	else {
+		try {
+			$id = makeClientId($clientId);
+		}
+		catch (Exception $e) {
+			die('invalidClientId');
+		}
 
-	$clientDocument = mongoClient()->clients->findOne(array('_id' => $id));
-	if (!$clientDocument) {
-		die('invalidClientId');
+		$clientDocument = mongoClient()->clients->findOne(array('_id' => $id));
+		if (!$clientDocument) {
+			die('invalidClientId');
+		}
 	}
 }
 

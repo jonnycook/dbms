@@ -569,7 +569,7 @@ return array(
 				'primary' => 'paymentMethods',
 			),
 			'attributes' => array(
-				'nameOnCard' => array('type' => 'string'),
+				// 'nameOnCard' => array('type' => 'string'),
 				'firstName' => array('type' => 'string'),
 				'lastName' => array('type' => 'string'),
 				'number' => array('type' => 'string'),

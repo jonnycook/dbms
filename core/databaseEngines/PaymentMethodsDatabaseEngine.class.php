@@ -198,7 +198,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 		));
 
 		$changes['attributes']['customerVaultId'] = $response['customer_vault_id'];
-
+		// $changes['attributes']['gwResponse'] = $response;
 
 		for ($i = 0; $i < strlen($changes['attributes']['number']); ++$i) {
 			$number .= '*';

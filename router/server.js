@@ -145,7 +145,7 @@ Connection = (function() {
         this.dbmsVersion = params[0];
         this.clientId = params[1];
         this.db = params[2];
-        this.schemaSchema = params[3];
+        this.schemaVersion = params[3];
         connections[this.clientId] = this;
         return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientConnected.php?id=" + this.clientId, (function(_this) {
           return function(err, res, body) {
@@ -157,7 +157,7 @@ Connection = (function() {
           };
         })(this));
       case 'q':
-        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&clientId=" + this.clientId + "&pull=1", (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&schemaVersion=" + this.schemaVersion + "&clientId=" + this.clientId + "&pull=1", (function(_this) {
           return function(err, res, body) {
             if (body === 'invalidClientId') {
               return _this._respond(number, 1);
@@ -167,7 +167,7 @@ Connection = (function() {
           };
         })(this));
       case 'g':
-        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?resource=" + params[0] + "&db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&clientId=" + this.clientId, (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?resource=" + params[0] + "&db=" + this.db + "&schemaVersion=" + this.schemaVersion + "&clientId=" + this.clientId, (function(_this) {
           return function(err, res, body) {
             if (body === 'invalidClientId') {
               return _this._respond(number, 1);
@@ -177,7 +177,7 @@ Connection = (function() {
           };
         })(this));
       case 'u':
-        return request.post("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&clientId=" + this.clientId, {
+        return request.post("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/main.php?db=" + this.db + "&schemaVersion=" + this.schemaVersion + "&clientId=" + this.clientId, {
           form: {
             update: params[0]
           }
@@ -191,7 +191,7 @@ Connection = (function() {
           };
         })(this));
       case 'U':
-        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientReceivedUpdate.php?db=" + this.db + "&schemaSchema=" + this.schemaSchema + "&id=" + this.clientId + "&updates=" + params[0], (function(_this) {
+        return request.get("http://127.0.0.1/dbms/" + this.dbmsVersion + "/core/clientReceivedUpdate.php?db=" + this.db + "&schemaVersion=" + this.schemaVersion + "&id=" + this.clientId + "&updates=" + params[0], (function(_this) {
           return function(err, res, body) {
             if (body === 'invalidClientId') {
               return _this._respond(number, 1);

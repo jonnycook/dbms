@@ -101,7 +101,7 @@ class Connection
 				@dbmsVersion = params[0]
 				@clientId = params[1]
 				@db = params[2]
-				@schemaSchema = params[3]
+				@schemaVersion = params[3]
 
 				connections[@clientId] = @
 
@@ -112,28 +112,28 @@ class Connection
 						@_respond number, 0
 
 			when 'q'
-				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{@clientId}&pull=1", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaVersion=#{@schemaVersion}&clientId=#{@clientId}&pull=1", (err, res, body) =>
 					if body == 'invalidClientId'
 						@_respond number, 1
 					else
 						@_respond number, 0, body
 
 			when 'g'
-				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?resource=#{params[0]}&db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{@clientId}", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?resource=#{params[0]}&db=#{@db}&schemaVersion=#{@schemaVersion}&clientId=#{@clientId}", (err, res, body) =>
 					if body == 'invalidClientId'
 						@_respond number, 1
 					else
 						@_respond number, 0, body
 
 			when 'u'
-				request.post "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaSchema=#{@schemaSchema}&clientId=#{@clientId}", form:{update:params[0]}, (err, res, body) =>
+				request.post "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?db=#{@db}&schemaVersion=#{@schemaVersion}&clientId=#{@clientId}", form:{update:params[0]}, (err, res, body) =>
 					if body == 'invalidClientId'
 						@_respond number, 1
 					else
 						@_respond number, 0, body
 
 			when 'U'
-				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientReceivedUpdate.php?db=#{@db}&schemaSchema=#{@schemaSchema}&id=#{@clientId}&updates=#{params[0]}", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/clientReceivedUpdate.php?db=#{@db}&schemaVersion=#{@schemaVersion}&id=#{@clientId}&updates=#{params[0]}", (err, res, body) =>
 					if body == 'invalidClientId'
 						@_respond number, 1
 					else
