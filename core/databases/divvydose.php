@@ -1,5 +1,22 @@
 <?php
 
+function qs1Get($url) {
+	$mongo = new MongoClient();
+
+
+	$id = md5($url);
+
+	$document = $mongo->divvydose->qs1Cache->findOne(array('_id' => $id));
+
+	if ($document) {
+		return $document['data'];
+	}
+	else {
+		$data = json_decode(file_get_contents($url), true);
+		$mongo->divvydose->qs1Cache->insert(array('_id' => $id, 'data' => $data));
+		return $data;
+	}
+}
 
 return array(
 	'init' => function($client) {
@@ -39,73 +56,73 @@ return array(
 	),
 
 	'models' => array(
-		'Supplement' => array(
-			'storage' => array(
-				'primary' => 'supplements',
-				'config' => array(
-					'supplements' => array(
-						'@*' => array(
-							'strengths' => array(
-								'@strengths' => array(
-									'@*' => '@id'
-								)
-							),
-							'*' => '@*',
-							null
-						)
-					)
-				)
-			),
+		// 'Supplement' => array(
+		// 	'storage' => array(
+		// 		'primary' => 'supplements',
+		// 		'config' => array(
+		// 			'supplements' => array(
+		// 				'@*' => array(
+		// 					'strengths' => array(
+		// 						'@strengths' => array(
+		// 							'@*' => '@id'
+		// 						)
+		// 					),
+		// 					'*' => '@*',
+		// 					null
+		// 				)
+		// 			)
+		// 		)
+		// 	),
 
-			'attributes' => array(
-				'name' => array('type' => 'string'),
-				'primaryName' => array('type' => 'string'),
-				'image' => array('type' => 'string'),
-			),
+		// 	'attributes' => array(
+		// 		'name' => array('type' => 'string'),
+		// 		'primaryName' => array('type' => 'string'),
+		// 		'image' => array('type' => 'string'),
+		// 	),
 
-			'relationships' => array(
-				'strengths' => array(
-					'type' => 'Many',
-					'model' => 'SupplementStrength',
-					'inverseRelationship' => 'supplement',
-				)
-			)
-		),
+		// 	'relationships' => array(
+		// 		'strengths' => array(
+		// 			'type' => 'Many',
+		// 			'model' => 'SupplementStrength',
+		// 			'inverseRelationship' => 'supplement',
+		// 		)
+		// 	)
+		// ),
 
-		'SupplementStrength' => array(
-			'storage' => array(
-				'primary' => 'supplements',
-				'config' => array(
-					'supplements' => array(
-						'@*' => array(
-							'supplement' => '@id',
-							'@strengths' => array(
-								'@*' => array(
-									'*' => '@*',
-									null
-								)
-							)
-						)
-					)
-				)
-			),
-			'attributes' => array(
-				'name' => array('type' => 'string'),
-				'retailItemCost' => array('type' => 'float'),
-				'doseType' => array('type' => 'string'),
-				'containerType' => array('type' => 'string'),
-				'unitSize' => array('type' => 'string'),
-				'canBeSubdivided' => array('type' => 'bool'),
-				'inPackets' => array('type' => 'bool')
-			),
-			'relationships' => array(
-				'supplement' => array(
-					'type' => 'One',
-					'model' => 'Supplement',
-					'inverseRelationship' => 'strengths'
-				)
-			)
-		),
+		// 'SupplementStrength' => array(
+		// 	'storage' => array(
+		// 		'primary' => 'supplements',
+		// 		'config' => array(
+		// 			'supplements' => array(
+		// 				'@*' => array(
+		// 					'supplement' => '@id',
+		// 					'@strengths' => array(
+		// 						'@*' => array(
+		// 							'*' => '@*',
+		// 							null
+		// 						)
+		// 					)
+		// 				)
+		// 			)
+		// 		)
+		// 	),
+		// 	'attributes' => array(
+		// 		'name' => array('type' => 'string'),
+		// 		'retailItemCost' => array('type' => 'float'),
+		// 		'doseType' => array('type' => 'string'),
+		// 		'containerType' => array('type' => 'string'),
+		// 		'unitSize' => array('type' => 'string'),
+		// 		'canBeSubdivided' => array('type' => 'bool'),
+		// 		'inPackets' => array('type' => 'bool')
+		// 	),
+		// 	'relationships' => array(
+		// 		'supplement' => array(
+		// 			'type' => 'One',
+		// 			'model' => 'Supplement',
+		// 			'inverseRelationship' => 'strengths'
+		// 		)
+		// 	)
+		// ),
 
 		'User' => array(
 			'storage' => array(
@@ -223,7 +240,7 @@ return array(
 					}
 
 					if ($user['divvyPacks']) {
-						$rxProfile = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']), true);
+						$rxProfile = qs1Get('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
 								$parts = explode(', ', $rx['PrescriberName']);
@@ -460,17 +477,17 @@ return array(
 					'inverseRelationship' => 'prescriptions',
 					'owner' => true,
 				),
-				'supplementStrength' => array(
-					'storage' => array('ignore' => true),
-					'type' => 'One',
-					'model' => 'SupplementStrength',
-				),
-				'doses' => array(
-					'storage' => array('ignore' => true),
-					'type' => 'Many',
-					'model' => 'PrescriptionDose',
-					'inverseRelationship' => 'prescription'
-				)
+				// 'supplementStrength' => array(
+				// 	'storage' => array('ignore' => true),
+				// 	'type' => 'One',
+				// 	'model' => 'SupplementStrength',
+				// ),
+				// 'doses' => array(
+				// 	'storage' => array('ignore' => true),
+				// 	'type' => 'Many',
+				// 	'model' => 'PrescriptionDose',
+				// 	'inverseRelationship' => 'prescription'
+				// )
 			),
 		),
 
@@ -514,8 +531,8 @@ return array(
 				'quantity' => array('type' => 'string'),
 			),
 			'relationships' => array(
-				'supplementStrength' => array(
-					'model' => 'SupplementStrength',
+				'prescription' => array(
+					'model' => 'Prescription',
 					'type' => 'One'
 				),
 				'medicineLogEntry' => array(

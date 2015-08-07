@@ -20,7 +20,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 		if ($user['patientId']) {
 			if ($user['patientId'] == 'DUMMY') {
 				$prescriptions = array(
-					array('ATORVOSTATIN 20 MG', '3141592', 'Take once daily by mouth'),	
+					array('ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth'),	
 					array('LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth'),	
 					array('ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'),	
 					array('FISH OIL + DHA 500 MG', '6022141', 'Take three times daily by mouth'),	
@@ -31,7 +31,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 				);
 				foreach ($prescriptions as $i => $p) {
 					$addresses[] = array(
-						'id' => $id . '-' . $i,
+						'id' => $id . '-' . $p[1],
 						'name' => $p[0],
 						'rxNumber' => $p[1],
 						'prescriber' => 'Doctor Jones',

@@ -111,7 +111,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 		if ($relSchema['access'] == 'owner' && $options['child']) continue;
 
 		if (isset($options['properties']) && !$options['properties'][$relName]) continue;
-		// var_dump($relName);
+
 
 		$relOptions = (array)$options['propertyOptions'][$relName] + (array)$relSchema['storage']['objectOptions'];
 		// if ($relOptions) {
@@ -161,10 +161,13 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			unset($value);
 
 			if (!$relSchema['storage']['ignore']) {
+				// var_dump($relName);
 				if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
 					if ($value !== null) {
 						switch ($relSchema['type']) {
 							case 'One':
+								// var_dump($relName);
+
 								$object[$relName] = $value;
 								if ($options['getRelationships'] || !isset($options['getRelationships'])) {
 									if (is_array($value)) {
@@ -543,17 +546,19 @@ class DbUtil {
 }
 
 function distributeUpdate($db, $databaseSchema, $update, $clientId) {
-
 	$dbUtil = new DbUtil($db, $databaseSchema);
 
 	$clientChanges = array();
 	foreach ($update['data'] as $model => $modelChanges) {
 		foreach ($modelChanges as $id => $instanceChanges) {
+
 			$storage = $databaseSchema['models'][$model]['storage'];
 			if ($storage['distributeUpdate']) {
 				$clientIds = $storage['distributeUpdate']($dbUtil, $id, $model, $id);
 				// var_dump($clientIds);
 			}
+
+
 
 			$lineage = ancestors($databaseSchema, $model, $id);
 
@@ -683,7 +688,33 @@ function sendToClient($clientId, $db, $update) {
 	// }
 }
 
-function parents($databaseSchema, $model, $id) {
+// function parents($databaseSchema, $model, $id) {
+// 	$properties = array();
+// 	foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
+// 		if ($schema['owner']) {
+// 			$properties[$name] = true;
+// 		}
+// 	}
+
+// 	$objects = array(
+// 		array(
+// 			'model' => $model,
+// 			'id' => $id,
+// 		)
+// 	);
+// 	if ($properties) {
+// 		$object = getObject($databaseSchema, $model, $id, $results, array('getRelationships' => false, 'properties' => $properties));
+// 		foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
+// 			if ($schema['owner']) {
+// 				$objects = array_merge($objects, ancestors($databaseSchema, $schema['model'], $object[$name]));
+// 			}
+// 		}
+// 	}
+// 	return $objects;
+// }
+
+
+function ancestors($databaseSchema, $model, $id) {
 	$properties = array();
 	foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
 		if ($schema['owner']) {
@@ -708,8 +739,7 @@ function parents($databaseSchema, $model, $id) {
 	return $objects;
 }
 
-
-function ancestors($databaseSchema, $model, $id) {
+function ancestors2($databaseSchema, $model, $id) {
 	$properties = array();
 	foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
 		if ($schema['owner']) {
@@ -725,6 +755,7 @@ function ancestors($databaseSchema, $model, $id) {
 	);
 	if ($properties) {
 		$object = getObject($databaseSchema, $model, $id, $results, array('getRelationships' => false, 'properties' => $properties));
+
 		foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
 			if ($schema['owner']) {
 				$objects = array_merge($objects, ancestors($databaseSchema, $schema['model'], $object[$name]));

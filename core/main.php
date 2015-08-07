@@ -1,5 +1,5 @@
 <?php
-
+ini_set('html_errors', 0);
 // header('Content-Type: text/plain');
 
 require_once('includes/header.php');
@@ -260,12 +260,14 @@ else if ($backup = $_POST['backup']) {
 	executeUpdate($backup, $databaseSchema);
 }
 else if ($_GET['test']) {
-	// $model = 'Allergy';
-	// $id = '55a93de56b3e1311030041a7';
+	$model = 'Caregiver';
+	$id = '55bccc416b3e135dcf0041a7';
 
-	// var_dump(ancestors($databaseSchema, $model, $id));
+	var_dump(ancestors2($databaseSchema, $model, $id));
 
-	$dbUtil = new DbUtil($databaseName, $databaseSchema);
-	var_dump($dbUtil->subscribers($dbUtil->resolveRel('User', '55bc216d6b3e1382ae0041a8', array('caringFor.caredForUser', 'caregivers.caregiverUser'))));
+	// $dbUtil = new DbUtil($databaseName, $databaseSchema);
+	// var_dump($dbUtil->resolveRel('User', '55bc6e3677c8e917272f9c15', array('caringFor.caredForUser', 'caregivers.caregiverUser')));
 	// var_dump($dbUtil->resolveRel('User', '55bc216d6b3e1382ae0041a8', 'caringFor.caredForUser'));
+
+
 }

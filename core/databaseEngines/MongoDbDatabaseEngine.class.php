@@ -14,6 +14,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 			return $this->db->{$collection}->findOne(array('_id' => $id));			
 		}
 		catch (Exception $e) {
+			// var_dump($e);
 			return null;
 		}
 	}
@@ -24,6 +25,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 				return new MongoId($modelId);
 			}
 			catch (Exception $e) {
+				// var_dump($e);
 				return null;
 			}
 		}
@@ -78,6 +80,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 				else {
 					$collection = $model;
 				}
+
 				$document = $this->document($collection, $this->storageId($storageConfig, $id));
 				$value = $document[$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $relName];
 				return !!$value;
