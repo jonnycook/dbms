@@ -2,12 +2,8 @@
 
 function qs1Get($url) {
 	$mongo = new MongoClient();
-
-
 	$id = md5($url);
-
 	$document = $mongo->divvydose->qs1Cache->findOne(array('_id' => $id));
-
 	if ($document) {
 		return $document['data'];
 	}
@@ -54,86 +50,17 @@ return array(
 			'db' => 'divvydose',
 		)
 	),
-
 	'models' => array(
-		// 'Supplement' => array(
-		// 	'storage' => array(
-		// 		'primary' => 'supplements',
-		// 		'config' => array(
-		// 			'supplements' => array(
-		// 				'@*' => array(
-		// 					'strengths' => array(
-		// 						'@strengths' => array(
-		// 							'@*' => '@id'
-		// 						)
-		// 					),
-		// 					'*' => '@*',
-		// 					null
-		// 				)
-		// 			)
-		// 		)
-		// 	),
-
-		// 	'attributes' => array(
-		// 		'name' => array('type' => 'string'),
-		// 		'primaryName' => array('type' => 'string'),
-		// 		'image' => array('type' => 'string'),
-		// 	),
-
-		// 	'relationships' => array(
-		// 		'strengths' => array(
-		// 			'type' => 'Many',
-		// 			'model' => 'SupplementStrength',
-		// 			'inverseRelationship' => 'supplement',
-		// 		)
-		// 	)
-		// ),
-
-		// 'SupplementStrength' => array(
-		// 	'storage' => array(
-		// 		'primary' => 'supplements',
-		// 		'config' => array(
-		// 			'supplements' => array(
-		// 				'@*' => array(
-		// 					'supplement' => '@id',
-		// 					'@strengths' => array(
-		// 						'@*' => array(
-		// 							'*' => '@*',
-		// 							null
-		// 						)
-		// 					)
-		// 				)
-		// 			)
-		// 		)
-		// 	),
-		// 	'attributes' => array(
-		// 		'name' => array('type' => 'string'),
-		// 		'retailItemCost' => array('type' => 'float'),
-		// 		'doseType' => array('type' => 'string'),
-		// 		'containerType' => array('type' => 'string'),
-		// 		'unitSize' => array('type' => 'string'),
-		// 		'canBeSubdivided' => array('type' => 'bool'),
-		// 		'inPackets' => array('type' => 'bool')
-		// 	),
-		// 	'relationships' => array(
-		// 		'supplement' => array(
-		// 			'type' => 'One',
-		// 			'model' => 'Supplement',
-		// 			'inverseRelationship' => 'strengths'
-		// 		)
-		// 	)
-		// ),
-
 		'User' => array(
 			'storage' => array(
-				'distributeUpdate' => function($db, $id, $model, $oid) {
-					if ($model == 'User') {
-						return $db->subscribers($db->resolveRel('User', $id, array('caringFor.caredForUser', 'caregivers.caregiverUser')));
-					}
-					else if ($model != 'Caregiver') {
-						return $db->subscribers($db->resolveRel('User', $id, array('caregivers.caregiverUser')));
-					}
-				},
+				// 'distributeUpdate' => function($db, $id, $model, $oid) {
+				// 	if ($model == 'User') {
+				// 		return $db->subscribers($db->resolveRel('User', $id, array('caringFor.caredForUser', 'caregivers.caregiverUser')));
+				// 	}
+				// 	else if ($model != 'Caregiver') {
+				// 		return $db->subscribers($db->resolveRel('User', $id, array('caregivers.caregiverUser')));
+				// 	}
+				// },
 
 				'filter' => function(&$user) {
 					if ($user['patientId'] == 'DUMMY') {
@@ -298,9 +225,9 @@ return array(
 				'dateOfBirth' => array('type' => 'date'),
 				'phoneNumber' => array('type' => 'string'),
 				'ssn' => array(
-					'storage' => array(
+					'storage' => defined('QS1') ? array(
 						'db' => 'patients',
-					),
+					) : null,
 					'type' => 'string'
 				),
 
@@ -321,31 +248,29 @@ return array(
 				'patientId' => array('type' => 'string'),
 
 				'agreedToTerms' => array('type' => 'bool'),
-
-				// 'passwordHash' => array('type' => 'string'),
-				// 'passwordSalt' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'caregivers' => array(
 					'model' => 'Caregiver',
 					'type' => 'Many',
 					'inverseRelationship' => 'caredForUser',
-					'access' => 'owner',
-					// 'owner' => true,
-					'storage' => array(
-						'objectOptions' => array(
-							'propertyOptions' => array(
-								'caregiverUser' => array(
-									'getRelationships' => false
-								)
-							),
-						)
-					),
+					// 'access' => 'owner',
+//					 'owner' => true,
+					// 'storage' => array(
+					// 	'objectOptions' => array(
+					// 		'propertyOptions' => array(
+					// 			'caregiverUser' => array(
+					// 				'getRelationships' => false
+					// 			)
+					// 		),
+					// 	)
+					// ),
 				),
 				'caringFor' => array(
 					'model' => 'Caregiver',
 					'type' => 'Many',
 					'inverseRelationship' => 'caregiverUser',
+//					'owner' => true
 
 					// 'storage' => array(
 					// 	'objectObjects' => array(
@@ -357,12 +282,12 @@ return array(
 					// 	)
 					// ),
 
-					'access' => 'owner',
+					// 'access' => 'owner',
 				),
 				'prescriptions' => array(
-					'storage' => array(
+					'storage' => defined('QS1') ? array(
 						'db' => 'medications'
-					),
+					) : null,
 					'type' => 'Many',
 					'model' => 'Prescription',
 					'inverseRelationship' => 'user',
@@ -373,9 +298,9 @@ return array(
 					'inverseRelationship' => 'user'
 				),
 				'addresses' => array(
-					'storage' => array(
+					'storage' => defined('QS1') ? array(
 						'db' => 'addresses'
-					),
+					) : null,
 					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
@@ -448,9 +373,9 @@ return array(
 		),
 
 		'Prescription' => array(
-			'storage' => array(
+			'storage' => defined('QS1') ? array(
 				'primary' => 'medications'
-			),
+			) : null,
 
 			'attributes' => array(
 				'packaging' => array('type' => 'string', 'values' => array('In A Packet', 'Separate Bottle')),
@@ -477,33 +402,8 @@ return array(
 					'inverseRelationship' => 'prescriptions',
 					'owner' => true,
 				),
-				// 'supplementStrength' => array(
-				// 	'storage' => array('ignore' => true),
-				// 	'type' => 'One',
-				// 	'model' => 'SupplementStrength',
-				// ),
-				// 'doses' => array(
-				// 	'storage' => array('ignore' => true),
-				// 	'type' => 'Many',
-				// 	'model' => 'PrescriptionDose',
-				// 	'inverseRelationship' => 'prescription'
-				// )
 			),
 		),
-
-		// 'PrescriptionDose' => array(
-		// 	'attributes' => array(
-		// 		'time' => array('type' => 'string'),
-		// 		'quantity' => array('type' => 'string')
-		// 	),
-		// 	'relationships' => array(
-		// 		'prescription' => array(
-		// 			'type' => 'One',
-		// 			'model' => 'Prescription',
-		// 			'inverseRelationship' => 'doses'
-		// 		)
-		// 	)
-		// ),
 
 		'MedicineLogEntry' => array(
 			'attributes' => array(
@@ -544,34 +444,10 @@ return array(
 			)
 		),
 
-		// 'Client' => array(
-		// 	'attributes' => array(
-		// 		'clientId' => array('type' => 'string'),
-
-		// 		'devicePlatform' => array('type' => 'string'),
-		// 		'deviceToken' => array('type' => 'string'),
-		// 		'deviceId' => array('type' => 'string'),
-
-		// 		'schedule' => array('type' => 'string'),
-
-		// 		'everyDay' => array('type' => 'string'),
-		// 		'everyOddDay' => array('type' => 'string'),
-		// 		'everyEvenDay' => array('type' => 'string'),
-
-		// 		'monday' => array('type' => 'string'),
-		// 		'tuesday' => array('type' => 'string'),
-		// 		'wednesday' => array('type' => 'string'),
-		// 		'thursday' => array('type' => 'string'),
-		// 		'friday' => array('type' => 'string'),
-		// 		'saturday' => array('type' => 'string'),
-		// 		'sunday' => array('type' => 'string'),
-		// 	)
-		// ),
-
 		'Address' => array(
-			'storage' => array(
+			'storage' => defined('QS1') ? array(
 				'primary' => 'addresses'
-			),
+			) : null,
 			'attributes' => array(
 				'street1' => array('type' => 'string'),
 				'street2' => array('type' => 'string'),
@@ -622,7 +498,6 @@ return array(
 				'primary' => 'paymentMethods',
 			),
 			'attributes' => array(
-				// 'nameOnCard' => array('type' => 'string'),
 				'firstName' => array('type' => 'string'),
 				'lastName' => array('type' => 'string'),
 				'number' => array('type' => 'string'),
@@ -636,8 +511,6 @@ return array(
 				'zip' => array('type' => 'string'),
 				'city' => array('type' => 'string'),
 				'state' => array('type' => 'string'),
-
-				// 'customerVaultid' => array('type' => 'string'),
 			),
 			'relationships' => array(
 				'user' => array(
@@ -699,26 +572,44 @@ return array(
 			)
 		),
 	),
+	'resources' => array(
+		'user' => array(
+			'root' => 'User',
 
+			'models' => array(
+				'MedicineLogEntryDose' => array(
+					'references' => array('prescription'),
+				),
+				'Payment' => array(
+					'references' => array('paymentMethod'),
+				),
+				'User' => array(
+					'references' => array('currentAddress', 'currentPaymentMethod'),
+					'edges' => array('caregivers', 'caringFor'),
+				)
+			),
+			'nodes' => array(
+				'caregivers.caregiverUser' => array(
+					'edges' => false
+				),
+				'caringFor.caredForUser' => array(
+					'edges' => array(
+						'caregivers' => false,
+						'caringFor' => false
+					)
+				)
+			)
+		)
+	),
 	'routes' => array(
 		'/' => array(
 			'type' => 'db'
 		),
 
 		'/u' => array(
-			// array(
-			// 	'type' => 'model',
-			// 	'params' => array('model' => 'Supplement'),
-			// ),
-			// array(
-			// 	'type' => 'model',
-			// 	'params' => array('model' => 'SupplementStrength'),
-			// ),
 			array(
 				'type' => 'model',
 				'params' => function($client) {
-					// $session = _mongoClient()->divvydose->sessions->findOne(array('_id' => new MongoId($client['token'])));
-
 					return array(
 						'model' => 'User',
 						'id' => $client['userId']
@@ -727,8 +618,89 @@ return array(
 			),
 		),
 
+		'/user' => array(
+			'type' => 'resource',
+			'resource' => 'user',
+			'id' => function($client) {
+				return $client['userId'];
+			}
+		),
+
 		'/:model/:id' => array(
 			'type' => 'model'
 		),
 	)
 );
+
+
+
+
+
+
+// 'Supplement' => array(
+// 	'storage' => array(
+// 		'primary' => 'supplements',
+// 		'config' => array(
+// 			'supplements' => array(
+// 				'@*' => array(
+// 					'strengths' => array(
+// 						'@strengths' => array(
+// 							'@*' => '@id'
+// 						)
+// 					),
+// 					'*' => '@*',
+// 					null
+// 				)
+// 			)
+// 		)
+// 	),
+//
+// 	'attributes' => array(
+// 		'name' => array('type' => 'string'),
+// 		'primaryName' => array('type' => 'string'),
+// 		'image' => array('type' => 'string'),
+// 	),
+//
+// 	'relationships' => array(
+// 		'strengths' => array(
+// 			'type' => 'Many',
+// 			'model' => 'SupplementStrength',
+// 			'inverseRelationship' => 'supplement',
+// 		)
+// 	)
+// ),
+//
+// 'SupplementStrength' => array(
+// 	'storage' => array(
+// 		'primary' => 'supplements',
+// 		'config' => array(
+// 			'supplements' => array(
+// 				'@*' => array(
+// 					'supplement' => '@id',
+// 					'@strengths' => array(
+// 						'@*' => array(
+// 							'*' => '@*',
+// 							null
+// 						)
+// 					)
+// 				)
+// 			)
+// 		)
+// 	),
+// 	'attributes' => array(
+// 		'name' => array('type' => 'string'),
+// 		'retailItemCost' => array('type' => 'float'),
+// 		'doseType' => array('type' => 'string'),
+// 		'containerType' => array('type' => 'string'),
+// 		'unitSize' => array('type' => 'string'),
+// 		'canBeSubdivided' => array('type' => 'bool'),
+// 		'inPackets' => array('type' => 'bool')
+// 	),
+// 	'relationships' => array(
+// 		'supplement' => array(
+// 			'type' => 'One',
+// 			'model' => 'Supplement',
+// 			'inverseRelationship' => 'strengths'
+// 		)
+// 	)
+// ),

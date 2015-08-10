@@ -1,5 +1,5 @@
 <?php
-ini_set('html_errors', 0);
+//ini_set('html_errors', 0);
 // header('Content-Type: text/plain');
 
 require_once('includes/header.php');
@@ -15,7 +15,9 @@ require_once('databaseEngines/PaymentMethodsDatabaseEngine.class.php');
 
 require_once('includes/main.php');
 
-$clientId = $_GET['clientId'];
+if ($_REQUEST['clientId']) {
+	$clientId = $_REQUEST['clientId'];
+}
 $databaseName = $_REQUEST['db'];
 if ($_REQUEST['schemaVersion']) {
 	$schemaVersion = $_REQUEST['schemaVersion'];
@@ -49,7 +51,7 @@ if ($databaseSchema['init']) {
 	$databaseSchema['init']($clientDocument);
 }
 
-if ($resource = $_GET['resource']) {
+if ($resourceRoots = $_GET['resource']) {
 	$params = array();
 
 	$models = array_keys($databaseSchema['models']);
@@ -66,7 +68,7 @@ if ($resource = $_GET['resource']) {
 			}
 		}, $route);
 
-		if (preg_match("#^$pattern\$#", $resource, $matches)) {
+		if (preg_match("#^$pattern\$#", $resourceRoots, $matches)) {
 			foreach ($paramNames as $i => $paramName) {
 				$params[$paramName] = $matches[$i + 1];
 			}
@@ -144,7 +146,16 @@ if ($resource = $_GET['resource']) {
 					);
 				}
 			}
+			else if ($routeSchema['type'] == 'resource') {
+				$id = $routeSchema['id']($clientDocument);
 
+				resource($databaseSchema, $routeSchema['resource'], $id, $results);
+
+				$resolvedResource = array(
+					'name' => $routeSchema['resource'],
+					'id' => $id,
+				);
+			}
 
 			if ($clientId && $resolvedResource) addSubscriberToResource($databaseName, $schemaVersion, $resolvedResource, $clientId);
 
@@ -160,7 +171,7 @@ if ($resource = $_GET['resource']) {
 		// 	addSubscriberToResources($databaseName, $schemaVersion, $clientId, $allResults);
 		// }
 		echo json_encode(array(
-			'path' => $resource,
+			'path' => $resourceRoots,
 			'data' => $allResults
 		) + $resolvedResource);
 	}
@@ -192,7 +203,6 @@ else if ($update = $_POST['update']) {
 				}
 			}
 		}
-		// var_dump($resolvedUpdate);
 
 		distributeUpdate($databaseName, $databaseSchema, array('id' => $update['id'], 'data' => $resolvedUpdate), $clientId);
 
@@ -220,7 +230,8 @@ else if ($update = $_POST['update']) {
 else if ($_GET['schema']) {
 	$schema = array(
 		'version' => $databaseSchema['version'] ? $databaseSchema['version'] : 1,
-		'models' => $databaseSchema['models']
+		'models' => $databaseSchema['models'],
+		'resources' => $databaseSchema['resources'],
 	);
 
 	foreach ($schema['models'] as &$modelSchema) {
@@ -260,14 +271,44 @@ else if ($backup = $_POST['backup']) {
 	executeUpdate($backup, $databaseSchema);
 }
 else if ($_GET['test']) {
-	$model = 'Caregiver';
-	$id = '55bccc416b3e135dcf0041a7';
 
-	var_dump(ancestors2($databaseSchema, $model, $id));
+//	var_dump(nodeEdges($databaseSchema, 'user', 'caringFor'));
 
-	// $dbUtil = new DbUtil($databaseName, $databaseSchema);
-	// var_dump($dbUtil->resolveRel('User', '55bc6e3677c8e917272f9c15', array('caringFor.caredForUser', 'caregivers.caregiverUser')));
-	// var_dump($dbUtil->resolveRel('User', '55bc216d6b3e1382ae0041a8', 'caringFor.caredForUser'));
+//	var_dump(resources($databaseSchema, 'User', '55bcb30d77c870a477876611'));
+//	var_dump(resources($databaseSchema, 'Address', '55862c576b3e13ec390041a8'));
+
+
+//	var_dump(resources($databaseSchema, 'User', '55bcb30d77c870a477876611'));
+//	var_dump(resources($databaseSchema, 'Address', '55862c576b3e13ec390041a8'));
+
+
+//	var_dump(resource($databaseSchema, 'user', '55bc6e3677c8e917272f9c15'));
+
+//	var_dump(resourceSubtree($databaseSchema, 'user', '', array('55bc6e3677c8e917272f9c15')));
+//	var_dump(resourceSubtree($databaseSchema, 'user', '', array('55bc6e3677c8e917272f9c15'), $results, array('edges' => array('bills'))));
+
+
+//	var_dump(resolvedResourcePaths($databaseSchema, 'user', 'caringFor.caredForUser.addresses', '55862c576b3e13ec390041a8'));
+//	var_dump(resolvedResourcePaths($databaseSchema, 'user', 'caringFor.caredForUser', '55bcb30d77c870a477876611'));
+
+//	var_dump(nodeInfo($databaseSchema, 'user', 'bills'));
+//	var_dump(resolvePathInfo($databaseSchema, 'user', 'caringFor.caredForUser.addresses'));
+//	var_dump(nodePaths($databaseSchema, 'user', 'User'));
+
+
+//	$basePath = 'caringFor';
+//	$id = '55bccc416b3e135dcf0041a7';
+//	$model = 'Caregiver';
+//
+//	$basePath = '';
+//	$id = '55bc6e3677c8e917272f9c15';
+//	$model = $graphSchema['root'];
+//
+//	$basePath = '';
+//	$id = '55bcb30d77c870a477876611';
+//	$model = $graphSchema['root'];
+//
+//
 
 
 }
