@@ -72,42 +72,42 @@ return array(
 						$user['divvyPacks'] = array(
 			        date('Y-m-d') => array(
 			            "prescriptions" => array(
-			                "1" => array(
+			                "06001164" => array(
 			                    "name" => "ATORVOSTATIN 20 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
 			                ),
-			                "2" => array(
+			                "0112358" => array(
 			                    "name" => "LISINOPRIL 20 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
 			                ),
-			                "3" => array(
+			                "8675309" => array(
 			                    "name" => "ASPIRIN 81 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
 			                ),
-			                "4" => array(
+			                "6022141" => array(
 			                    "name" => "FISH OIL + DHA 500 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take three times daily by mouth"
 			                ),
-			                "5" => array(
+			                "1618033" => array(
 			                    "name" => "MULTIVITAMIN", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
 			                ),
-			                "6" => array(
+			                "7973010" => array(
 			                    "name" => "PROBIOTIC", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
 			                ),
-			                "7" => array(
+			                "3182008" => array(
 			                    "name" => "LEVOTHYROXINE 125 MCG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
 			                ),
-			                "8" => array(
+			                "6934889" => array(
 			                    "name" => "OMEPRAZOLE 40 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily at bedtime"
@@ -118,35 +118,35 @@ return array(
 			                    "time" => date('Y-m-d H:i:s', mktime(date('H') + 1, 0, 0, date('m'), date('d'), date('Y'))), 
 			                    "doses" => array(
 			                        array(
-			                            "rxNumber" => "1", 
+			                            "rxNumber" => "06001164", 
 			                            "quantity" => "1.00"
 			                        ),
 			                        array(
-			                            "rxNumber" => "2", 
+			                            "rxNumber" => "0112358", 
 			                            "quantity" => "1.00"
 			                        ),
 			                        array(
-			                            "rxNumber" => "3", 
+			                            "rxNumber" => "8675309", 
 			                            "quantity" => "1.00"
 			                        ),
 			                        array(
-			                            "rxNumber" => "4", 
+			                            "rxNumber" => "6022141", 
 			                            "quantity" => "1.00"
 			                        ),
 			                        array(
-			                            "rxNumber" => "5", 
+			                            "rxNumber" => "1618033", 
 			                            "quantity" => "1.00"
 			                        ),
 			                        array(
-			                            "rxNumber" => "6", 
+			                            "rxNumber" => "7973010", 
 			                            "quantity" => "1.00"
 			                        ),
 			                        array(
-			                            "rxNumber" => "7", 
+			                            "rxNumber" => "3182008", 
 			                            "quantity" => "1.00"
 			                        ),
 			                        array(
-			                            "rxNumber" => "8", 
+			                            "rxNumber" => "6934889", 
 			                            "quantity" => "1.00"
 			                        ),
 			                    )
