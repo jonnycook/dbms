@@ -155,7 +155,7 @@ return array(
 			                    "time" => date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') + 1, date('Y'))), 
 			                    "doses" => array(
 			                        array(
-			                            "rxNumber" => "1", 
+			                            "rxNumber" => "06001164", 
 			                            "quantity" => "1.00"
 			                        )
 			                    )
