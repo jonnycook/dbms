@@ -67,6 +67,7 @@ return array(
 
 				'filter' => function(&$user) {
 					if ($user['patientId'] == 'DUMMY') {
+						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
 						date_default_timezone_set(timezone_name_from_abbr('', -$user['timezone']*60, 0));
 						$user['divvyPacks'] = array(
@@ -251,6 +252,8 @@ return array(
 				'patientId' => array('type' => 'string'),
 
 				'agreedToTerms' => array('type' => 'bool'),
+
+				'demo' => array('type' => 'bool'),
 			),
 			'relationships' => array(
 				'caregivers' => array(

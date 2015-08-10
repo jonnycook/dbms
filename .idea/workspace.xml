@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="" />
+    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/databases/divvydose.php" afterPath="$PROJECT_DIR$/core/databases/divvydose.php" />
+    </list>
     <ignored path="v1.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -87,13 +89,10 @@
       <file leaf-file-name="divvydose.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/databases/divvydose.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.34054053">
-              <caret line="66" column="52" selection-start-line="66" selection-start-column="52" selection-end-line="66" selection-end-column="52" />
+            <state vertical-scroll-proportion="0.38918918">
+              <caret line="25" column="5" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
               <folding>
-                <element signature="e#7#358#0#PHP" expanded="false" />
-                <element signature="e#385#637#2#PHP" expanded="false" />
-                <element signature="e#655#1169#1#PHP" expanded="false" />
-                <element signature="e#17072#17503#1#PHP" expanded="false" />
+                <element signature="e#17268#17699#1#PHP" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -109,9 +108,9 @@
       <list>
         <option value="$PROJECT_DIR$/console.php" />
         <option value="$PROJECT_DIR$/core/includes/header.php" />
-        <option value="$PROJECT_DIR$/core/databases/divvydose.php" />
         <option value="$PROJECT_DIR$/core/includes/main.php" />
         <option value="$PROJECT_DIR$/core/main.php" />
+        <option value="$PROJECT_DIR$/core/databases/divvydose.php" />
       </list>
     </option>
   </component>
@@ -427,10 +426,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="722" column="10" selection-start-line="722" selection-start-column="10" selection-end-line="722" selection-end-column="10" />
           <folding>
-            <element signature="e#7#358#0#PHP" expanded="false" />
-            <element signature="e#385#637#2#PHP" expanded="false" />
-            <element signature="e#655#1169#1#PHP" expanded="false" />
-            <element signature="e#17072#17503#1#PHP" expanded="false" />
+            <element signature="e#17268#17699#1#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -466,10 +462,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="719" column="56" selection-start-line="719" selection-start-column="56" selection-end-line="719" selection-end-column="56" />
           <folding>
-            <element signature="e#7#358#0#PHP" expanded="false" />
-            <element signature="e#385#637#2#PHP" expanded="false" />
-            <element signature="e#655#1169#1#PHP" expanded="false" />
-            <element signature="e#17072#17503#1#PHP" expanded="false" />
+            <element signature="e#17268#17699#1#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -505,10 +498,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="719" column="56" selection-start-line="719" selection-start-column="56" selection-end-line="719" selection-end-column="56" />
           <folding>
-            <element signature="e#7#358#0#PHP" expanded="false" />
-            <element signature="e#385#637#2#PHP" expanded="false" />
-            <element signature="e#655#1169#1#PHP" expanded="false" />
-            <element signature="e#17072#17503#1#PHP" expanded="false" />
+            <element signature="e#17268#17699#1#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -621,13 +611,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/databases/divvydose.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34054053">
-          <caret line="66" column="52" selection-start-line="66" selection-start-column="52" selection-end-line="66" selection-end-column="52" />
+        <state vertical-scroll-proportion="0.38918918">
+          <caret line="25" column="5" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
           <folding>
-            <element signature="e#7#358#0#PHP" expanded="false" />
-            <element signature="e#385#637#2#PHP" expanded="false" />
-            <element signature="e#655#1169#1#PHP" expanded="false" />
-            <element signature="e#17072#17503#1#PHP" expanded="false" />
+            <element signature="e#17268#17699#1#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
