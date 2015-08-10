@@ -17,6 +17,12 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 
+		if ($model == 'Prescription' && $relName == 'user') {
+			list($userId, $rxNumber) = explode('-', $id);
+			$value = $userId;
+			return true;
+		}
+		else if ($model == 'User' && $relName == 'prescriptions') {
 		if ($user['patientId']) {
 			if ($user['patientId'] == 'DUMMY') {
 				$prescriptions = array(
@@ -68,6 +74,9 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 		else {
 			return false;
 		}
+
+		}
+
 	}
 
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
