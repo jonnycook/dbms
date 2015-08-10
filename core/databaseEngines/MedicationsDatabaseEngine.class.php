@@ -17,8 +17,8 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 
-		if ($user['patientId'] || 1) {
-			if ($user['patientId'] == 'DUMMY' || 1) {
+		if ($user['patientId']) {
+			if ($user['patientId'] == 'DUMMY') {
 				$prescriptions = array(
 					array('ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth'),	
 					array('LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth'),	

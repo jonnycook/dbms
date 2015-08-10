@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/console.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/databaseEngines/MedicationsDatabaseEngine.class.php" afterPath="$PROJECT_DIR$/core/databaseEngines/MedicationsDatabaseEngine.class.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/databases/divvydose.php" afterPath="$PROJECT_DIR$/core/databases/divvydose.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/includes/header.php" afterPath="$PROJECT_DIR$/core/includes/header.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/main.php" afterPath="$PROJECT_DIR$/core/main.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/includes/main.php" afterPath="$PROJECT_DIR$/core/includes/main.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/v1.iml" afterPath="$PROJECT_DIR$/.idea/v1.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="" />
     <ignored path="v1.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -98,8 +87,8 @@
       <file leaf-file-name="divvydose.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/databases/divvydose.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27567568">
-              <caret line="62" column="13" selection-start-line="62" selection-start-column="13" selection-end-line="62" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.34054053">
+              <caret line="66" column="52" selection-start-line="66" selection-start-column="52" selection-end-line="66" selection-end-column="52" />
               <folding>
                 <element signature="e#7#358#0#PHP" expanded="false" />
                 <element signature="e#385#637#2#PHP" expanded="false" />
@@ -632,8 +621,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/databases/divvydose.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27567568">
-          <caret line="62" column="13" selection-start-line="62" selection-start-column="13" selection-end-line="62" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.34054053">
+          <caret line="66" column="52" selection-start-line="66" selection-start-column="52" selection-end-line="66" selection-end-column="52" />
           <folding>
             <element signature="e#7#358#0#PHP" expanded="false" />
             <element signature="e#385#637#2#PHP" expanded="false" />
