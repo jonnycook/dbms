@@ -16,7 +16,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
-		var_dump($user);
+
 		if ($user['patientId']) {
 			if ($user['patientId'] == 'DUMMY') {
 				$prescriptions = array(
