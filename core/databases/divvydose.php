@@ -1,5 +1,8 @@
 <?php
 
+define('QS1', true);
+
+
 function qs1Get($url) {
 	$mongo = new MongoClient();
 	$id = md5($url);
@@ -23,7 +26,6 @@ return array(
 		else {
 			define('QS1_SERVER', '52.27.135.117');
 			define('QS1_PHARMACY', 'divvyDOSE');
-			define('QS1', true);
 		}
 	},
 	'databases' => array(
