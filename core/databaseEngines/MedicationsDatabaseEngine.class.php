@@ -18,6 +18,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
 
 		if ($model == 'Prescription' && $relName == 'user') {
+			var_dump($id);
 			list($userId, $rxNumber) = explode('-', $id);
 			$value = $userId;
 			return true;
