@@ -15,15 +15,14 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
-
 		if ($model == 'Prescription' && $relName == 'user') {
-			var_dump($id);
 			list($userId, $rxNumber) = explode('-', $id);
 			$value = $userId;
 			return true;
 		}
 		else if ($model == 'User' && $relName == 'prescriptions') {
+		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
+
 		if ($user['patientId']) {
 			if ($user['patientId'] == 'DUMMY') {
 				$prescriptions = array(
