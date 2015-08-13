@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="" />
+    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/includes/main.php" afterPath="$PROJECT_DIR$/core/includes/main.php" />
+    </list>
     <ignored path="v1.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -55,8 +57,8 @@
       <file leaf-file-name="main.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/includes/main.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.49513513">
-              <caret line="641" column="155" selection-start-line="641" selection-start-column="141" selection-end-line="641" selection-end-column="155" />
+            <state vertical-scroll-proportion="0.51135135">
+              <caret line="641" column="185" selection-start-line="641" selection-start-column="185" selection-end-line="641" selection-end-column="185" />
               <folding>
                 <element signature="e#16924#16995#0#PHP" expanded="false" />
               </folding>
@@ -652,8 +654,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/includes/main.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49513513">
-          <caret line="641" column="155" selection-start-line="641" selection-start-column="141" selection-end-line="641" selection-end-column="155" />
+        <state vertical-scroll-proportion="0.51135135">
+          <caret line="641" column="185" selection-start-line="641" selection-start-column="185" selection-end-line="641" selection-end-column="185" />
           <folding>
             <element signature="e#16924#16995#0#PHP" expanded="false" />
           </folding>
