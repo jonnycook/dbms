@@ -629,7 +629,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 
 				$subscribers = resourceSubscribers($db, $resource['resource'], $resource['id'], $clientId);
 
-				if ($subscribers) {
+//				if ($subscribers) {
 					if ($instanceChanges != 'delete') {
 						$edges = nodeEdges($databaseSchema, $resource['resource'], $resource['path']);
 						$includedEdges = array();
@@ -639,7 +639,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 							}
 						}
 
-						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, array('edges' => $includedEdges));
+						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, array('edges' => $includedEdges, 'excludeReferences' => true));
 					}
 					
 					foreach ($subscribers as $subscriber) {
@@ -649,7 +649,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 							$clientChanges[$subscriber] = array_merge_recursive_distinct($clientChanges[$subscriber], $results);
 						}
 					}
-				}
+//				}
 			}
 		}
 	}
@@ -937,7 +937,7 @@ function resource($databaseSchema, $resource, $id, &$results) {
 	return resourceSubtree($databaseSchema, $resource, '', array($id), $results);
 }
 
-function resourceSubtree($databaseSchema, $resource, $basePath, $instancePath, &$results, $opts=array()) {
+function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instancePath, $opts=array()) {
 	$schema = $databaseSchema['resources'][$resource];
 
 	$options = array();
@@ -968,6 +968,12 @@ function resourceSubtree($databaseSchema, $resource, $basePath, $instancePath, &
 				}
 			}
 		}
+
+		if ($opts['excludeReferences'] && $node['references']) {
+			foreach ($node['references'] as $ref) {
+				$obj['excludeProperties'][$ref] = true;
+			}
+		}
 		unset($obj);
 	}
 
@@ -990,9 +996,83 @@ function resourceSubtree($databaseSchema, $resource, $basePath, $instancePath, &
 		}
 	}
 
+	return array($model, $options);
+}
+
+function resourceSubtree($databaseSchema, $resource, $basePath, $instancePath, &$results, $opts=array()) {
+	// $schema = $databaseSchema['resources'][$resource];
+
+	// $options = array();
+
+	// foreach ($schema['nodes'] as $path => $node) {
+	// 	if ($basePath) {
+	// 		if (substr($path, 0, strlen($basePath)) != $basePath) continue;
+	// 		$path = substr($path, strlen($basePath) + 1);
+
+	// 	}
+
+	// 	$obj = &$options;
+
+	// 	if ($path) {
+	// 		$components = explode('.', $path);
+	// 		foreach ($components as $component) {
+	// 			$obj = &$obj['propertyOptions'][$component];
+	// 		}
+	// 	}
+
+	// 	if ($node['edges'] === false) {
+	// 		$obj['relationships'] = array();
+	// 	}
+	// 	else if ($node['edges']) {
+	// 		foreach ($node['edges'] as $edge => $include) {
+	// 			if (!$include) {
+	// 				$obj['excludeProperties'][$edge] = true;
+	// 			}
+	// 		}
+	// 	}
+
+	// 	if ($opts['excludeReferences'] && $node['references']) {
+	// 		foreach ($node['references'] as $ref) {
+	// 			$obj['excludeProperties'][$ref] = true;
+	// 		}
+	// 	}
+	// 	unset($obj);
+	// }
+
+	// $resolvedPath = resolvePathInfo($databaseSchema, $resource, $basePath);
+	// $model = $resolvedPath[count($resolvedPath) - 1]['model'];
+	// $parentEdge = $databaseSchema['models'][$resolvedPath[count($resolvedPath) - 2]['model']]['relationships'][$resolvedPath[count($resolvedPath) - 2]['edge']]['inverseRelationship'];
+
+
+	// if ($parentEdge) {
+	// 	$options['excludeRelationshipInstances'][$parentEdge] = array($instancePath[count($instancePath) - 2]);
+	// }
+
+
+	// if ($opts['edges']) {
+	// 	$edges = nodeEdges($databaseSchema, $resource, $basePath);
+	// 	foreach ($edges as $edge) {
+	// 		if (!in_array($edge, $opts['edges'])) {
+	// 			$options['excludeProperties'][$edge] = true;
+	// 		}
+	// 	}
+	// }
+
+	// var_dump($options);
+
+	// return;
+
+	// if ($opts['ignoreReferences']) {
+	// 	$nodeInfo = nodeInfo($databaseSchema, $resource, $path);
+
+	// 	foreach ($)
+	// }
+
 //	if ($debug) {
 //		var_dump($basePath, $instancePath, $options);
 //	}
+
+	list($model, $options) = resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instancePath, $opts);
 
 	getObject($databaseSchema, $model, $instancePath[count($instancePath) - 1], $results, $options);
 

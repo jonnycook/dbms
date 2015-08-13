@@ -593,16 +593,47 @@ return array(
 					'edges' => array('caregivers', 'caringFor'),
 				)
 			),
+
 			'nodes' => array(
 				'caregivers.caregiverUser' => array(
-					'edges' => false
+					'edges' => false,
+
+					'references' => array('currentAddress', 'currentPaymentMethod'),
+//					'edges' => array('caregivers', 'caringFor'),
+
 				),
 				'caringFor.caredForUser' => array(
 					'edges' => array(
 						'caregivers' => false,
-						'caringFor' => false
+						'caringFor' => false,
+
+						'references' => array('currentAddress', 'currentPaymentMethod'),
+						'edges' => array('caregivers', 'caringFor'),
+
 					)
-				)
+				),
+
+				// MedicineLogEntryDose
+				'medicineLogEntries.doses' => array(
+					'references' => array('prescription'),
+				),
+				'caringFor.caredForUser.medicineLogEntries.doses' => array(
+					'references' => array('prescription'),
+				),
+
+				// Payment
+				'payments' => array(
+					'references' => array('paymentMethod'),
+				),
+				'caringFor.caredForUser.payments' => array(
+					'references' => array('paymentMethod'),
+				),
+
+				// User
+				'' => array(
+					'references' => array('currentAddress', 'currentPaymentMethod'),
+					'edges' => array('caregivers', 'caringFor'),
+				),
 			)
 		)
 	),

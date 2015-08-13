@@ -271,7 +271,8 @@ else if ($backup = $_POST['backup']) {
 	executeUpdate($backup, $databaseSchema);
 }
 else if ($_GET['test']) {
-
+	var_dump(nodePaths($databaseSchema, 'user', 'User'));
+	var_dump(resourceSubtreeOptions($databaseSchema, 'user', 'medicineLogEntries', array(), array('excludeReferences' => true)));
 //	var_dump(nodeEdges($databaseSchema, 'user', 'caringFor'));
 
 //	var_dump(resources($databaseSchema, 'User', '55bcb30d77c870a477876611'));
@@ -285,7 +286,7 @@ else if ($_GET['test']) {
 //	var_dump(resource($databaseSchema, 'user', '55bc6e3677c8e917272f9c15'));
 
 //	var_dump(resourceSubtree($databaseSchema, 'user', '', array('55bc6e3677c8e917272f9c15')));
-//	var_dump(resourceSubtree($databaseSchema, 'user', '', array('55bc6e3677c8e917272f9c15'), $results, array('edges' => array('bills'))));
+	// var_dump(resourceSubtree($databaseSchema, 'user', '', array('55bc6e3677c8e917272f9c15'), $results, array('edges' => array('bills'))));
 
 
 //	var_dump(resolvedResourcePaths($databaseSchema, 'user', 'caringFor.caredForUser.addresses', '55862c576b3e13ec390041a8'));
