@@ -627,24 +627,27 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 			foreach ($resources as $resource) {
 				$results = array();
 
-				if ($instanceChanges != 'delete') {
-					$edges = nodeEdges($databaseSchema, $resource['resource'], $resource['path']);
-					$includedEdges = array();
-					foreach ($edges as $edge) {
-						if ($instanceChanges[$edge]) {
-							$includedEdges[] = $edge;
-						}
-					}
-
-					resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, array('edges' => $includedEdges));
-				}
-
 				$subscribers = resourceSubscribers($db, $resource['resource'], $resource['id'], $clientId);
-				foreach ($subscribers as $subscriber) {
-					$clientChanges[$subscriber][$model][$id] = $instanceChanges;
 
-					if ($results) {
-						$clientChanges[$subscriber] = array_merge_recursive_distinct($clientChanges[$subscriber], $results);
+				if ($subscribers) {
+					if ($instanceChanges != 'delete') {
+						$edges = nodeEdges($databaseSchema, $resource['resource'], $resource['path']);
+						$includedEdges = array();
+						foreach ($edges as $edge) {
+							if ($instanceChanges[$edge]) {
+								$includedEdges[] = $edge;
+							}
+						}
+
+						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, array('edges' => $includedEdges));
+					}
+					
+					foreach ($subscribers as $subscriber) {
+						$clientChanges[$subscriber][$model][$id] = $instanceChanges;
+
+						if ($results) {
+							$clientChanges[$subscriber] = array_merge_recursive_distinct($clientChanges[$subscriber], $results);
+						}
 					}
 				}
 			}

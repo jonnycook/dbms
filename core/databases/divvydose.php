@@ -1,6 +1,6 @@
 <?php
 
-define('QS1', true);
+// define('QS1', true);
 
 function qs1Get($url) {
 	$mongo = new MongoClient();

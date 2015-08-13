@@ -28,7 +28,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 				$prescriptions = array(
 					array('ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth'),	
 					array('LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth'),	
-					array('ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'),	
+					array('ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'),
 					array('FISH OIL + DHA 500 MG', '6022141', 'Take three times daily by mouth'),	
 					array('MULTIVITAMIN', '1618033', 'Take once daily by mouth'),	
 					array('PROBIOTIC', '7973010', 'Take once daily by mouth'),	
