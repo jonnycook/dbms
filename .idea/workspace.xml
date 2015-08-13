@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/includes/main.php" afterPath="$PROJECT_DIR$/core/includes/main.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="v1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -57,8 +58,8 @@
       <file leaf-file-name="main.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/includes/main.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.68972975">
-              <caret line="641" column="184" selection-start-line="641" selection-start-column="184" selection-end-line="641" selection-end-column="184" />
+            <state vertical-scroll-proportion="0.4627027">
+              <caret line="630" column="29" selection-start-line="630" selection-start-column="29" selection-end-line="630" selection-end-column="29" />
               <folding>
                 <element signature="e#16924#16995#0#PHP" expanded="false" />
               </folding>
@@ -654,8 +655,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/includes/main.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.68972975">
-          <caret line="641" column="184" selection-start-line="641" selection-start-column="184" selection-end-line="641" selection-end-column="184" />
+        <state vertical-scroll-proportion="0.4627027">
+          <caret line="630" column="29" selection-start-line="630" selection-start-column="29" selection-end-line="630" selection-end-column="29" />
           <folding>
             <element signature="e#16924#16995#0#PHP" expanded="false" />
           </folding>

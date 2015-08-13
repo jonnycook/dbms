@@ -625,11 +625,10 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 			$resources = resources($databaseSchema, $model, $id);
 
 			foreach ($resources as $resource) {
-				$results = array();
-
 				$subscribers = resourceSubscribers($db, $resource['resource'], $resource['id'], $clientId);
 
-//				if ($subscribers) {
+				if ($subscribers) {
+					$results = array();
 					if ($instanceChanges != 'delete') {
 						$edges = nodeEdges($databaseSchema, $resource['resource'], $resource['path']);
 						$includedEdges = array();
@@ -649,7 +648,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 							$clientChanges[$subscriber] = array_merge_recursive_distinct($clientChanges[$subscriber], $results);
 						}
 					}
-//				}
+				}
 			}
 		}
 	}
