@@ -639,7 +639,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 							}
 						}
 
-						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, array('edges' => $includedEdges, 'excludeReferences' => false));
+						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, array('edges' => $includedEdges, 'excludeReferences' => true));
 					}
 					
 					foreach ($subscribers as $subscriber) {

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="" />
+    <list default="true" id="6e6e3036-edbd-4829-b43d-b276837b5050" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/includes/main.php" afterPath="$PROJECT_DIR$/core/includes/main.php" />
+    </list>
     <ignored path="v1.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -55,8 +57,8 @@
       <file leaf-file-name="main.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/includes/main.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.47783783">
-              <caret line="802" column="26" selection-start-line="802" selection-start-column="26" selection-end-line="802" selection-end-column="26" />
+            <state vertical-scroll-proportion="0.68972975">
+              <caret line="641" column="184" selection-start-line="641" selection-start-column="184" selection-end-line="641" selection-end-column="184" />
               <folding>
                 <element signature="e#16924#16995#0#PHP" expanded="false" />
               </folding>
@@ -88,7 +90,7 @@
         <entry file="file://$PROJECT_DIR$/core/databases/divvydose.php">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-23.19608">
-              <caret line="617" column="48" selection-start-line="617" selection-start-column="48" selection-end-line="617" selection-end-column="48" />
+              <caret line="616" column="44" selection-start-line="616" selection-start-column="44" selection-end-line="616" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -645,15 +647,15 @@
     <entry file="file://$PROJECT_DIR$/core/databases/divvydose.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-23.19608">
-          <caret line="617" column="48" selection-start-line="617" selection-start-column="48" selection-end-line="617" selection-end-column="48" />
+          <caret line="616" column="44" selection-start-line="616" selection-start-column="44" selection-end-line="616" selection-end-column="44" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/includes/main.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.47783783">
-          <caret line="802" column="26" selection-start-line="802" selection-start-column="26" selection-end-line="802" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.68972975">
+          <caret line="641" column="184" selection-start-line="641" selection-start-column="184" selection-end-line="641" selection-end-column="184" />
           <folding>
             <element signature="e#16924#16995#0#PHP" expanded="false" />
           </folding>
