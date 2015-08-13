@@ -65,6 +65,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'packaging' => 'In A Packet',
 						'type' => 'Packet',
 						'image' => "https://s3-us-west-2.amazonaws.com/divvydose/pills/$ndc.png",
+						'monographUrl' => "https://server.divvydose.com/app/v1/monograph.php?drug=$obj[DispensedDrugID]",
 					);
 				}
 			}

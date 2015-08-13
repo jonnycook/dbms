@@ -389,9 +389,10 @@ return array(
 				'days' => array('type' => 'string'),
 				'quantity' => array('type' => 'string'),
 				'startedAt' => array('type' => 'date'),
+				'monographUrl' => array('type' => 'string'),
 
 				'type' => array('type' => 'string'),
-
+				
 				'image' => array('type' => 'string'),
 
 				'directions' => array('type' => 'string'),
