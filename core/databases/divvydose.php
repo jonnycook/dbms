@@ -2,6 +2,19 @@
 
 define('QS1', true);
 
+function currentShipment($facility) {
+	$begin = mktime(0, 0, 0, 6, 1, 2015);
+	$days = floor((time() - $begin) / (60*60*24));
+	$shipment = floor(($days - ($facility - 1))/28);
+	return $shipment;
+}
+
+function shipmentDate($facility, $shipment) {
+	$begin = mktime(0, 0, 0, 6, 1, 2015);
+	return date('Y-m-d H:i:s', $begin + ($shipment * 28 + ($facility - 1)) * (60*60*24));
+}
+
+
 function qs1Get($url) {
 	$mongo = new MongoClient();
 	$id = md5($url);
@@ -214,16 +227,20 @@ return array(
 					}
 
 					if ($user['facility']) {
-						$shipmentDate = substr($user['facility'], 1);
-						$currentDate = date('j');
-						if ($shipmentDate <= $currentDate) {
-							$user['lastShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
-							$user['nextShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') + 1, $shipmentDate, date('Y')));
-						}
-						else {
-							$user['nextShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
-							$user['lastShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') - 1, $shipmentDate, date('Y')));
-						}
+						$facility = substr($user['facility'], 1);
+						$currentShipment = currentShipment($facility);
+
+						$user['lastShipment'] = shipmentDate($facility, $currentShipment);
+						$user['nextShipment'] = shipmentDate($facility, $currentShipment + 1);
+						// $currentDate = date('j');
+						// if ($shipmentDate <= $currentDate) {
+						// 	$user['lastShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
+						// 	$user['nextShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') + 1, $shipmentDate, date('Y')));
+						// }
+						// else {
+						// 	$user['nextShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
+						// 	$user['lastShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') - 1, $shipmentDate, date('Y')));
+						// }
 					}
 				}
 			),
