@@ -234,6 +234,13 @@ return array(
 					'type' => 'string'
 				),
 
+				'facility' => array(
+					'storage' => defined('QS1') ? array(
+						'db' => 'patients',
+					) : null,
+					'type' => 'string'
+				),
+
 				'timezone' => array('type' => 'int'),
 
 				'lastShipment' => array('type' => 'date'),
@@ -392,7 +399,7 @@ return array(
 				'monographUrl' => array('type' => 'string'),
 
 				'type' => array('type' => 'string'),
-				
+
 				'image' => array('type' => 'string'),
 
 				'directions' => array('type' => 'string'),
