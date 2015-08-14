@@ -228,7 +228,7 @@ return array(
 
 					if ($user['facility']) {
 						$facility = substr($user['facility'], 1);
-						$currentShipment = currentShipment($facility);
+						$currentShipment = 0;//currentShipment($facility);
 
 						$user['lastShipment'] = shipmentDate($facility, $currentShipment);
 						$user['nextShipment'] = shipmentDate($facility, $currentShipment + 1);
