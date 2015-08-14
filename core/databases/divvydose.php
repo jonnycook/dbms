@@ -212,6 +212,19 @@ return array(
 							);
 						}
 					}
+
+					if ($user['facility']) {
+						$shipmentDate = substr($user['facility'], 1);
+						$currentDate = date('j');
+						if ($shipmentDate <= $currentDate) {
+							$user['lastShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
+							$user['nextShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') + 1, $shipmentDate, date('Y')));
+						}
+						else {
+							$user['nextShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
+							$user['lastShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') - 1, $shipmentDate, date('Y')));
+						}
+					}
 				}
 			),
 			'attributes' => array(
