@@ -123,7 +123,7 @@ if ($resourceRoots = $_GET['resource']) {
 			}
 			else if ($routeSchema['type'] == 'model') {
 				if ($params['id']) {
-					getObject($databaseSchema, $params['model'], $params['id'], $results, ['owner' => true]);
+					getObject($databaseSchema, $params['model'], $params['id'], $results, ['owner' => true, 'relationships' = []]);
 					$resolvedResource = [
 						'type' => 'model',
 						'model' => $params['model'],

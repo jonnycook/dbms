@@ -11,30 +11,35 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 
 
 	private function addresses($userId) {
-		if ($this->addresses[$userId]) {
+		if (isset($this->addresses[$userId])) {
 			return $this->addresses[$userId];
 		}
 		else {
 			$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($userId)]);
-			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
-			foreach ($response as $i => $obj) {
-				if ($obj['AddressID'] == 'PERM') {
-					list($lastName, $firstName) = explode(', ',$obj['Name']);
-					$name = "$firstName $lastName";
+			if ($user['patientId'] != 'DUMMY') {
+				$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
+				foreach ($response as $i => $obj) {
+					if ($obj['AddressID'] == 'PERM') {
+						list($lastName, $firstName) = explode(', ',$obj['Name']);
+						$name = "$firstName $lastName";
+					}
+					else {
+						$name = $obj['Name'];
+					}
+					$addresses[] = [
+						'id' => $userId . '-' . $obj['AddressID'],
+						'street1' => $obj['Address'],
+						'street2' => $obj['Address2'],
+						'city' => $obj['City'],
+						'state' => $obj['State'],
+						'zip' => $obj['Zip'],
+						'name' => $name,
+						'user' => $userId,
+					];
 				}
-				else {
-					$name = $obj['Name'];
-				}
-				$addresses[] = [
-					'id' => $userId . '-' . $obj['AddressID'],
-					'street1' => $obj['Address'],
-					'street2' => $obj['Address2'],
-					'city' => $obj['City'],
-					'state' => $obj['State'],
-					'zip' => $obj['Zip'],
-					'name' => $name,
-					'user' => $userId,
-				];
+			}
+			else {
+				$addresses = [];
 			}
 			return $this->addresses = $addresses;
 		}
