@@ -187,7 +187,7 @@ return [
 					}
 
 					if ($user['trackingNumber']) {
-						// $user['lastShipmentTrackingUrl'] = "http://wwwapps.ups.com/WebTracking/track?loc=en_US&track.x=Track&trackNums=$user[trackingNumber]";
+						$user['lastShipmentTrackingUrl'] = "http://wwwapps.ups.com/WebTracking/track?loc=en_US&track.x=Track&trackNums=$user[trackingNumber]";
 					}
 
 					if ($user['divvyPacks'] && $user['patientId']) {
