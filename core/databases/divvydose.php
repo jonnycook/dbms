@@ -18,13 +18,13 @@ function shipmentDate($facility, $shipment) {
 function qs1Get($url) {
 	$mongo = new MongoClient();
 	$id = md5($url);
-	$document = $mongo->divvydose->qs1Cache->findOne(['_id' => $id]);
-	if ($document && 0) {
+	// $document = $mongo->divvydose->qs1Cache->findOne(['_id' => $id]);
+	if ($document) {
 		return $document['data'];
 	}
 	else {
 		$data = json_decode(file_get_contents($url), true);
-		$mongo->divvydose->qs1Cache->insert(['_id' => $id, 'data' => $data]);
+		// $mongo->divvydose->qs1Cache->insert(['_id' => $id, 'data' => $data]);
 		return $data;
 	}
 }
