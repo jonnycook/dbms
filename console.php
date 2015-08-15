@@ -1,7 +1,7 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <form>
   <input type="text" name="db" placeholder="DB">
-  <input type="text" name="clientId" placeholder="Client ID">
+  <input type="text" name="clientId" value="wW8tp9y1vp2Y8vH" placeholder="Client ID">
   <textarea name="update" placeholder="Update"></textarea>
   <input type="submit">
 </form>

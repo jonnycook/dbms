@@ -16,7 +16,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 		}
 		else {
 			$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($userId)]);
-			if ($user['patientId'] != 'DUMMY') {
+			if ($user['patientId'] != 'DUMMY' && $user['patientId']) {
 				$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
 				foreach ($response as $i => $obj) {
 					if ($obj['AddressID'] == 'PERM') {

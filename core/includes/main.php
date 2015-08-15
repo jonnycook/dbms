@@ -639,6 +639,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 
 				if ($subscribers) {
 					$results = [];
+					$results[$model][$id] = $instanceChanges;
 					if ($instanceChanges != 'delete') {
 						$edges = nodeEdges($databaseSchema, $resource['resource'], $resource['path']);
 						$includedEdges = [];
@@ -652,11 +653,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 					}
 					
 					foreach ($subscribers as $subscriber) {
-						$clientChanges[$subscriber][$model][$id] = $instanceChanges;
-
-						if ($results) {
-							$clientChanges[$subscriber] = array_merge_recursive_distinct($clientChanges[$subscriber], $results);
-						}
+						$clientChanges[$subscriber] = $results;
 					}
 				}
 			}
@@ -978,7 +975,7 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 		if ($node['edges'] === false) {
 			$obj['relationships'] = [];
 		}
-		else if ($node['edges']) {
+		else if (isset($node['edges'])) {
 			foreach ($node['edges'] as $edge => $include) {
 				if (!$include) {
 					$obj['excludeProperties'][$edge] = true;
@@ -986,7 +983,7 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 			}
 		}
 
-		if ($opts['excludeReferences'] && $node['references']) {
+		if ($opts['excludeReferences'] && isset($node['references'])) {
 			foreach ($node['references'] as $ref) {
 				$obj['excludeProperties'][$ref] = true;
 			}
@@ -1004,7 +1001,7 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 	}
 
 
-	if ($opts['edges']) {
+	if (isset($opts['edges'])) {
 		$edges = nodeEdges($databaseSchema, $resource, $basePath);
 		foreach ($edges as $edge) {
 			if (!in_array($edge, $opts['edges'])) {
