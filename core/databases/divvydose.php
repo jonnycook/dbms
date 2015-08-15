@@ -19,7 +19,7 @@ function qs1Get($url) {
 	$mongo = new MongoClient();
 	$id = md5($url);
 	$document = $mongo->divvydose->qs1Cache->findOne(['_id' => $id]);
-	if ($document) {
+	if ($document && 0) {
 		return $document['data'];
 	}
 	else {
@@ -379,6 +379,7 @@ return [
 		'Caregiver' => [
 			'attributes' => [
 				'notifiedWhenForgotten' => ['type' => 'bool'],
+				// 'notifiedWhenSkipped' => ['type' => 'bool'], // schema 2
 				'notifiedWhenTaken' => ['type' => 'bool'],
 				'notifiedWhenOffline' => ['type' => 'bool'],
 				'notificationDelay' => ['type' => 'interval'],
@@ -668,9 +669,9 @@ return [
 		]
 	],
 	'routes' => [
-		'/' => [
-			'type' => 'db'
-		],
+		// '/' => [
+		// 	'type' => 'db'
+		// ],
 
 		'/u' => [
 			[
@@ -692,6 +693,7 @@ return [
 			}
 		],
 
+		// TODO: only allow from super client
 		'/:model/:id' => [
 			'type' => 'model'
 		],
