@@ -21,22 +21,22 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 			return true;
 		}
 		else if ($model == 'User' && $relName == 'prescriptions') {
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
+		$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 
 		if ($user['patientId']) {
 			if ($user['patientId'] == 'DUMMY') {
-				$prescriptions = array(
-					array('ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth'),	
-					array('LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth'),	
-					array('ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'),
-					array('FISH OIL + DHA 500 MG', '6022141', 'Take three times daily by mouth'),	
-					array('MULTIVITAMIN', '1618033', 'Take once daily by mouth'),	
-					array('PROBIOTIC', '7973010', 'Take once daily by mouth'),	
-					array('LEVOTHYROXINE 125 MCG', '3182008', 'Take once daily by mouth'),	
-					array('OMEPRAZOLE 40 MG', '6934889', 'Take once daily at bedtime'),	
-				);
+				$prescriptions = [
+					['ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth'],	
+					['LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth'],	
+					['ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'],
+					['FISH OIL + DHA 500 MG', '6022141', 'Take three times daily by mouth'],	
+					['MULTIVITAMIN', '1618033', 'Take once daily by mouth'],	
+					['PROBIOTIC', '7973010', 'Take once daily by mouth'],	
+					['LEVOTHYROXINE 125 MCG', '3182008', 'Take once daily by mouth'],	
+					['OMEPRAZOLE 40 MG', '6934889', 'Take once daily at bedtime'],	
+				];
 				foreach ($prescriptions as $i => $p) {
-					$addresses[] = array(
+					$addresses[] = [
 						'id' => $id . '-' . $p[1],
 						'name' => $p[0],
 						'rxNumber' => $p[1],
@@ -47,14 +47,14 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'type' => 'Packet',
 						'image' => 'http://jonnycook.com/dd/images/' . ($i + 1) . '.png',
 						'packaging' => 'In A Packet',
-					);
+					];
 				}
 			}
 			else {
 				$response = json_decode(file_get_contents("http://" . QS1_SERVER . "/api/Patient/" . QS1_PHARMACY . "/RxProfile?patientID=$user[patientId]&ActiveScriptsOnly=true&IncludeShortTerm=true"), true);
 				foreach ($response as $i => $obj) {
 					$ndc = substr($obj['DispensedDrugNDC'], 0, 9);
-					$addresses[] = array(
+					$addresses[] = [
 						'id' => $id . '-' . $obj['RxNumber'],
 						'name' => $obj['DispensedDrugName'],
 						'rxNumber' => $obj['RxNumber'],
@@ -66,7 +66,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'type' => 'Packet',
 						'image' => "https://s3-us-west-2.amazonaws.com/divvydose/pills/$ndc.png",
 						'monographUrl' => "https://server.divvydose.com/app/v1/monograph.php?drug=$obj[DispensedDrugID]",
-					);
+					];
 				}
 			}
 			$value = $addresses;
@@ -81,7 +81,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
-		$fields = array(
+		$fields = [
 			'Address' => def($changes['attributes']['street1'], 'Address'),
 			'Address2' => def($changes['attributes']['street2'], ''),
 			'City' => def($changes['attributes']['city'], 'City'),
@@ -89,9 +89,9 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 			'Zip' => def($changes['attributes']['zipCode'], '12345'),
 			'Name' => def($changes['attributes']['name'], 'Name'),
 			'PatientID' => 'DEGESA'
-		);
+		];
 
-		$fieldsStr = array();
+		$fieldsStr = [];
 
 		foreach ($fields as $key => $value) {
 			$fieldsStr[] = "$key=$value";

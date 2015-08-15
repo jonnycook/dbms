@@ -18,7 +18,7 @@ $databaseSchema = require("databases/$databaseName.php");
 				else if ($ruleKey[0] == '@') {
 					$objectProp = substr($ruleKey, 1);
 					if ($objectProp == '*') {
-						$result = array();
+						$result = [];
 						foreach ($object as $key => $value) {
 							$result[] = mapObject($ruleValue, $value, $state, $output);
 						}
@@ -52,7 +52,7 @@ $databaseSchema = require("databases/$databaseName.php");
 
 $supplements = json_decode(file_get_contents('supplements.json'), true);
 
-mapObject($databaseSchema['models']['SupplementStrength']['storage']['config']['supplements'], $supplements, array(), $output);
+mapObject($databaseSchema['models']['SupplementStrength']['storage']['config']['supplements'], $supplements, [], $output);
 header('Content-Type: text/plain');
 var_dump($output);
 

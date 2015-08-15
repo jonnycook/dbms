@@ -1,96 +1,96 @@
 <?php
 
-return array(
-	'databases' => array(
+return [
+	'databases' => [
 		'default' => 'mysql',
-		'mysql' => array(
+		'mysql' => [
 			'type' => 'mysql',
 			'db' => 'dbms',
 			'server' => '127.0.0.1',
 			'user' => 'root',
 			'password' => '9wo7bCrA'
-		),
-		'mongodb' => array(
+		],
+		'mongodb' => [
 			'type' => 'mongodb',
 			'db' => 'dbms',
-		),
-	),
+		],
+	],
 
-	'queryProfiles' => array(
-		'default' => array(
-			'Model' => array(
-				'attributes' => array(
-					'hash' => array(
+	'queryProfiles' => [
+		'default' => [
+			'Model' => [
+				'attributes' => [
+					'hash' => [
 						'retrieval' => 'lazy'
-					)
-				),
-				'relationships' => array(
-					'children' => array(
+					]
+				],
+				'relationships' => [
+					'children' => [
 						'paged' => 10
-					)
-				)
-			)
-		)
-	),
+					]
+				]
+			]
+		]
+	],
 
-	'models' => array(
-		'Model' => array(
-			'storage' => array(
+	'models' => [
+		'Model' => [
+			'storage' => [
 				'primary' => 'mysql',
-				'config' => array(
-					'mysql' => array(
+				'config' => [
+					'mysql' => [
 						'table' => 'objects',
-					),
-					'mongodb' => array(
+					],
+					'mongodb' => [
 						'collection' => 'objects'
-					)
-				)
-			),
+					]
+				]
+			],
 			'structure' => 'Set',
-			'id' => array(
+			'id' => [
 				'type' => 'int'
-			),
-			'attributes' => array(
-				'prop' => array(
+			],
+			'attributes' => [
+				'prop' => [
 					'type' => 'string',
-				),
-				'hash' => array(
+				],
+				'hash' => [
 					'type' => 'hash',
-					'storage' => array(
+					'storage' => [
 						'db' => 'mongodb'
-					)
-				)
-			),
-			'relationships' => array(
-				'children' => array(
+					]
+				]
+			],
+			'relationships' => [
+				'children' => [
 					'type' => 'Many',
 					'model' => 'Model',
 					'structure' => 'Set', // Set, OrderedSet, ArrangedSet
 					'inverseRelationship' => 'parent',
-					'storage' => array(
+					'storage' => [
 						'foreignKey' => 'parent_id',
-					)
-				),
-				'parent' => array(
+					]
+				],
+				'parent' => [
 					'type' => 'One',
 					'model' => 'Model',
 					'inverseRelationship' => 'children',
-					'storage' => array(
+					'storage' => [
 						'key' => 'parent_id'
-					)
-				)
-			)
-		)
-	),
+					]
+				]
+			]
+		]
+	],
 
-	'routes' => array(
-		'/' => array(
+	'routes' => [
+		'/' => [
 			'type' => 'db'
-		),
+		],
 
-		'/:model/:id' => array(
+		'/:model/:id' => [
 			'type' => 'model'
-		),
+		],
 		// '/Model' => array('model' => 'Model'),
 
 		// '/settings/:id' => array(
@@ -100,5 +100,5 @@ return array(
 		// 		'collection' => 'settings',
 		// 	)
 		// )
-	)
-);
+	]
+];

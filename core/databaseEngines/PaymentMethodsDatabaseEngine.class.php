@@ -6,9 +6,6 @@ define("DECLINED", 2);
 define("ERROR", 3);
 
 class gwapi {
-
-// Initial Setting Functions
-
   function setLogin($username, $password) {
     $this->login['username'] = $username;
     $this->login['password'] = $password;
@@ -63,7 +60,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 
 	private function document($collection, $id) {
 		try {
-			return $this->db->{$collection}->findOne(array('_id' => $id));			
+			return $this->db->{$collection}->findOne(['_id' => $id]);			
 		}
 		catch (Exception $e) {
 			return null;
@@ -101,7 +98,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 			$collection = $model;
 		}
 
-		$ids = array();
+		$ids = [];
 		$cursor = $this->db->{$collection}->find();
 		foreach ($cursor as $document) {
 			$ids[] = $this->modelId($storageConfig, $document['_id']);
@@ -147,7 +144,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 						$collection = $relSchema['model'];
 					}
 
-					$cursor = $this->db->{$collection}->find(array(($foreignKey) => $id));
+					$cursor = $this->db->{$collection}->find([($foreignKey) => $id]);
 					foreach ($cursor as $document) {
 						$value[] = $this->modelId($relModelStorageConfig, $document['_id']);
 					}
@@ -180,7 +177,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 	}
 
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
-		$response = $this->gw->execute(array(
+		$response = $this->gw->execute([
 			'customer_vault' => 'add_customer',
 			'ccnumber' => $changes['attributes']['number'],
 			'ccexp' => $changes['attributes']['expMonth'] . $changes['attributes']['expYear'],
@@ -195,45 +192,55 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 			'zip' => $changes['attributes']['zip'],
 			'country' => 'US',
 			// 'phone' => $changes['attributes']['firstName'],
-		));
+		]);
 
-		$changes['attributes']['customerVaultId'] = $response['customer_vault_id'];
-		// $changes['attributes']['gwResponse'] = $response;
+		if ($response['response'] == 1) {
+			$changes['attributes']['customerVaultId'] = $response['customer_vault_id'];
+			// $changes['attributes']['gwResponse'] = $response;
 
-		for ($i = 0; $i < strlen($changes['attributes']['number']); ++$i) {
-			$number .= '*';
-		}
-		$number .= substr($changes['attributes']['number'], strlen($changes['attributes']['number']) - 4);
-		$changes['attributes']['number'] = $number;
+			for ($i = 0; $i < strlen($changes['attributes']['number']); ++$i) {
+				$number .= '*';
+			}
+			$number .= substr($changes['attributes']['number'], strlen($changes['attributes']['number']) - 4);
+			$changes['attributes']['number'] = $number;
 
 
-		if ($storageConfig['collection']) {
-			$collection = $storageConfig['collection'];
-		}
-		else {
-			$collection = $model;
-		}
+			if ($storageConfig['collection']) {
+				$collection = $storageConfig['collection'];
+			}
+			else {
+				$collection = $model;
+			}
 
-		$data = array();
-		if ($id !== null) {
-			$data['_id'] = $this->storageId($storageConfig, $id);
-		}
+			$data = [];
+			if ($id !== null) {
+				$data['_id'] = $this->storageId($storageConfig, $id);
+			}
 
-		if ($changes['attributes']) {
-			$data += $changes['attributes'];
-		}
+			if ($changes['attributes']) {
+				$data += $changes['attributes'];
+			}
 
-		if ($relationships = $changes['relationships']) {
-			foreach ($relationships as $name => $value) {
-				$relSchema = $schema['models'][$model]['relationships'][$name];
-				if ($this->embeddedStorage($schema, $model, $name)) {
-					$data[$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $name] = $value;
+			if ($relationships = $changes['relationships']) {
+				foreach ($relationships as $name => $value) {
+					$relSchema = $schema['models'][$model]['relationships'][$name];
+					if ($this->embeddedStorage($schema, $model, $name)) {
+						$data[$relSchema['storage']['key'] ? $relSchema['storage']['key'] : $name] = $value;
+					}
 				}
 			}
+
+			$this->db->{$collection}->insert($data);
+			return $this->modelId($storageConfig, $data['_id']);
+		}
+		else {
+			// TODO: errors
+			$this->errors = array(
+				'number' => array('errorString' => 'invalid', 'human' => 'Invalid credit card number.')
+			);
+			return false;
 		}
 
-		$this->db->{$collection}->insert($data);
-		return $this->modelId($storageConfig, $data['_id']);
 	}
 
 	public function update(array $schema, array $storageConfig, $model, $id, array $changes) {
@@ -255,7 +262,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 		}
 
 		if ($changes['attributes']) {
-			$update = array('$set' => $changes['attributes']);		
+			$update = ['$set' => $changes['attributes']];		
 		}
 
 		if ($relationships = $changes['relationships']) {
@@ -268,11 +275,11 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 		}
 
 		if ($update) {
-			$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));
+			$this->db->{$collection}->update(['_id' => $this->storageId($storageConfig, $id)], $update, ['upsert' => true]);
 
 			$document = $this->document($collection, $this->storageId($storageConfig, $id));
 
-			$gwUpdate = array(
+			$gwUpdate = [
 				'customer_vault' => 'update_customer',
 				'customer_vault_id' => $document['customerVaultId'],
 				'ccexp' => $document['expMonth'] . $document['expYear'],
@@ -283,7 +290,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 				'city' => $document['city'],
 				'state' => $document['state'],
 				'zip' => $document['zip'],
-			);
+			];
 
 			if ($orgNumber) {
 				$gwUpdate['ccnumber'] = $orgNumber;
@@ -319,7 +326,7 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 				}
 
 				if ($update) {
-					$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));
+					$this->db->{$collection}->update(['_id' => $this->storageId($storageConfig, $id)], $update, ['upsert' => true]);
 				}
 			}
 		}
@@ -336,13 +343,13 @@ class PaymentMethodsStorageEngine extends DatabaseEngine {
 		$document = $this->document($collection, $this->storageId($storageConfig, $id));
 
 		if ($document['customerVaultId']) {
-			$this->gw->execute(array(
+			$this->gw->execute([
 				'customer_vault' => 'delete_customer',
 				'customer_vault_id' => $document['customerVaultId'],
-			));			
+			]);			
 		}
 
-		$this->db->{$collection}->remove(array('_id' => $this->storageId($storageConfig, $id)));
+		$this->db->{$collection}->remove(['_id' => $this->storageId($storageConfig, $id)]);
 	}
 
 	public function truncate(array $schema, array $storageConfig, $model) {

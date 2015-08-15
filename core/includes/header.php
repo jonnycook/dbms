@@ -20,25 +20,25 @@ function mongoClient() {
 
 function terminateClient($clientId) {
 	$mongo = mongoClient();
-	$clientDocument = $mongo->clients->findOne(array('_id' => makeClientId($clientId)));
+	$clientDocument = $mongo->clients->findOne(['_id' => makeClientId($clientId)]);
 	if ($clientDocument['subscribedTo']) {
 		foreach ($clientDocument['subscribedTo'] as $resource) {
 			unset($resource['schemaVersion']);
-			$mongo->resources->update(array('_id' => $resource), array('$pull' => array('subscribers' => $clientId)));
+			$mongo->resources->update(['_id' => $resource], ['$pull' => ['subscribers' => $clientId]]);
 		}
 	}
 
-	$mongo->clients->remove(array('_id' => makeClientId($clientId)));
+	$mongo->clients->remove(['_id' => makeClientId($clientId)]);
 }
 
 function httpPost($url, $data) {
-	$options = array(
-    'http' => array(
+	$options = [
+    'http' => [
 			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
 			'method'  => 'POST',
 			'content' => http_build_query($data),
-    ),
-	);
+    ],
+	];
 	$context  = stream_context_create($options);
 	return file_get_contents($url, false, $context);
 }

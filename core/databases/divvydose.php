@@ -18,20 +18,20 @@ function shipmentDate($facility, $shipment) {
 function qs1Get($url) {
 	$mongo = new MongoClient();
 	$id = md5($url);
-	$document = $mongo->divvydose->qs1Cache->findOne(array('_id' => $id));
+	$document = $mongo->divvydose->qs1Cache->findOne(['_id' => $id]);
 	if ($document) {
 		return $document['data'];
 	}
 	else {
 		$data = json_decode(file_get_contents($url), true);
-		$mongo->divvydose->qs1Cache->insert(array('_id' => $id, 'data' => $data));
+		$mongo->divvydose->qs1Cache->insert(['_id' => $id, 'data' => $data]);
 		return $data;
 	}
 }
 
-return array(
+return [
 	'init' => function($client) {
-		if ($client['params']['dev'] && false) {
+		if ($client['params']['dev'] || 1) {
 			define('QS1_SERVER', 'sandbox.qs1api.com');
 			define('QS1_PHARMACY', 'VendorTest');
 		}
@@ -40,34 +40,37 @@ return array(
 			define('QS1_PHARMACY', 'divvyDOSE');
 		}
 	},
-	'databases' => array(
+	'databases' => [
 		'default' => 'mongodb',
-		'mongodb' => array(
+		'mongodb' => [
 			'type' => 'mongodb',
 			'db' => 'divvydose',
-		),
-		'supplements' => array(
+		],
+		'supplements' => [
 			'type' => 'json',
 			'file' => 'supplements.json',
-			'attributeNameMapping' => array('underscores' => 'camelCase'),
-		),
-		'addresses' => array(
+			'attributeNameMapping' => ['underscores' => 'camelCase'],
+		],
+		'addresses' => [
 			'type' => 'addresses'
-		),
-		'medications' => array(
+		],
+		'insurance' => [
+			'type' => 'insurance'
+		],
+		'medications' => [
 			'type' => 'medications'
-		),
-		'patients' => array(
+		],
+		'patients' => [
 			'type' => 'patients',
-		),
-		'paymentMethods' => array(
+		],
+		'paymentMethods' => [
 			'type' => 'paymentMethods',
 			'db' => 'divvydose',
-		)
-	),
-	'models' => array(
-		'User' => array(
-			'storage' => array(
+		]
+	],
+	'models' => [
+		'User' => [
+			'storage' => [
 				// 'distributeUpdate' => function($db, $id, $model, $oid) {
 				// 	if ($model == 'User') {
 				// 		return $db->subscribers($db->resolveRel('User', $id, array('caringFor.caredForUser', 'caregivers.caregiverUser')));
@@ -82,100 +85,100 @@ return array(
 						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
 						date_default_timezone_set(timezone_name_from_abbr('', -$user['timezone']*60, 0));
-						$user['divvyPacks'] = array(
-			        date('Y-m-d') => array(
-			            "prescriptions" => array(
-			                "06001164" => array(
+						$user['divvyPacks'] = [
+			        date('Y-m-d') => [
+			            "prescriptions" => [
+			                "06001164" => [
 			                    "name" => "ATORVOSTATIN 20 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
-			                ),
-			                "0112358" => array(
+			                ],
+			                "0112358" => [
 			                    "name" => "LISINOPRIL 20 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
-			                ),
-			                "8675309" => array(
+			                ],
+			                "8675309" => [
 			                    "name" => "ASPIRIN 81 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
-			                ),
-			                "6022141" => array(
+			                ],
+			                "6022141" => [
 			                    "name" => "FISH OIL + DHA 500 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take three times daily by mouth"
-			                ),
-			                "1618033" => array(
+			                ],
+			                "1618033" => [
 			                    "name" => "MULTIVITAMIN", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
-			                ),
-			                "7973010" => array(
+			                ],
+			                "7973010" => [
 			                    "name" => "PROBIOTIC", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
-			                ),
-			                "3182008" => array(
+			                ],
+			                "3182008" => [
 			                    "name" => "LEVOTHYROXINE 125 MCG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily by mouth"
-			                ),
-			                "6934889" => array(
+			                ],
+			                "6934889" => [
 			                    "name" => "OMEPRAZOLE 40 MG", 
 			                    "prescriber" => "Doctor Jones", 
 			                    "sig" => "Take once daily at bedtime"
-			                ),
-			            ), 
-			            "packets" => array(
-			                array(
+			                ],
+			            ], 
+			            "packets" => [
+			                [
 			                    "time" => date('Y-m-d H:i:s', mktime(date('H') + 1, 0, 0, date('m'), date('d'), date('Y'))), 
-			                    "doses" => array(
-			                        array(
+			                    "doses" => [
+			                        [
 			                            "rxNumber" => "06001164", 
 			                            "quantity" => "1.00"
-			                        ),
-			                        array(
+			                        ],
+			                        [
 			                            "rxNumber" => "0112358", 
 			                            "quantity" => "1.00"
-			                        ),
-			                        array(
+			                        ],
+			                        [
 			                            "rxNumber" => "8675309", 
 			                            "quantity" => "1.00"
-			                        ),
-			                        array(
+			                        ],
+			                        [
 			                            "rxNumber" => "6022141", 
 			                            "quantity" => "1.00"
-			                        ),
-			                        array(
+			                        ],
+			                        [
 			                            "rxNumber" => "1618033", 
 			                            "quantity" => "1.00"
-			                        ),
-			                        array(
+			                        ],
+			                        [
 			                            "rxNumber" => "7973010", 
 			                            "quantity" => "1.00"
-			                        ),
-			                        array(
+			                        ],
+			                        [
 			                            "rxNumber" => "3182008", 
 			                            "quantity" => "1.00"
-			                        ),
-			                        array(
+			                        ],
+			                        [
 			                            "rxNumber" => "6934889", 
 			                            "quantity" => "1.00"
-			                        ),
-			                    )
-			                ), 
-			                array(
+			                        ],
+			                    ]
+			                ], 
+			                [
 			                    "time" => date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'), date('m'), date('d') + 1, date('Y'))), 
-			                    "doses" => array(
-			                        array(
+			                    "doses" => [
+			                        [
 			                            "rxNumber" => "06001164", 
 			                            "quantity" => "1.00"
-			                        )
-			                    )
-			                )
-			            )
-			        )
-		       	);
+			                        ]
+			                    ]
+			                ]
+			            ]
+			        ]
+		       	];
 						date_default_timezone_set($timezone);
 						// $user['lastShipment'] = date('Y-m-d H:i:s', mktime(date('H'), 0, 0, date('m'), 3, date('Y')));
 						$user['ssn'] = '5555';
@@ -192,23 +195,23 @@ return array(
 							else {
 								$prescriber = $rx['PrescriberName'];
 							}
-							$rxData[$rx['RxNumber']] = array(
+							$rxData[$rx['RxNumber']] = [
 								'ndc' => substr($rx['DispensedDrugNDC'], 0, 9),
 								'name' => $rx['DispensedDrugName'],
 								'sig' => $rx['SIG'],
 								'prescriber' => $prescriber,
-							);
+							];
 						}
 
 						foreach ($user['divvyPacks'] as $beginDate => $divvyPack) {
-							$rxs = array();
+							$rxs = [];
 							foreach ($divvyPack as $dose) {
 								if (!$rxs[$rxNumber = $dose['rxNumber']]) {
-									$rxs[$rxNumber] = array(
+									$rxs[$rxNumber] = [
 										'prescriber' => $rxData[$rxNumber]['prescriber'],
 										'name' => $rxData[$rxNumber]['name'],
 										'sig' => $rxData[$rxNumber]['sig']
-									);
+									];
 								}
 								if (!$packets[$dose['time']]) {
 									$packets[$dose['time']]['time'] = $dose['time'];
@@ -219,10 +222,10 @@ return array(
 								$packets[$time]['doses'][] = $dose;
 							}
 
-							$user['divvyPacks'][$beginDate] = array(
+							$user['divvyPacks'][$beginDate] = [
 								'prescriptions' => $rxs,
 								'packets' => array_values($packets),
-							);
+							];
 						}
 					}
 
@@ -243,468 +246,457 @@ return array(
 						// }
 					}
 				}
-			),
-			'attributes' => array(
-				'firstName' => array(
+			],
+			'attributes' => [
+				'firstName' => [
 					'type' => 'string', 
 					// 'storage' => array(
 					// 	'db' => 'patients',
 					// )
-				),
-				'lastName' => array('type' => 'string'),
+				],
+				'lastName' => ['type' => 'string'],
 
-				'sex' => array('type' => 'string'),
-				'email' => array('type' => 'string'),
-				'dateOfBirth' => array('type' => 'date'),
-				'phoneNumber' => array('type' => 'string'),
-				'ssn' => array(
-					'storage' => defined('QS1') ? array(
+				'sex' => ['type' => 'string'],
+				'email' => ['type' => 'string'],
+				'dateOfBirth' => ['type' => 'date'],
+				'phoneNumber' => ['type' => 'string'],
+				'ssn' => [
+					'storage' => defined('QS1') ? [
 						'db' => 'patients',
-					) : null,
+					] : null,
 					'type' => 'string'
-				),
+				],
 
-				'facility' => array(
-					'storage' => defined('QS1') ? array(
+				'facility' => [
+					'storage' => defined('QS1') ? [
 						'db' => 'patients',
-					) : null,
+					] : null,
 					'type' => 'string'
-				),
+				],
 
-				'timezone' => array('type' => 'int'),
+				'timezone' => ['type' => 'int'],
 
-				'lastShipment' => array('type' => 'date'),
-				'lastShipmentTrackingUrl' => array('type' => 'string'),
-				'nextShipment' => array('type' => 'date'),
+				'lastShipment' => ['type' => 'date'],
+				'lastShipmentTrackingUrl' => ['type' => 'string'],
+				'nextShipment' => ['type' => 'date'],
 
-				'outstandingBalance' => array('type' => 'float'),
+				'outstandingBalance' => ['type' => 'float'],
 
-				'lastPayment' => array('type' => 'float'),
-				'lastPaymentTime' => array('type' => 'datetime'),
+				'lastPayment' => ['type' => 'float'],
+				'lastPaymentTime' => ['type' => 'datetime'],
 
-				'divvyPacks' => array('type' => 'object'),
+				'divvyPacks' => ['type' => 'object'],
 
-				'picture' => array('type' => 'string'),
-				'patientId' => array('type' => 'string'),
+				'picture' => ['type' => 'string'],
+				'patientId' => ['type' => 'string'],
 
-				'agreedToTerms' => array('type' => 'bool'),
+				'agreedToTerms' => ['type' => 'bool'],
 
-				'demo' => array('type' => 'bool'),
-			),
-			'relationships' => array(
-				'caregivers' => array(
+				'demo' => ['type' => 'bool'],
+			],
+			'relationships' => [
+				'caregivers' => [
 					'model' => 'Caregiver',
 					'type' => 'Many',
 					'inverseRelationship' => 'caredForUser',
-					// 'access' => 'owner',
-//					 'owner' => true,
-					// 'storage' => array(
-					// 	'objectOptions' => array(
-					// 		'propertyOptions' => array(
-					// 			'caregiverUser' => array(
-					// 				'getRelationships' => false
-					// 			)
-					// 		),
-					// 	)
-					// ),
-				),
-				'caringFor' => array(
+				],
+				'caringFor' => [
 					'model' => 'Caregiver',
 					'type' => 'Many',
 					'inverseRelationship' => 'caregiverUser',
-//					'owner' => true
-
-					// 'storage' => array(
-					// 	'objectObjects' => array(
-					// 		'propertyOptions' => array(
-					// 			'caredForUser' => array(
-					// 				'getRelationships' => false
-					// 			)
-					// 		),
-					// 	)
-					// ),
-
-					// 'access' => 'owner',
-				),
-				'prescriptions' => array(
-					'storage' => defined('QS1') ? array(
+				],
+				'prescriptions' => [
+					'storage' => defined('QS1') ? [
 						'db' => 'medications'
-					) : null,
+					] : null,
 					'type' => 'Many',
 					'model' => 'Prescription',
 					'inverseRelationship' => 'user',
-				),
-				'medicineLogEntries' => array(
+				],
+				'medicineLogEntries' => [
 					'model' => 'MedicineLogEntry',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				),
-				'addresses' => array(
-					'storage' => defined('QS1') ? array(
+				],
+				'addresses' => [
+					'storage' => defined('QS1') ? [
 						'db' => 'addresses'
-					) : null,
+					] : null,
 					'model' => 'Address',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				),
-				'allergies' => array(
+				],
+				'allergies' => [
 					'model' => 'Allergy',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				),
-				'conditions' => array(
+				],
+				'conditions' => [
 					'model' => 'Condition',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				),
-				'paymentMethods' => array(
+				],
+				'paymentMethods' => [
 					'model' => 'PaymentMethod',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				),
-				'insurance' => array(
+				],
+				'insurance' => [
+					'storage' => defined('QS1') ? [
+						'db' => 'insurance'
+					] : null,
 					'model' => 'Insurance',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				),
+				],
 
-				'payments' => array(
+				'payments' => [
 					'model' => 'Payment',
 					'type' => 'Many',
 					'inverseRelationship' => 'user'
-				),
-				'bills' => array(
+				],
+				'bills' => [
 					'model' => 'Bill',
 					'type' => 'Many',
 					'inverseRelationship' => 'user',
-				),
+				],
 
-				'currentAddress' => array(
+				'currentAddress' => [
 					'model' => 'Address',
 					'type' => 'One',
-				),
-				'currentPaymentMethod' => array(
+				],
+				'currentPaymentMethod' => [
 					'model' => 'PaymentMethod',
 					'type' => 'One',
-				),
-			)
-		),
+				],
+				'currentInsurance' => [
+					'model' => 'Insurance',
+					'type' => 'One',
+				],
+			]
+		],
 
-		'Caregiver' => array(
-			'attributes' => array(
-				'notifiedWhenForgotten' => array('type' => 'bool'),
-				'notifiedWhenTaken' => array('type' => 'bool'),
-				'notifiedWhenOffline' => array('type' => 'bool'),
-				'notificationDelay' => array('type' => 'interval'),
-			),
-			'relationships' => array(
-				'caregiverUser' => array(
+		'Caregiver' => [
+			'attributes' => [
+				'notifiedWhenForgotten' => ['type' => 'bool'],
+				'notifiedWhenTaken' => ['type' => 'bool'],
+				'notifiedWhenOffline' => ['type' => 'bool'],
+				'notificationDelay' => ['type' => 'interval'],
+			],
+			'relationships' => [
+				'caregiverUser' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'caringFor',
 					'owner' => true,
-				),
+				],
 
-				'caredForUser' => array(
+				'caredForUser' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'caregivers',
 					'owner' => true,
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Prescription' => array(
-			'storage' => defined('QS1') ? array(
+		'Prescription' => [
+			'storage' => defined('QS1') ? [
 				'primary' => 'medications'
-			) : null,
+			] : null,
 
-			'attributes' => array(
-				'packaging' => array('type' => 'string', 'values' => array('In A Packet', 'Separate Bottle')),
-				'frequency' => array('type' => 'string'),
-				'autoRefill' => array('type' => 'bool'),
-				'days' => array('type' => 'string'),
-				'quantity' => array('type' => 'string'),
-				'startedAt' => array('type' => 'date'),
-				'monographUrl' => array('type' => 'string'),
+			'attributes' => [
+				'packaging' => ['type' => 'string', 'values' => ['In A Packet', 'Separate Bottle']],
+				'frequency' => ['type' => 'string'],
+				'autoRefill' => ['type' => 'bool'],
+				'days' => ['type' => 'string'],
+				'quantity' => ['type' => 'string'],
+				'startedAt' => ['type' => 'date'],
+				'monographUrl' => ['type' => 'string'],
 
-				'type' => array('type' => 'string'),
+				'type' => ['type' => 'string'],
 
-				'image' => array('type' => 'string'),
+				'image' => ['type' => 'string'],
 
-				'directions' => array('type' => 'string'),
-				'name' => array('type' => 'string'),
-				'prescriber' => array('type' => 'string'),
-				'rxNumber' => array('type' => 'string'),
-				'endDate' => array('type' => 'date'),
-			),
-			'relationships' => array(
-				'user' => array(
+				'directions' => ['type' => 'string'],
+				'name' => ['type' => 'string'],
+				'prescriber' => ['type' => 'string'],
+				'rxNumber' => ['type' => 'string'],
+				'endDate' => ['type' => 'date'],
+			],
+			'relationships' => [
+				'user' => [
 					'type' => 'One',
 					'model' => 'User',
 					'inverseRelationship' => 'prescriptions',
 					'owner' => true,
-				),
-			),
-		),
+				],
+			],
+		],
 
-		'MedicineLogEntry' => array(
-			'attributes' => array(
-				'timestamp' => array('type' => 'datetime'),
-				'time' => array('type' => 'string'),
-				'event' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'user' => array(
+		'MedicineLogEntry' => [
+			'attributes' => [
+				'timestamp' => ['type' => 'datetime'],
+				'time' => ['type' => 'string'],
+				'event' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'medicineLogEntries',
 					'owner' => true,
-				),
-				'doses' => array(
+				],
+				'doses' => [
 					'model' => 'MedicineLogEntryDose',
 					'type' => 'Many',
 					'inverseRelationship' => 'medicineLogEntry'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'MedicineLogEntryDose' => array(
-			'attributes' => array(
-				'quantity' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'prescription' => array(
+		'MedicineLogEntryDose' => [
+			'attributes' => [
+				'quantity' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'prescription' => [
 					'model' => 'Prescription',
 					'type' => 'One'
-				),
-				'medicineLogEntry' => array(
+				],
+				'medicineLogEntry' => [
 					'model' => 'MedicineLogEntry',
 					'type' => 'One',
 					'inverseRelationship' => 'doses',
 					'owner' => true
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Address' => array(
-			'storage' => defined('QS1') ? array(
+		'Address' => [
+			'storage' => defined('QS1') ? [
 				'primary' => 'addresses'
-			) : null,
-			'attributes' => array(
-				'street1' => array('type' => 'string'),
-				'street2' => array('type' => 'string'),
-				'name' => array('type' => 'string'),
-				'city' => array('type' => 'string'),
-				'state' => array('type' => 'string'),
-				'zip' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'user' => array(
+			] : null,
+			'attributes' => [
+				'street1' => ['type' => 'string'],
+				'street2' => ['type' => 'string'],
+				'name' => ['type' => 'string'],
+				'city' => ['type' => 'string'],
+				'state' => ['type' => 'string'],
+				'zip' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'addresses',
 					'owner' => true
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Allergy' => array(
-			'attributes' => array(
-				'name' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'user' => array(
+		'Allergy' => [
+			'attributes' => [
+				'name' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'allergies',
 					'owner' => true,
-				)
-			)
-		),
-		'Condition' => array(
-			'attributes' => array(
-				'name' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'user' => array(
+				]
+			]
+		],
+		'Condition' => [
+			'attributes' => [
+				'name' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'conditions',
 					'owner' => true,
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'PaymentMethod' => array(
-			'storage' => array(
+		'PaymentMethod' => [
+			'storage' => [
 				'primary' => 'paymentMethods',
-			),
-			'attributes' => array(
-				'firstName' => array('type' => 'string'),
-				'lastName' => array('type' => 'string'),
-				'number' => array('type' => 'string'),
-				'type' => array('type' => 'string'),
-				'cvc' => array('type' => 'string'),
-				'expMonth' => array('type' => 'string'),
-				'expYear' => array('type' => 'string'),
+			],
+			'attributes' => [
+				'firstName' => ['type' => 'string'],
+				'lastName' => ['type' => 'string'],
+				'number' => ['type' => 'string'],
+				'type' => ['type' => 'string'],
+				'cvc' => ['type' => 'string'],
+				'expMonth' => ['type' => 'string'],
+				'expYear' => ['type' => 'string'],
 
-				'street1' => array('type' => 'string'),
-				'street2' => array('type' => 'string'),
-				'zip' => array('type' => 'string'),
-				'city' => array('type' => 'string'),
-				'state' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'user' => array(
+				'street1' => ['type' => 'string'],
+				'street2' => ['type' => 'string'],
+				'zip' => ['type' => 'string'],
+				'city' => ['type' => 'string'],
+				'state' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'paymentMethods',
 					'owner' => true,
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Insurance' => array(
-			'attributes' => array(
-				'idNumber' => array('type' => 'string'),
-				'groupNumber' => array('type' => 'string'),
-				'rxBin' => array('type' => 'string')
-			),
-			'relationships' => array(
-				'user' => array(
+		'Insurance' => [
+			'storage' => defined('QS1') ? [
+				'primary' => 'insurance'
+			] : null,
+
+			'attributes' => [
+				'idNumber' => ['type' => 'string'],
+				'groupNumber' => ['type' => 'string'],
+				'rxBin' => ['type' => 'string']
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'insurance',
 					'owner' => true,
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Payment' => array(
-			'attributes' => array(
-				'timestamp' => array('type' => 'datetime'),
-				'amount' => array('type' => 'float'),
-			),
-			'relationships' => array(
-				'user' => array(
+		'Payment' => [
+			'attributes' => [
+				'timestamp' => ['type' => 'datetime'],
+				'amount' => ['type' => 'float'],
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'payments',
 					'owner' => true,
-				),
-				'paymentMethod' => array(
+				],
+				'paymentMethod' => [
 					'model' => 'PaymentMethod',
 					'type' => 'One'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Bill' => array(
-			'attributes' => array(
-				'timestamp' => array('type' => 'datetime'),
-				'amount' => array('type' => 'float'),
-			),
-			'relationships' => array(
-				'user' => array(
+		'Bill' => [
+			'attributes' => [
+				'timestamp' => ['type' => 'datetime'],
+				'amount' => ['type' => 'float'],
+			],
+			'relationships' => [
+				'user' => [
 					'model' => 'User',
 					'type' => 'One',
 					'inverseRelationship' => 'bills',
 					'owner' => true,
-				)
-			)
-		),
-	),
-	'resources' => array(
-		'user' => array(
+				]
+			]
+		],
+	],
+	'resources' => [
+		'user' => [
 			'root' => 'User',
 
-			'models' => array(
-				'MedicineLogEntryDose' => array(
-					'references' => array('prescription'),
-				),
-				'Payment' => array(
-					'references' => array('paymentMethod'),
-				),
-				'User' => array(
-					'references' => array('currentAddress', 'currentPaymentMethod'),
-					'edges' => array('caregivers', 'caringFor'),
-				)
-			),
+			'models' => [
+				'MedicineLogEntryDose' => [
+					'references' => ['prescription'],
+				],
+				'Payment' => [
+					'references' => ['paymentMethod'],
+				],
+				'User' => [
+					'references' => ['currentAddress', 'currentPaymentMethod', 'currentInsurance'],
+					'edges' => ['caregivers', 'caringFor'],
+				]
+			],
 
-			'nodes' => array(
-				'caregivers.caregiverUser' => array(
+			'nodes' => [
+				'caregivers.caregiverUser' => [
 					'edges' => false,
 
-					'references' => array('currentAddress', 'currentPaymentMethod'),
+						'references' => ['currentAddress', 'currentPaymentMethod', 'currentInsurance'],
+
 //					'edges' => array('caregivers', 'caringFor'),
 
-				),
-				'caringFor.caredForUser' => array(
-					'edges' => array(
+				],
+				'caringFor.caredForUser' => [
+					'edges' => [
 						'caregivers' => false,
 						'caringFor' => false,
 
-						'references' => array('currentAddress', 'currentPaymentMethod'),
-						'edges' => array('caregivers', 'caringFor'),
+						'references' => ['currentAddress', 'currentPaymentMethod', 'currentInsurance'],
 
-					)
-				),
+						'edges' => ['caregivers', 'caringFor'],
+
+					]
+				],
 
 				// MedicineLogEntryDose
-				'medicineLogEntries.doses' => array(
-					'references' => array('prescription'),
-				),
-				'caringFor.caredForUser.medicineLogEntries.doses' => array(
-					'references' => array('prescription'),
-				),
+				'medicineLogEntries.doses' => [
+					'references' => ['prescription'],
+				],
+				'caringFor.caredForUser.medicineLogEntries.doses' => [
+					'references' => ['prescription'],
+				],
 
 				// Payment
-				'payments' => array(
-					'references' => array('paymentMethod'),
-				),
-				'caringFor.caredForUser.payments' => array(
-					'references' => array('paymentMethod'),
-				),
+				'payments' => [
+					'references' => ['paymentMethod'],
+				],
+				'caringFor.caredForUser.payments' => [
+					'references' => ['paymentMethod'],
+				],
 
 				// User
-				'' => array(
-					'references' => array('currentAddress', 'currentPaymentMethod'),
-					'edges' => array('caregivers', 'caringFor'),
-				),
-			)
-		)
-	),
-	'routes' => array(
-		'/' => array(
+				'' => [
+					'references' => ['currentAddress', 'currentPaymentMethod', 'currentInsurance'],
+					'edges' => ['caregivers', 'caringFor'],
+				],
+			]
+		]
+	],
+	'routes' => [
+		'/' => [
 			'type' => 'db'
-		),
+		],
 
-		'/u' => array(
-			array(
+		'/u' => [
+			[
 				'type' => 'model',
 				'params' => function($client) {
-					return array(
+					return [
 						'model' => 'User',
 						'id' => $client['userId']
-					);
+					];
 				}
-			),
-		),
+			],
+		],
 
-		'/user' => array(
+		'/user' => [
 			'type' => 'resource',
 			'resource' => 'user',
 			'id' => function($client) {
 				return $client['userId'];
 			}
-		),
+		],
 
-		'/:model/:id' => array(
+		'/:model/:id' => [
 			'type' => 'model'
-		),
-	)
-);
+		],
+	]
+];
 
 
 

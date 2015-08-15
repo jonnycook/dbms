@@ -1,125 +1,125 @@
 <?php
 
-return array(
-	'databases' => array(
+return [
+	'databases' => [
 		'default' => 'mongodb',
-		'mongodb' => array(
+		'mongodb' => [
 			'type' => 'mongodb',
 			'db' => 'imageorganizer',
-		),
-	),
+		],
+	],
 
-	'models' => array(
-		'Image' => array(
-			'attributes' => array(
-				'hash' => array('type' => 'string'),
-				'addedAt' => array('type' => 'datetime'),
-			),
-			'relationships' => array(
-				'points' => array(
+	'models' => [
+		'Image' => [
+			'attributes' => [
+				'hash' => ['type' => 'string'],
+				'addedAt' => ['type' => 'datetime'],
+			],
+			'relationships' => [
+				'points' => [
 					'model' => 'Point',
 					'type' => 'Many',
 					'inverseRelationship' => 'image'
-				),
-				'nullValues' => array(
+				],
+				'nullValues' => [
 					'model' => 'DimensionValue',
 					'type' => 'Many',
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Point' => array(
-			'attributes' => array(
-				'region' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'image' => array(
+		'Point' => [
+			'attributes' => [
+				'region' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'image' => [
 					'model' => 'Image',
 					'type' => 'One',
 					'inverseRelationship' => 'points'
-				),
-				'dimensionValues' => array(
+				],
+				'dimensionValues' => [
 					'model' => 'DimensionValue',
 					'type' => 'Many',
 					'inverseRelationship' => 'points'
-				),
-				'parent' => array(
+				],
+				'parent' => [
 					'model' => 'Point',
 					'type' => 'One',
 					'inverseRelationship' => 'points',
-				),
-				'points' => array(
+				],
+				'points' => [
 					'model' => 'Point',
 					'type' => 'Many',
 					'inverseRelationship' => 'parent'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'DimensionValue' => array(
-			'attributes' => array(
-				'label' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'dimension' => array(
+		'DimensionValue' => [
+			'attributes' => [
+				'label' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'dimension' => [
 					'model' => 'Dimension',
 					'type' => 'One',
 					'inverseRelationship' => 'values'
-				),
-				'parentValue' => array(
+				],
+				'parentValue' => [
 					'model' => 'DimensionValue',
 					'type' => 'One',
-				),
-				'points' => array(
+				],
+				'points' => [
 					'model' => 'Point',
 					'type' => 'Many',
 					'inverseRelationship' => 'dimensionValues',
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Dimension' => array(
-			'attributes' => array(
-				'name' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'values' => array(
+		'Dimension' => [
+			'attributes' => [
+				'name' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'values' => [
 					'model' => 'DimensionValue',
 					'type' => 'Many',
 					'inverseRelationship' => 'dimension'
-				),
-				'nullValue' => array(
+				],
+				'nullValue' => [
 					'model' => 'DimensionValue',
 					'type' => 'One',
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'DimensionValueDistance' => array(
-			'attributes' => array(
-				'amount' => array('type' => 'float')
-			),
+		'DimensionValueDistance' => [
+			'attributes' => [
+				'amount' => ['type' => 'float']
+			],
 
-			'relationships' => array(
-				'valueA' => array(
+			'relationships' => [
+				'valueA' => [
 					'model' => 'DimensionValue',
 					'type' => 'One',
-				),
-				'valueB' => array(
+				],
+				'valueB' => [
 					'model' => 'DimensionValue',
 					'type' => 'One',
-				),
-			)
-		),
+				],
+			]
+		],
 
-	),
+	],
 
-	'routes' => array(
-		'/' => array(
+	'routes' => [
+		'/' => [
 			'type' => 'db'
-		),
-		'/:model/:id' => array(
+		],
+		'/:model/:id' => [
 			'type' => 'model'
-		),
-	)
-);
+		],
+	]
+];

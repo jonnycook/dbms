@@ -30,7 +30,7 @@ $databaseSchema = require("databases/$databaseName.php");
 
 if ($clientId) {
 	if ($clientId == 'wW8tp9y1vp2Y8vH') {
-		$clientDocument = array();
+		$clientDocument = [];
 	}
 	else {
 		try {
@@ -40,7 +40,7 @@ if ($clientId) {
 			die('invalidClientId');
 		}
 
-		$clientDocument = mongoClient()->clients->findOne(array('_id' => $id));
+		$clientDocument = mongoClient()->clients->findOne(['_id' => $id]);
 		if (!$clientDocument) {
 			die('invalidClientId');
 		}
@@ -52,7 +52,7 @@ if ($databaseSchema['init']) {
 }
 
 if ($resourceRoots = $_GET['resource']) {
-	$params = array();
+	$params = [];
 
 	$models = array_keys($databaseSchema['models']);
 	foreach ($databaseSchema['routes'] as $route => $routeSchema) {
@@ -79,14 +79,14 @@ if ($resourceRoots = $_GET['resource']) {
 
 	if ($matched) {
 		if (!$routeSchema[0]) {
-			$routeSchemas = array($routeSchema);
+			$routeSchemas = [$routeSchema];
 		}
 		else {
 			$routeSchemas = $routeSchema;
 		}
-		$allResults = array();
+		$allResults = [];
 		foreach ($routeSchemas as $routeSchema) {
-			$results = array();
+			$results = [];
 			if (is_callable($routeSchema)) {
 				$routeSchema = $routeSchema();
 				// $params = array_merge($params, $routeSchema['params']);
@@ -117,18 +117,18 @@ if ($resourceRoots = $_GET['resource']) {
 					}
 				}
 
-				$resolvedResource = array(
+				$resolvedResource = [
 					'type' => 'db',
-				);
+				];
 			}
 			else if ($routeSchema['type'] == 'model') {
 				if ($params['id']) {
-					getObject($databaseSchema, $params['model'], $params['id'], $results, array('owner' => true));
-					$resolvedResource = array(
+					getObject($databaseSchema, $params['model'], $params['id'], $results, ['owner' => true]);
+					$resolvedResource = [
 						'type' => 'model',
 						'model' => $params['model'],
 						'id' => $params['id'],
-					);
+					];
 				}
 				else {
 					$primaryStorageName = schemaModelStorage($databaseSchema, $params['model']);
@@ -140,10 +140,10 @@ if ($resourceRoots = $_GET['resource']) {
 						getObject($databaseSchema, $params['model'], $id, $results);
 					}
 
-					$resolvedResource = array(
+					$resolvedResource = [
 						'type' => 'model',
 						'model' => $params['model'],
-					);
+					];
 				}
 			}
 			else if ($routeSchema['type'] == 'resource') {
@@ -151,10 +151,10 @@ if ($resourceRoots = $_GET['resource']) {
 
 				resource($databaseSchema, $routeSchema['resource'], $id, $results);
 
-				$resolvedResource = array(
+				$resolvedResource = [
 					'name' => $routeSchema['resource'],
 					'id' => $id,
-				);
+				];
 			}
 
 			if ($clientId && $resolvedResource) addSubscriberToResource($databaseName, $schemaVersion, $resolvedResource, $clientId);
@@ -170,16 +170,16 @@ if ($resourceRoots = $_GET['resource']) {
 		// if ($clientId) {
 		// 	addSubscriberToResources($databaseName, $schemaVersion, $clientId, $allResults);
 		// }
-		echo json_encode(array(
+		echo json_encode([
 			'path' => $resourceRoots,
 			'data' => $allResults
-		) + $resolvedResource);
+		] + $resolvedResource);
 	}
 }
 else if ($update = $_POST['update']) {
 	$update = json_decode($update, true);
 
-	$updateDoc = mongoClient()->updates->findOne(array('_id' => array('db' => $databaseName, 'id' => $update['id'])));
+	$updateDoc = mongoClient()->updates->findOne(['_id' => ['db' => $databaseName, 'id' => $update['id']]]);
 	if (!$updateDoc) {
 		foreach ($update['data'] as $model => $modelChanges) {
 			foreach ($modelChanges as $id => $instanceChanges) {
@@ -193,7 +193,11 @@ else if ($update = $_POST['update']) {
 		}
 
 		if ($withoutDelete) {
-			list($mapping, $resolvedUpdate) = executeUpdate($withoutDelete, $databaseSchema);		
+			list($mapping, $resolvedUpdate, $errors) = executeUpdate($withoutDelete, $databaseSchema);
+			if ($errors) {
+				echo json_encode((object)array('errors' => $errors));
+				exit;
+			}
 		}
 
 		if ($delete) {
@@ -204,7 +208,7 @@ else if ($update = $_POST['update']) {
 			}
 		}
 
-		distributeUpdate($databaseName, $databaseSchema, array('id' => $update['id'], 'data' => $resolvedUpdate), $clientId);
+		distributeUpdate($databaseName, $databaseSchema, ['id' => $update['id'], 'data' => $resolvedUpdate], $clientId);
 
 		if ($delete) {
 			executeUpdate($delete, $databaseSchema);
@@ -215,11 +219,11 @@ else if ($update = $_POST['update']) {
 			$response->mapping = $mapping;
 		}
 
-		mongoClient()->updates->insert(array(
-			'_id' => array('db' => $databaseName, 'id' => $update['id']),
+		mongoClient()->updates->insert([
+			'_id' => ['db' => $databaseName, 'id' => $update['id']],
 			'timestamp' => gmdate('Y-m-d H:i:s'),
 			'response' => $response
-		));
+		]);
 		echo json_encode($response);
 	}
 	else {
@@ -228,11 +232,11 @@ else if ($update = $_POST['update']) {
 	}
 }
 else if ($_GET['schema']) {
-	$schema = array(
+	$schema = [
 		'version' => $databaseSchema['version'] ? $databaseSchema['version'] : 1,
 		'models' => $databaseSchema['models'],
 		'resources' => $databaseSchema['resources'],
-	);
+	];
 
 	foreach ($schema['models'] as &$modelSchema) {
 		unset($modelSchema['storage']);
@@ -272,7 +276,7 @@ else if ($backup = $_POST['backup']) {
 }
 else if ($_GET['test']) {
 	var_dump(nodePaths($databaseSchema, 'user', 'User'));
-	var_dump(resourceSubtreeOptions($databaseSchema, 'user', 'medicineLogEntries', array(), array('excludeReferences' => true)));
+	var_dump(resourceSubtreeOptions($databaseSchema, 'user', 'medicineLogEntries', [], ['excludeReferences' => true]));
 //	var_dump(nodeEdges($databaseSchema, 'user', 'caringFor'));
 
 //	var_dump(resources($databaseSchema, 'User', '55bcb30d77c870a477876611'));

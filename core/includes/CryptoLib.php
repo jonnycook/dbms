@@ -29,7 +29,7 @@ class CryptoLib {
     private static $pepper = '+?*er*F+AY%vJ,tmwt$e[AzIy|(}(;W7]-Gw}Nazr}iD}--vA}+Jq%+$LCPsP#J#';
 
     // Ciphers used, in order of use, if you change this after encryption you will not be able to decrypt, they must support MCRYPT_MODE_CBC:
-    public static $mcryptCiphers = array(MCRYPT_SERPENT, MCRYPT_TWOFISH, MCRYPT_RIJNDAEL_256);
+    public static $mcryptCiphers = [MCRYPT_SERPENT, MCRYPT_TWOFISH, MCRYPT_RIJNDAEL_256];
 
     /**
      * Will return openssl_random_pseudo_bytes with desired length is $strong is set to true.
@@ -107,7 +107,7 @@ class CryptoLib {
         $charactersArr = array_merge(range('a', 'z'), range('A', 'Z'), range('0', '9'));
 
         $charactersCount = count($charactersArr);
-        $stringArr = array();
+        $stringArr = [];
 
         for ($character = 0; $character !== $length; $character++) {
             $stringArr[$character] = $charactersArr[self::randomInt(0, $charactersCount-1)];
@@ -297,7 +297,7 @@ class CryptoLib {
         $data = implode('_', $explodedData);
         unset($explodedData);
 
-        $hashes = array();
+        $hashes = [];
 
         for($hash = 1; $hash <= $cipherCount; $hash++) {
 

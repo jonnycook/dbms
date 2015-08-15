@@ -1,6 +1,6 @@
 <?php
 
-function loadTemplate($__name, $__params=array(), $type='html') {
+function loadTemplate($__name, $__params=[], $type='html') {
   extract($__params);
   ob_start();
   include(__DIR__."/emails/$__name.php");
@@ -10,7 +10,7 @@ function loadTemplate($__name, $__params=array(), $type='html') {
   if ($type == 'html') {
     $body = nl2br($body);
   }
-  return array('body' => $body, 'subject' => $subject);
+  return ['body' => $body, 'subject' => $subject];
 }
 
 

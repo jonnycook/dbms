@@ -17,7 +17,7 @@ class MysqlDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	private function setPart(array $schema, $model, array $changes) {
-		$setPart = array();
+		$setPart = [];
 		if ($attributes = $changes['attributes']) {
 			foreach ($attributes as $name => $value) {
 				$value = mysql_real_escape_string($value);

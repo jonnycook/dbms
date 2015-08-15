@@ -1,7 +1,7 @@
 <?php
 
-return array(
-	'databases' => array(
+return [
+	'databases' => [
 		'default' => 'mongodb',
 		// 'mysql' => array(
 		// 	'type' => 'mysql',
@@ -10,11 +10,11 @@ return array(
 		// 	'user' => 'root',
 		// 	'password' => '9wo7bCrA'
 		// ),
-		'mongodb' => array(
+		'mongodb' => [
 			'type' => 'mongodb',
 			'db' => 'life',
-		),
-	),
+		],
+	],
 
 	// 'queryProfiles' => array(
 	// 	'default' => array(
@@ -33,237 +33,237 @@ return array(
 	// 	)
 	// ),
 
-	'models' => array(
-		'Activity' => array(
-			'attributes' => array(
-				'name' => array(
+	'models' => [
+		'Activity' => [
+			'attributes' => [
+				'name' => [
 					'type' => 'string',
-				),
-			),
-			'relationships' => array(
-				'instances' => array(
+				],
+			],
+			'relationships' => [
+				'instances' => [
 					'type' => 'Many',
 					'model' => 'Instance',
 					'structure' => 'OrderedSet', // Set, OrderedSet, ArrangedSet
 					'inverseRelationship' => 'activity',
-					'storage' => array(
+					'storage' => [
 						'foreignKey' => 'activity_id',
-					)
-				)
-			)
-		),
+					]
+				]
+			]
+		],
 
-		'ActivityPlan' => array(
-			'attributes' => array(
-				'date' => array('type' => 'string'),
-				'time' => array('type' => 'duration'),
-				'completed' => array('type' => 'bool')
-			),
-			'relationships' => array(
-				'activity' => array(
+		'ActivityPlan' => [
+			'attributes' => [
+				'date' => ['type' => 'string'],
+				'time' => ['type' => 'duration'],
+				'completed' => ['type' => 'bool']
+			],
+			'relationships' => [
+				'activity' => [
 					'model' => 'Activity',
 					'type' => 'One'
-				),
-				'day' => array(
+				],
+				'day' => [
 					'model' => 'Day',
 					'type' => 'One',
 					'inverseRelationship' => 'activityPlans'
-				),
-			)
-		),
+				],
+			]
+		],
 
-		'Instance' => array(
-			'attributes' => array(
-				'begin' => array('type' => 'datetime'),
-				'end' => array('type' => 'datetime'),
-				'comment' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'activity' => array(
+		'Instance' => [
+			'attributes' => [
+				'begin' => ['type' => 'datetime'],
+				'end' => ['type' => 'datetime'],
+				'comment' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'activity' => [
 					'type' => 'One',
 					'model' => 'Activity',
 					'structure' => 'OrderedSet', // Set, OrderedSet, ArrangedSet
 					'inverseRelationship' => 'instances',
-					'storage' => array(
+					'storage' => [
 						'key' => 'activity_id',
-					)
-				)
-			)
-		),
-		'Goal' => array(
-			'attributes' => array(
-				'name' => array(
+					]
+				]
+			]
+		],
+		'Goal' => [
+			'attributes' => [
+				'name' => [
 					'type' => 'string'
-				)
-			)
-		),
-		'Day' => array(
-			'attributes' => array(
-				'begin' => array(
+				]
+			]
+		],
+		'Day' => [
+			'attributes' => [
+				'begin' => [
 					'type' => 'datetime',
-				),
-				'end' => array(
+				],
+				'end' => [
 					'type' => 'datetime',
-				),
-				'intendedEnd' => array(
+				],
+				'intendedEnd' => [
 					'type' => 'datetime',
-				)
-			),
-			'relationships' => array(
-				'activityPlans' => array(
+				]
+			],
+			'relationships' => [
+				'activityPlans' => [
 					'type' => 'Many',
 					'model' => 'ActivityPlan',
 					'inverseRelationship' => 'day'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'JournalEntry' => array(),
+		'JournalEntry' => [],
 
-		'ScheduleItemType' => array(
-			'attributes' => array(
-				'label' => array('type' => 'string'),
-				'sedentary' => array('type' => 'bool'),
-				'active' => array('type' => 'bool'),
-				'stimulating' => array('type' => 'bool'),
-			),
-			'relationships' => array(
-				'activities' => array(
+		'ScheduleItemType' => [
+			'attributes' => [
+				'label' => ['type' => 'string'],
+				'sedentary' => ['type' => 'bool'],
+				'active' => ['type' => 'bool'],
+				'stimulating' => ['type' => 'bool'],
+			],
+			'relationships' => [
+				'activities' => [
 					'model' => 'Activity',
 					'type' => 'Many',
-				),
-				'rules' => array(
+				],
+				'rules' => [
 					'model' => 'ScheduleItemTypeRule',
 					'type' => 'Many',
 					'inverseRelationship' => 'type'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'ScheduleItemTypeRule' => array(
-			'attributes' => array(
+		'ScheduleItemTypeRule' => [
+			'attributes' => [
 				// fixed
-				'start' => array('type' => 'string'),
-				'length' => array('type' => 'duration'),
+				'start' => ['type' => 'string'],
+				'length' => ['type' => 'duration'],
 				
 				// distributed
-				'weight' => array('type' => 'int'),
-				'priority' => array('type' => 'int'),
-				'minTime' => array('type' => 'duration'),
-				'maxTime' => array('type' => 'duration'),
-				'minBlockSize' => array('type' => 'duration'),
-				'maxBlockSize' => array('type' => 'duration'),
-			),
-			'relationships' => array(
-				'day' => array(
+				'weight' => ['type' => 'int'],
+				'priority' => ['type' => 'int'],
+				'minTime' => ['type' => 'duration'],
+				'maxTime' => ['type' => 'duration'],
+				'minBlockSize' => ['type' => 'duration'],
+				'maxBlockSize' => ['type' => 'duration'],
+			],
+			'relationships' => [
+				'day' => [
 					'model' => 'Day',
 					'type' => 'One',
-				),
-				'type' => array(
+				],
+				'type' => [
 					'model' => 'ScheduleItemType',
 					'type' => 'One',
 					'inverseRelationship' => 'rules'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Schedule' => array(
-			'attributes' => array(
-				'begin' => array('type' => 'datetime'),
-				'end' => array('type' => 'datetime'),
-				'firstBlock' => array('type' => 'datetime'),
-			),
-			'relationships' => array(
-				'items' => array(
+		'Schedule' => [
+			'attributes' => [
+				'begin' => ['type' => 'datetime'],
+				'end' => ['type' => 'datetime'],
+				'firstBlock' => ['type' => 'datetime'],
+			],
+			'relationships' => [
+				'items' => [
 					'model' => 'ScheduleItem',
 					'type' => 'Many',
 					'inverseRelationship' => 'schedule',
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'ScheduleItem' => array(
-			'attributes' => array(
-				'begin' => array('type' => 'datetime'),
-				'end' => array('type' => 'datetime'),
+		'ScheduleItem' => [
+			'attributes' => [
+				'begin' => ['type' => 'datetime'],
+				'end' => ['type' => 'datetime'],
 
-				'started' => array('type' => 'datetime'),
-				'finished' => array('type' => 'datetime'),
-			),
-			'relationships' => array(
-				'schedule' => array(
+				'started' => ['type' => 'datetime'],
+				'finished' => ['type' => 'datetime'],
+			],
+			'relationships' => [
+				'schedule' => [
 					'model' => 'Schedule',
 					'type' => 'One',
 					'inverseRelationship' => 'items'
-				),
-				'type' => array(
+				],
+				'type' => [
 					'model' => 'ScheduleItemType',
 					'type' => 'One',
 					'inverseRelationship' => 'items',
-				),
-			)
-		),
+				],
+			]
+		],
 
-		'ShuffleState' => array(
-			'attributes' => array(
-				'nextBlockTime' => array('type' => 'duration')
-			),
-			'relationships' => array(
-				'lastItem' => array(
+		'ShuffleState' => [
+			'attributes' => [
+				'nextBlockTime' => ['type' => 'duration']
+			],
+			'relationships' => [
+				'lastItem' => [
 					'type' => 'One',
 					'model' => 'ShuffleItem',
-				),
-				'nextBlockItem' => array(
+				],
+				'nextBlockItem' => [
 					'type' => 'One',
 					'model' => 'ShuffleItem',
-				),
-			)
-		),
+				],
+			]
+		],
 
-		'ShuffleItem' => array(
-			'attributes' => array(
-				'label' => array('type' => 'string'),
-				'unit' => array('type' => 'duration'),
-			),
-			'relationships' => array(
-				'activities' => array(
+		'ShuffleItem' => [
+			'attributes' => [
+				'label' => ['type' => 'string'],
+				'unit' => ['type' => 'duration'],
+			],
+			'relationships' => [
+				'activities' => [
 					'model' => 'Activity',
 					'type' => 'Many',
-				),
-				'rules' => array(
+				],
+				'rules' => [
 					'model' => 'ShuffleItemRule',
 					'type' => 'Many',
 					'inverseRelationship' => 'item',
-				),
-				'bodyStateValues' => array(
+				],
+				'bodyStateValues' => [
 					'model' => 'BodyStateValue',
 					'type' => 'Many',
 					'inverseRelationship' => 'item'
-				),
-				'blocks' => array(
+				],
+				'blocks' => [
 					'model' => 'ShuffleItemBlock',
 					'type' => 'Many',
 					'inverseRelationship' => 'shuffleItem',
-				)
-			),
-		),
+				]
+			],
+		],
 
-		'ShuffleItemBlock' => array(
-			'attributes' => array(
-				'length' => array('type' => 'duration'),
-				'finished' => array('type' => 'bool'),
+		'ShuffleItemBlock' => [
+			'attributes' => [
+				'length' => ['type' => 'duration'],
+				'finished' => ['type' => 'bool'],
 
-				'begin' => array('type' => 'datetime'),
-				'end' => array('type' => 'datetime'),
-			),
-			'relationships' => array(
-				'shuffleItem' => array(
+				'begin' => ['type' => 'datetime'],
+				'end' => ['type' => 'datetime'],
+			],
+			'relationships' => [
+				'shuffleItem' => [
 					'model' => 'ShuffleItem',
 					'type' => 'One',
 					'inverseRelationship' => 'blocks'
-				)
-			)
-		),
+				]
+			]
+		],
 
 		// 'ShuffleItemInstance' => array(
 		// 	'attributes' => array(
@@ -279,484 +279,484 @@ return array(
 		// 	)
 		// ),
 
-		'BodyState' => array(
-			'attributes' => array(
-				'label' => array('type' => 'string'),
-				'based' => array('type' => 'string', 'values' => array('time', 'unit'))
-			)
-		),
+		'BodyState' => [
+			'attributes' => [
+				'label' => ['type' => 'string'],
+				'based' => ['type' => 'string', 'values' => ['time', 'unit']]
+			]
+		],
 
-		'CurrentBodyState' => array(
-			'attributes' => array(
-				'timestamp' => array('type' => 'datetime')
-			),
-			'relationships' => array(
-				'values' => array(
+		'CurrentBodyState' => [
+			'attributes' => [
+				'timestamp' => ['type' => 'datetime']
+			],
+			'relationships' => [
+				'values' => [
 					'model' => 'CurrentBodyStateValue',
 					'type' => 'Many',
 					'inverseRelationship' => 'currentBodyState'
-				),
-			)
-		),
+				],
+			]
+		],
 
-		'CurrentBodyStateValue' => array(
-			'attributes' => array(
-				'value' => array('type' => 'float')
-			),
-			'relationships' => array(
-				'state' => array(
+		'CurrentBodyStateValue' => [
+			'attributes' => [
+				'value' => ['type' => 'float']
+			],
+			'relationships' => [
+				'state' => [
 					'model' => 'BodyState',
 					'type' => 'One',
-				),
-				'currentBodyState' => array(
+				],
+				'currentBodyState' => [
 					'model' => 'CurrentBodyState',
 					'type' => 'One',
 					'inverseRelationship' => 'values',
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'BodyStateValue' => array(
-			'attributes' => array(
-				'value' => array('type' => 'float')
-			),
-			'relationships' => array(
-				'state' => array(
+		'BodyStateValue' => [
+			'attributes' => [
+				'value' => ['type' => 'float']
+			],
+			'relationships' => [
+				'state' => [
 					'model' => 'BodyState',
 					'type' => 'One',
-				),
-				'item' => array(
+				],
+				'item' => [
 					'model' => 'ShuffleItem',
 					'type' => 'One',
 					'inverseRelationship' => 'bodyStateValues'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'ShuffleItemRule' => array(
-			'attributes' => array(
-				'date' => array('type' => 'string'),
-				'minTime' => array('type' => 'duration'),
-				'maxTime' => array('type' => 'duration'),
-				'priority' => array('type' => 'int'),
-				'minBlockTime' => array('type' => 'duration'),
-				'maxBlockTime' => array('type' => 'duration'),
-			),
-			'relationships' => array(
-				'item' => array(
+		'ShuffleItemRule' => [
+			'attributes' => [
+				'date' => ['type' => 'string'],
+				'minTime' => ['type' => 'duration'],
+				'maxTime' => ['type' => 'duration'],
+				'priority' => ['type' => 'int'],
+				'minBlockTime' => ['type' => 'duration'],
+				'maxBlockTime' => ['type' => 'duration'],
+			],
+			'relationships' => [
+				'item' => [
 					'model' => 'ShuffleItem',
 					'type' => 'One',
 					'inverseRelationship' => 'rules'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Thought' => array(
-			'attributes' => array(
-				'content' => array(
+		'Thought' => [
+			'attributes' => [
+				'content' => [
 					'type' => 'string',
-				),
-				'timestamp' => array(
+				],
+				'timestamp' => [
 					'type' => 'datetime',
-				),
-			)
-		),
+				],
+			]
+		],
 
 		// '@Money' => array(
-			'FinancialWindow' => array(
-				'attributes' => array(
-					'name' => array('type' => 'string'),
-					'begin' => array('type' => 'string'),
-					'end' => array('type' => 'string'),
-				),
+			'FinancialWindow' => [
+				'attributes' => [
+					'name' => ['type' => 'string'],
+					'begin' => ['type' => 'string'],
+					'end' => ['type' => 'string'],
+				],
 
-				'relationships' => array(
-					'budgetGroups' => array(
+				'relationships' => [
+					'budgetGroups' => [
 						'type' => 'Many',
 						'model' => 'WindowBudgetGroup',
 						'inverseRelationship' => 'window',
 						'relationship' => 'Children'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'WindowBudgetGroup' => array(
-				'attributes' => array(
-					'name' => array('type' => 'string')
-				),
-				'relationships' => array(
-					'window' => array(
+			'WindowBudgetGroup' => [
+				'attributes' => [
+					'name' => ['type' => 'string']
+				],
+				'relationships' => [
+					'window' => [
 						'type' => 'One',
 						'model' => 'FinancialWindow',
 						'inverseRelationship' => 'budgetGroups'
-					),
-					'budgets' => array(
+					],
+					'budgets' => [
 						'type' => 'Many',
 						'model' => 'WindowBudget',
 						'inverseRelationship' => 'group',
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'WindowBudget' => array(
-				'attributes' => array(
-					'period' => array('type' => 'string', 'values' => array('Day', 'Week', 'Month', 'Year', 'Window', 'Portions')),
-					'amount' => array('type' => 'float'),
-				),
-				'relationships' => array(
-					'group' => array(
+			'WindowBudget' => [
+				'attributes' => [
+					'period' => ['type' => 'string', 'values' => ['Day', 'Week', 'Month', 'Year', 'Window', 'Portions']],
+					'amount' => ['type' => 'float'],
+				],
+				'relationships' => [
+					'group' => [
 						'type' => 'One',
 						'model' => 'WindowBudgetGroup',
 						'inverseRelationship' => 'budgets',
 						'relationship' => 'Parent'
-					),
-					'expense' => array(
+					],
+					'expense' => [
 						'type' => 'One',
 						'model' => 'Expense'
-					),
-					'portions' => array(
+					],
+					'portions' => [
 						'type' => 'Many',
 						'model' => 'WindowBudgetPortion',
 						'inverseRelationship' => 'budget'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'WindowBudgetPortion' => array(
-				'attributes' => array(
-					'portion' => array('type' => 'int'),
-					'amount' => array('type' => 'float'),
-				),
-				'relationships' => array(
-					'budget' => array(
+			'WindowBudgetPortion' => [
+				'attributes' => [
+					'portion' => ['type' => 'int'],
+					'amount' => ['type' => 'float'],
+				],
+				'relationships' => [
+					'budget' => [
 						'type' => 'One',
 						'model' => 'WindowBudget',
 						'inverseRelationship' => 'portions',
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'IncomePlan' => array(
-				'attributes' => array(
-					'label' => array('type' => 'string'),
-					'amount' => array('type' => 'float'),
-					'period' => array('type' => 'string'),
-					'begin' => array('type' => 'string'),
-					'end' => array('type' => 'string'),
-				)
-			),
+			'IncomePlan' => [
+				'attributes' => [
+					'label' => ['type' => 'string'],
+					'amount' => ['type' => 'float'],
+					'period' => ['type' => 'string'],
+					'begin' => ['type' => 'string'],
+					'end' => ['type' => 'string'],
+				]
+			],
 
 
-			'Expense' => array(
-				'attributes' => array(
-					'name' => array('type' => 'string'),
-				)
-			),
+			'Expense' => [
+				'attributes' => [
+					'name' => ['type' => 'string'],
+				]
+			],
 
-			'RecurringBill' => array(
-				'attributes' => array(
-					'date' => array('type' => 'int'),
-					'label' => array('type' => 'string'),
-					'amount' => array('type' => 'float')
-				),
-				'relationships' => array(
-					'payments' => array(
+			'RecurringBill' => [
+				'attributes' => [
+					'date' => ['type' => 'int'],
+					'label' => ['type' => 'string'],
+					'amount' => ['type' => 'float']
+				],
+				'relationships' => [
+					'payments' => [
 						'type' => 'Many',
 						'model' => 'RecurringBillPayment',
 						'inverseRelationship' => 'bill'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'RecurringBillPayment' => array(
-				'attributes' => array(
-					'timestamp' => array('type' => 'datetime'),
-					'amount' => array('type' => 'float')
-				),
-				'relationships' => array(
-					'bill' => array(
+			'RecurringBillPayment' => [
+				'attributes' => [
+					'timestamp' => ['type' => 'datetime'],
+					'amount' => ['type' => 'float']
+				],
+				'relationships' => [
+					'bill' => [
 						'model' => 'RecurringBill',
 						'type' => 'One',
 						'inverseRelationship' => 'payments'
-					),
-					'reserve' => array(
+					],
+					'reserve' => [
 						'type' => 'One',
 						'model' => 'MoneyReserve',
-					),
-				),
-			),
+					],
+				],
+			],
 
-			'Income' => array(
-				'attributes' => array(
-					'amount' => array('type' => 'float'),
-					'label' => array('type' => 'string')
-				),
-				'relationships' => array(
-					'payments' => array(
+			'Income' => [
+				'attributes' => [
+					'amount' => ['type' => 'float'],
+					'label' => ['type' => 'string']
+				],
+				'relationships' => [
+					'payments' => [
 						'model' => 'IncomePayment',
 						'type' => 'Many',
 						'inverseRelationship' => 'income',
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'IncomePayment' => array(
-				'attributes' => array(
-					'amount' => array('type' => 'float'),
-					'timestamp' => array('type' => 'datetime'),
-				),
-				'relationships' => array(
-					'reserve' => array(
+			'IncomePayment' => [
+				'attributes' => [
+					'amount' => ['type' => 'float'],
+					'timestamp' => ['type' => 'datetime'],
+				],
+				'relationships' => [
+					'reserve' => [
 						'type' => 'One',
 						'model' => 'MoneyReserve',
-					),
-					'income' => array(
+					],
+					'income' => [
 						'type' => 'One',
 						'model' => 'Income',
 						'inverseRelationship' => 'payments'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'MoneyReserve' => array(
-				'attributes' => array(
-					'name' => array('type' => 'string'),
-					'currency' => array('type' => 'string'),
-					'type' => array('type' => 'string'),
-					'amount' => array('type' => 'float'),
-				),
-				'relationships' => array(
-					'counts' => array(
+			'MoneyReserve' => [
+				'attributes' => [
+					'name' => ['type' => 'string'],
+					'currency' => ['type' => 'string'],
+					'type' => ['type' => 'string'],
+					'amount' => ['type' => 'float'],
+				],
+				'relationships' => [
+					'counts' => [
 						'type' => 'Many',
 						'model' => 'MoneyReserveCount',
 						'inverseRelationship' => 'reserve'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'MoneyReserveTransfer' => array(
-				'attributes' => array(
-					'timestamp' => array('type' => 'datetime'),
-					'fromAmount' => array('type' => 'float'),
-					'toAmount' => array('type' => 'float')
-				),
-				'relationships' => array(
-					'fromReserve' => array(
+			'MoneyReserveTransfer' => [
+				'attributes' => [
+					'timestamp' => ['type' => 'datetime'],
+					'fromAmount' => ['type' => 'float'],
+					'toAmount' => ['type' => 'float']
+				],
+				'relationships' => [
+					'fromReserve' => [
 						'model' => 'MoneyReserve',
 						'type' => 'One',
-					),
-					'toReserve' => array(
+					],
+					'toReserve' => [
 						'model' => 'MoneyReserve',
 						'type' => 'One'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'MoneyReserveCount' => array(
-				'attributes' => array(
-					'timestamp' => array('type' => 'datetime'),
-					'amount' => array('type' => 'float'),
-				),
-				'relationships' => array(
-					'reserve' => array(
+			'MoneyReserveCount' => [
+				'attributes' => [
+					'timestamp' => ['type' => 'datetime'],
+					'amount' => ['type' => 'float'],
+				],
+				'relationships' => [
+					'reserve' => [
 						'model' => 'MoneyReserve',
 						'type' => 'One',
 						'inverseRelationship' => 'counts'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'MoneyEvent' => array(
-				'attributes' => array(
-					'timestamp' => array('type' => 'datetime'),
-					'type' => array('type' => 'string'),
-					'amount' => array('type' => 'float'),
-				),
-				'relationships' => array(
-					'store' => array(
+			'MoneyEvent' => [
+				'attributes' => [
+					'timestamp' => ['type' => 'datetime'],
+					'type' => ['type' => 'string'],
+					'amount' => ['type' => 'float'],
+				],
+				'relationships' => [
+					'store' => [
 						'type' => 'One',
 						'model' => 'MoneyStore',
 						'inverseRelationship' => 'events',
-					),
-					'recurringBill' => array(
+					],
+					'recurringBill' => [
 						'type' => 'One',
 						'model' => 'RecurringBill',
 						'inverseRelationship' => 'payments'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'DuePayment' => array(
-				'attributes' => array(
-					'label' => array('type' => 'string'),
-					'amount' => array('type' => 'float'),
-					'timestamp' => array('type' => 'datetime'),
-					'due' => array('type' => 'datetime')
-				)
-			),
+			'DuePayment' => [
+				'attributes' => [
+					'label' => ['type' => 'string'],
+					'amount' => ['type' => 'float'],
+					'timestamp' => ['type' => 'datetime'],
+					'due' => ['type' => 'datetime']
+				]
+			],
 
-			'Loan' => array(
-				'attributes' => array(
-					'label' => array('type' => 'string'),
-					'amount' => array('type' => 'float'),
-					'timestamp' => array('type' => 'datetime'),
-				),
-				'relationships' => array(
-					'payments' => array(
+			'Loan' => [
+				'attributes' => [
+					'label' => ['type' => 'string'],
+					'amount' => ['type' => 'float'],
+					'timestamp' => ['type' => 'datetime'],
+				],
+				'relationships' => [
+					'payments' => [
 						'model' => 'LoanPayment',
 						'type' => 'Many',
 						'inverseRelationship' => 'loan'
-					)
-				)
-			),
+					]
+				]
+			],
 
-			'LoanPayment' => array(
-				'attributes' => array(
-					'timestamp' => array('type' => 'datetime'),
-					'amount' => array('type' => 'float'),
-				),
-				'relationships' => array(
-					'loan' => array(
+			'LoanPayment' => [
+				'attributes' => [
+					'timestamp' => ['type' => 'datetime'],
+					'amount' => ['type' => 'float'],
+				],
+				'relationships' => [
+					'loan' => [
 						'model' => 'Loan',
 						'type' => 'One',
 						'inverseRelationship' => 'payments',
-					),
-					'reserve' => array(
+					],
+					'reserve' => [
 						'type' => 'One',
 						'model' => 'MoneyReserve',
-					),
+					],
 
-				)
-			),
+				]
+			],
 
-			'Purchase' => array(
-				'attributes' => array(
-					'timestamp' => array('type' => 'datetime'),
-					'amount' => array('type' => 'float'),
-					'comment' => array('type' => 'string')
-				),
-				'relationships' => array(
-					'reserve' => array(
+			'Purchase' => [
+				'attributes' => [
+					'timestamp' => ['type' => 'datetime'],
+					'amount' => ['type' => 'float'],
+					'comment' => ['type' => 'string']
+				],
+				'relationships' => [
+					'reserve' => [
 						'type' => 'One',
 						'model' => 'MoneyReserve',
-					),
-					'expense' => array(
+					],
+					'expense' => [
 						'type' => 'One',
 						'model' => 'Expense'
-					),
-					'transfer' => array(
+					],
+					'transfer' => [
 						'model' => 'MoneyReserveTransfer',
 						'type' => 'One',
-					)
-				)
-			),
+					]
+				]
+			],
 		// ),
 
 
 
-		'BodyCondition' => array(
-			'attributes' => array(
-				'name' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'checkIns' => array(
+		'BodyCondition' => [
+			'attributes' => [
+				'name' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'checkIns' => [
 					'model' => 'BodyConditionCheckIn',
 					'type' => 'Many',
 					'inverseRelationship' => 'condition'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'BodyCheckIn' => array(
-			'attributes' => array(
-				'timestamp' => array('type' => 'datetime'),
-				'comment' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'conditions' => array(
+		'BodyCheckIn' => [
+			'attributes' => [
+				'timestamp' => ['type' => 'datetime'],
+				'comment' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'conditions' => [
 					'model' => 'BodyConditionCheckIn',
 					'type' => 'Many',
 					'inverseRelationship' => 'checkIn'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'BodyConditionCheckIn' => array(
-			'attributes' => array(
-				'degree' => array('type' => 'float')
-			),
-			'relationships' => array(
-				'checkIn' => array(
+		'BodyConditionCheckIn' => [
+			'attributes' => [
+				'degree' => ['type' => 'float']
+			],
+			'relationships' => [
+				'checkIn' => [
 					'model' => 'BodyCheckIn',
 					'type' => 'One',
 					'inverseRelationship' => 'conditions'
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'model' => 'BodyCondition',
 					'type' => 'One',
 					'inverseRelationship' => 'checkIns'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Meal' => array(
-			'attributes' => array(
-				'timestamp' => array('type' => 'datetime'),
-				'type' => array('type' => 'string')
-			),
-			'relationships' => array(
-				'elements' => array(
+		'Meal' => [
+			'attributes' => [
+				'timestamp' => ['type' => 'datetime'],
+				'type' => ['type' => 'string']
+			],
+			'relationships' => [
+				'elements' => [
 					'type' => 'Many',
 					'model' => 'FoodElement',
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'FoodElement' => array(
-			'attributes' => array(
-				'name' => array('type' => 'string'),
-			),
+		'FoodElement' => [
+			'attributes' => [
+				'name' => ['type' => 'string'],
+			],
 
-			'relationships' => array(
-				'elements' => array(
+			'relationships' => [
+				'elements' => [
 					'model' => 'FoodElement',
 					'type' => 'Many',
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'FoodLog' => array(
-			'attributes' => array(
-				'timestamp' => array('type' => 'datetime'),
-			),
+		'FoodLog' => [
+			'attributes' => [
+				'timestamp' => ['type' => 'datetime'],
+			],
 
-			'relationships' => array(
-				'element' => array(
+			'relationships' => [
+				'element' => [
 					'model' => 'FoodElement',
 					'type' => 'One'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'WaterContainer' => array(
-			'attributes' => array(
-				'volume' => array('type' => 'string'),
-				'started' => array('type' => 'datetime'),
-				'finished' => array('type' => 'datetime'),
-			)
-		)
+		'WaterContainer' => [
+			'attributes' => [
+				'volume' => ['type' => 'string'],
+				'started' => ['type' => 'datetime'],
+				'finished' => ['type' => 'datetime'],
+			]
+		]
 
 		// 'SleepBe'
-	),
+	],
 
-	'routes' => array(
-		'/' => array(
+	'routes' => [
+		'/' => [
 			'type' => 'db'
-		),
+		],
 
-		'/:model/:id' => array(
+		'/:model/:id' => [
 			'type' => 'model'
-		),
+		],
 		// '/Model' => array('model' => 'Model'),
 
 		// '/settings/:id' => array(
@@ -766,5 +766,5 @@ return array(
 		// 		'collection' => 'settings',
 		// 	)
 		// )
-	)
-);
+	]
+];

@@ -1,21 +1,21 @@
 <?php
 
-return array(
-	'databases' => array(
+return [
+	'databases' => [
 		'default' => 'mysql',
-		'mysql' => array(
+		'mysql' => [
 			'type' => 'mysql',
 			'db' => 'srs',
 			'server' => '127.0.0.1',
 			'user' => 'root',
 			'password' => ''
-		),
+		],
 
-		'mongodb' => array(
+		'mongodb' => [
 			'type' => 'mongodb',
 			'db' => 'srs',
-		),
-	),
+		],
+	],
 
 	// 'queryProfiles' => array(
 	// 	'default' => array(
@@ -34,44 +34,44 @@ return array(
 	// 	)
 	// ),
 
-	'models' => array(
-		'Entry' => array(
-			'storage' => array(
-				'config' => array(
-					'mysql' => array(
+	'models' => [
+		'Entry' => [
+			'storage' => [
+				'config' => [
+					'mysql' => [
 						'table' => 'srs_entries'
-					)
-				)
-			),
-			'attributes' => array(
-				'factor' => array(
+					]
+				]
+			],
+			'attributes' => [
+				'factor' => [
 					'type' => 'int',
-				),
-				'ivl' => array(
+				],
+				'ivl' => [
 					'type' => 'int',
-				),
-				'stage' => array(
+				],
+				'stage' => [
 					'type' => 'int',
-				),
-				'learning_interval' => array(
+				],
+				'learning_interval' => [
 					'type' => 'int',
-				),
-				'learning_remembered' => array(
+				],
+				'learning_remembered' => [
 					'type' => 'int',
-				),
-				'remembering_ease' => array(
+				],
+				'remembering_ease' => [
 					'type' => 'int',
-				),
-				'last_reviewed_at' => array(
+				],
+				'last_reviewed_at' => [
 					'type' => 'datetime',
-				),
-				'disabled' => array(
+				],
+				'disabled' => [
 					'type' => 'bool',
-				),
-				'sides' => array(
+				],
+				'sides' => [
 					'type' => 'string',
-					'storage' => array(
-						'dependencies' => array('mysql.record'),
+					'storage' => [
+						'dependencies' => ['mysql.record'],
 						'compute' => function($entry) {
 							switch ($entry['item_type']) {
 								case '1': $table = 'terms'; break;
@@ -85,63 +85,63 @@ return array(
 									break;
 							}
 
-							return array('front' => $front, 'back' => $back);
+							return ['front' => $front, 'back' => $back];
 						}
-					)
-				)
-			),
-			'relationships' => array(
-				'log' => array(
+					]
+				]
+			],
+			'relationships' => [
+				'log' => [
 					'type' => 'Many',
 					'model' => 'Log',
 					'structure' => 'OrderedSet', // Set, OrderedSet, ArrangedSet
 					'inverseRelationship' => 'entry',
-					'storage' => array(
+					'storage' => [
 						'foreignKey' => 'entry_id',
-					)
-				)
-			)
-		),
-		'Log' => array(
-			'storage' => array(
-				'config' => array(
-					'mysql' => array(
+					]
+				]
+			]
+		],
+		'Log' => [
+			'storage' => [
+				'config' => [
+					'mysql' => [
 						'table' => 'srs_log'
-					)
-				)
-			),
-			'attributes' => array(
-				'stage' => array(
+					]
+				]
+			],
+			'attributes' => [
+				'stage' => [
 					'type' => 'int'
-				),
-				'answer' => array(
+				],
+				'answer' => [
 					'type' => 'string'
-				),
-				'timestamp' => array(
+				],
+				'timestamp' => [
 					'type' => 'datetime'
-				)
-			),
-			'relationships' => array(
-				'entry' => array(
+				]
+			],
+			'relationships' => [
+				'entry' => [
 					'type' => 'One',
 					'model' => 'Entry',
 					'inverseRelationship' => 'log',
-					'storage' => array(
+					'storage' => [
 						'key' => 'entry_id'
-					)
-				)
-			)
-		)
-	),
+					]
+				]
+			]
+		]
+	],
 
-	'routes' => array(
-		'/' => array(
+	'routes' => [
+		'/' => [
 			'type' => 'db'
-		),
+		],
 
-		'/:model/:id' => array(
+		'/:model/:id' => [
 			'type' => 'model'
-		),
+		],
 		// '/Model' => array('model' => 'Model'),
 
 		// '/settings/:id' => array(
@@ -151,5 +151,5 @@ return array(
 		// 		'collection' => 'settings',
 		// 	)
 		// )
-	)
-);
+	]
+];

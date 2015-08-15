@@ -9,11 +9,11 @@ $clientId = CryptoLib::randomString(32);
 $mongo = mongoClient();
 
 
-$client = array(
+$client = [
 	'_id' => $clientId,
-	'subscribedTo' => array(),
+	'subscribedTo' => [],
 	'registeredAt' => gmdate('Y-m-d H:i:s'),
-);
+];
 
 if ($_GET['client']) {
 	$client += json_decode($_GET['client'], true);
@@ -25,6 +25,6 @@ if ($client['token']) {
 
 $mongo->clients->insert($client);
 
-echo json_encode(array(
+echo json_encode([
 	'id' => $clientId,
-));
+]);

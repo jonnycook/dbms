@@ -15,7 +15,7 @@ class JsonDatabaseStorageEngine extends DatabaseEngine {
 				else if ($ruleKey[0] == '@') {
 					$objectProp = substr($ruleKey, 1);
 					if ($objectProp == '*') {
-						$result = array();
+						$result = [];
 						foreach ($object as $key => $value) {
 							$result[] = self::mapObject($ruleValue, $value, $state, $output);
 						}
@@ -55,7 +55,7 @@ class JsonDatabaseStorageEngine extends DatabaseEngine {
 
 	private function initModel($model, array $storageConfig) {
 		if (!$this->models[$model]) {
-			self::mapObject($storageConfig, $this->object, array(), $output);
+			self::mapObject($storageConfig, $this->object, [], $output);
 
 			if ($this->config['attributeNameMapping']) {
 				$from = array_keys($this->config['attributeNameMapping'])[0];
@@ -63,7 +63,7 @@ class JsonDatabaseStorageEngine extends DatabaseEngine {
 			}
 
 			foreach ($output as $obj) {
-				$newObj = array();
+				$newObj = [];
 				if ($from) {
 					foreach ($obj as $key => $value) {
 						if ($from == 'underscores') {

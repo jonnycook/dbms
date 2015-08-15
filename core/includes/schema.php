@@ -71,7 +71,7 @@ function schemaModelStorageConfig(array $schema, $model, $storageName=null) {
 function schemaAllModelStorage($schema, $model) {
 	$attributes = schemaModelAttributes($schema, $model);
 	$relationships = schemaModelRelationships($schema, $model);
-	$storageNames = array();
+	$storageNames = [];
 	foreach ($attributes as $attrName => $attrSchema) {
 		$storageNames[propSchemaStorage($schema, $model, $attrSchema)] = true;
 	}

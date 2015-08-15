@@ -11,7 +11,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 
 	private function document($collection, $id) {
 		try {
-			return $this->db->{$collection}->findOne(array('_id' => $id));			
+			return $this->db->{$collection}->findOne(['_id' => $id]);			
 		}
 		catch (Exception $e) {
 			// var_dump($e);
@@ -51,7 +51,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 			$collection = $model;
 		}
 
-		$ids = array();
+		$ids = [];
 		$cursor = $this->db->{$collection}->find();
 		foreach ($cursor as $document) {
 			$ids[] = $this->modelId($storageConfig, $document['_id']);
@@ -98,7 +98,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 						$collection = $relSchema['model'];
 					}
 
-					$cursor = $this->db->{$collection}->find(array(($foreignKey) => $id));
+					$cursor = $this->db->{$collection}->find([($foreignKey) => $id]);
 					foreach ($cursor as $document) {
 						$value[] = $this->modelId($relModelStorageConfig, $document['_id']);
 					}
@@ -138,7 +138,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 			$collection = $model;
 		}
 
-		$data = array();
+		$data = [];
 		if ($id !== null) {
 			$data['_id'] = $this->storageId($storageConfig, $id);
 		}
@@ -172,7 +172,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 
 
 		if ($changes['attributes']) {
-			$update = array('$set' => $changes['attributes']);		
+			$update = ['$set' => $changes['attributes']];		
 		}
 
 		if ($relationships = $changes['relationships']) {
@@ -185,7 +185,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 		}
 
 		if ($update) {
-			$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));			
+			$this->db->{$collection}->update(['_id' => $this->storageId($storageConfig, $id)], $update, ['upsert' => true]);			
 		}
 
 
@@ -217,7 +217,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 				}
 
 				if ($update) {
-					$this->db->{$collection}->update(array('_id' => $this->storageId($storageConfig, $id)), $update, array('upsert' => true));			
+					$this->db->{$collection}->update(['_id' => $this->storageId($storageConfig, $id)], $update, ['upsert' => true]);			
 				}
 
 			}
@@ -232,7 +232,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 			$collection = $model;
 		}
 
-		$this->db->{$collection}->remove(array('_id' => $this->storageId($storageConfig, $id)));
+		$this->db->{$collection}->remove(['_id' => $this->storageId($storageConfig, $id)]);
 	}
 
 	public function truncate(array $schema, array $storageConfig, $model) {

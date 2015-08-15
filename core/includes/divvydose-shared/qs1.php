@@ -3,7 +3,7 @@
 function qs1Insert($method, $fields) {
   $methodParts = explode('/', $method);
 
-  $fieldsStr = array();
+  $fieldsStr = [];
 
   foreach ($fields as $key => $value) {
     $fieldsStr[] = "$key=$value";

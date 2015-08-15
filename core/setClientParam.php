@@ -8,7 +8,7 @@ $clientId = $_GET['id'];
 $key = $_GET['key'];
 $value = $_GET['value'];
 
-$set = array($key => $value);
+$set = [$key => $value];
 
 if ($key == 'token') {
 	if ($value) {
@@ -20,7 +20,7 @@ if ($key == 'token') {
 	}
 }
 
-$result = $mongo->clients->update(array('_id' => makeClientId($clientId)), array('$set' => $set));
+$result = $mongo->clients->update(['_id' => makeClientId($clientId)], ['$set' => $set]);
 
 if ($result['n'] == 0) {
 	echo 'invalidClientId';

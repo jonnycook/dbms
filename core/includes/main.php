@@ -60,11 +60,11 @@ function propStorage($schema, $model, $prop) {
 	$propSchema = schemaModelProperty($schema, $model, $prop);
 	if ($propSchema['storage']['compute']) {
 		$obj = new ComputeStorage($propSchema['storage']);
-		return array($obj);
+		return [$obj];
 	}
 	else {
 		$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $propSchema));
-		return array($storage, modelSchemaStorageConfig(schemaModel($schema, $model), $storageName));
+		return [$storage, modelSchemaStorageConfig(schemaModel($schema, $model), $storageName)];
 	}
 }
 
@@ -72,7 +72,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 	$attributes = schemaModelAttributes($schema, $model);
 	$relationships = schemaModelRelationships($schema, $model);
 
-	$object = array();
+	$object = [];
 	foreach ($attributes as $name => $attrSchema) {
 		if ($results[$model][$id][$name] || (isset($options['properties']) && !$options['properties'][$name])) continue;
 		list($storage, $storageConfig) = propStorage($schema, $model, $name);//storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $attrSchema));
@@ -82,7 +82,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 		$deps = $storage->dependencies($model, $name);
 		if ($deps) {
-			$resolvedDeps = array();
+			$resolvedDeps = [];
 			foreach ($deps as $i => $dep) {
 				list($db, $dbProp) = explode('.', $dep);
 				$s = storageEngine($schema, $db);
@@ -109,10 +109,10 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 		$relOptions = (array)$options['propertyOptions'][$relName] + (array)$relSchema['storage']['objectOptions'];
 
-		$relOptions += array(
+		$relOptions += [
 			'child' => true,
-			'from' => array('model' => $model, 'id' => $id, 'relName' => $relName),
-		);
+			'from' => ['model' => $model, 'id' => $id, 'relName' => $relName],
+		];
 
 		// var_dump($relName, $relOptions);
 
@@ -177,7 +177,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 								break;
 
 							case 'Many':
-								$ids = array();
+								$ids = [];
 								foreach ($value as $v) {
 									if (is_array($v)) {
 										$relId = $v['id'];
@@ -215,7 +215,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 						break;
 
 					case 'Many':
-						$object[$relName] = array();
+						$object[$relName] = [];
 						break;
 				}
 			}
@@ -238,12 +238,13 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 	return $results[$model][$id];
 }
 
-function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, array $allChanges=array(), $whatToUpdate='both') {
+function updateObject(array $schema, $model, $id, &$changes, &$results=null, array $allChanges=[], $whatToUpdate='both') {
 	assert(is_string($model));
 	assert($changes !== null);
 	if ($changes == 'delete') {
 		if (isTemporaryId($id)) {
-			return;
+			// TODO: Possibly response with error
+			return null;
 		}
 		$storageNames = schemaAllModelStorage($schema, $model);
 		foreach ($storageNames as $storageName) {
@@ -294,7 +295,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 				$globalMatches = null;
 				preg_match_all('/\.([^\[.]+)|\[([^\]]+)\]/', $pathStr, $globalMatches);
 
-				$path = array($prop);
+				$path = [$prop];
 				if ($globalMatches) {
 					for ($i = 0; $i < count($globalMatches[0]); ++ $i) {
 						if ($p = $globalMatches[1][$i]) {
@@ -309,22 +310,22 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 				if ($relSchema = $relationships[$prop]) {
 					foreach ($value as &$relId) {
 						if (isTemporaryId($relId)) {
-							if ($mapping[$relId]) {
-								$relId = $mapping[$relId];
+							if ($results['mapping'][$relId]) {
+								$relId = $results['mapping'][$relId];
 							}
 							else {
-								$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $mapping, $allChanges);
+								$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $results, $allChanges);
 							}
 						}
 					}
 					unset($relId);
 				}
 
-				$storageChanges[$storageName]['operations'][] = array(
+				$storageChanges[$storageName]['operations'][] = [
 					'operation' => $operation,
 					'parameters' => $value,
 					'path' => $path
-				);
+				];
 			}
 			else {
 				if ($whatToUpdate == 'attributes' && $relationships[$prop] || $whatToUpdate == 'relationships' && $attributes[$prop]) continue;
@@ -338,11 +339,12 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 
 					if ($relSchema['type'] == 'One') {
 						if (isTemporaryId($value)) {
-							if ($mapping[$value]) {
-								$value = $mapping[$value];
+							if ($results['mapping'][$value]) {
+								$value = $results['mapping'][$value];
 							}
 							else {
-								$value = updateObject($schema, $relSchema['model'], $value, $allChanges[$relSchema['model']][$value], $mapping, $allChanges);
+								// TODO: Handle errors
+								$value = updateObject($schema, $relSchema['model'], $value, $allChanges[$relSchema['model']][$value], $results, $allChanges);
 							}
 						}
 						$storageChanges[$storageName]['relationships'][$prop] = $value;
@@ -350,11 +352,12 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 					else if ($relSchema['type'] == 'Many') {
 						foreach ($value as &$relId) {
 							if (isTemporaryId($relId)) {
-								if ($mapping[$relId]) {
-									$relId = $mapping[$relId];
+								if ($results['mapping'][$relId]) {
+									$relId = $results['mapping'][$relId];
 								}
 								else {
-									$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $mapping, $allChanges);
+									// TODO: Handle errors
+									$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $results, $allChanges);
 								}
 							}
 						}
@@ -370,18 +373,25 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 			$primaryStorageName = schemaModelStorage($schema, $model);
 			$storageConfig = schemaModelStorageConfig($schema, $model, $primaryStorageName);
 			$storage = storageEngine($schema, $primaryStorageName);
-			$mapping[$id] = $storage->insert($schema, $storageConfig, $model, null, (array)$storageChanges[$primaryStorageName]);
-			unset($storageChanges[$primaryStorageName]);
+			$r = $storage->insert($schema, $storageConfig, $model, null, (array)$storageChanges[$primaryStorageName]);
+			if ($r !== false) {
+				$results['mapping'][$id] = $r;
+				unset($storageChanges[$primaryStorageName]);
 
-			if ($storageChanges) {
-				foreach ($storageChanges as $storageName => $c) {
-					$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
-					$storage = storageEngine($schema, $storageName);
-					$storage->insert($schema, $storageConfig, $model, $mapping[$id], $c);
+				if ($storageChanges) {
+					foreach ($storageChanges as $storageName => $c) {
+						$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
+						$storage = storageEngine($schema, $storageName);
+						$storage->insert($schema, $storageConfig, $model, $results['mapping'][$id], $c);
+					}
 				}
-			}
 
-			return $mapping[$id];
+				return $results['mapping'][$id];
+			}
+			else {
+				$results['errors'][$model][$id] = $storage->errors;
+				return false;
+			}
 		}
 		else {
 			if ($storageChanges) {
@@ -398,24 +408,24 @@ function updateObject(array $schema, $model, $id, &$changes, &$mapping=null, arr
 
 function addSubscriberToResource($db, $schemaVersion, $resource, $clientId) {
 	$mongo = mongoClient();
-	$id = array('db' => $db, 'resource' => $resource);
-	$resourceDocument = $mongo->resources->findOne(array('_id' => $id));
+	$id = ['db' => $db, 'resource' => $resource];
+	$resourceDocument = $mongo->resources->findOne(['_id' => $id]);
 	if ($resourceDocument) {
 		if (!in_array($clientId, $resourceDocument['subscribers'])) {
-			$mongo->resources->update(array('_id' => $id), array('$push' => array('subscribers' => $clientId)));
-			$mongo->clients->update(array('_id' => makeClientId($clientId)), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
+			$mongo->resources->update(['_id' => $id], ['$push' => ['subscribers' => $clientId]]);
+			$mongo->clients->update(['_id' => makeClientId($clientId)], ['$push' => ['subscribedTo' => ['db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource]]]);
 		}
 	}
 	else {
-		$mongo->resources->insert(array('_id' => $id, 'subscribers' => array($clientId)));
-		$mongo->clients->update(array('_id' => makeClientId($clientId)), array('$push' => array('subscribedTo' => array('db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource))));
+		$mongo->resources->insert(['_id' => $id, 'subscribers' => [$clientId]]);
+		$mongo->clients->update(['_id' => makeClientId($clientId)], ['$push' => ['subscribedTo' => ['db' => $db, 'schemaVersion' => $schemaVersion, 'resource' => $resource]]]);
 	}
 }
 
 function addSubscriberToResources($db, $schemaVersion, $clientId, $resources) {
 	foreach ($resources as $modelName => $instances) {
 		foreach ($instances as $id => $instance) {
-			addSubscriberToResource($db, $schemaVersion, array('type' => 'model', 'model' => $modelName, 'id' => $id), $clientId);
+			addSubscriberToResource($db, $schemaVersion, ['type' => 'model', 'model' => $modelName, 'id' => $id], $clientId);
 		}
 	}
 }
@@ -471,7 +481,7 @@ class DbUtil {
 	}
 
 	public function resolveRel($model, $id, $prop) {
-		$results = array();
+		$results = [];
 		if (is_array($prop)) {
 			foreach ($prop as $p) {
 				$results = array_merge($results, $this->resolveRel($model, $id, $p));
@@ -480,24 +490,24 @@ class DbUtil {
 		else {
 			$dot = strpos($prop, '.');
 			if ($dot === false) {
-				$obj = getObject($this->schema, $model, $id, $_, array('getRelationships' => false, 'properties' => array($prop => true)));
+				$obj = getObject($this->schema, $model, $id, $_, ['getRelationships' => false, 'properties' => [$prop => true]]);
 				// var_dump($obj);
 
 				$relModel = $this->schema['models'][$model]['relationships'][$prop]['model'];
 				if (is_array($obj[$prop])) {
 					foreach ($obj[$prop] as $relId) {
-						$results[] = array('model' => $relModel, 'id' => $relId);
+						$results[] = ['model' => $relModel, 'id' => $relId];
 					}
 				}
 				else if ($obj[$prop]) {
-					$results[] = array('model' => $relModel, 'id' => $obj[$prop]);
+					$results[] = ['model' => $relModel, 'id' => $obj[$prop]];
 				}
 			}
 			else {
 				$p = substr($prop, 0, $dot);
 				$rest = substr($prop, $dot + 1);
 				$relModel = $this->schema['models'][$model]['relationships'][$p]['model'];
-				$obj = getObject($this->schema, $model, $id, $_, array('getRelationships' => false, 'properties' => array($p => true)));
+				$obj = getObject($this->schema, $model, $id, $_, ['getRelationships' => false, 'properties' => [$p => true]]);
 				// var_dump($obj);
 
 				if (is_array($obj[$p])) {
@@ -515,19 +525,19 @@ class DbUtil {
 	}
 
 	public function subscribers($instances) {
-		$clientIds = array();
+		$clientIds = [];
 
 		foreach ($instances as $instance) {
-			$resourceDocument = mongoClient()->resources->findOne(array(
-				'_id' => array(
+			$resourceDocument = mongoClient()->resources->findOne([
+				'_id' => [
 					'db' => $this->db, 
-					'resource' => array(
+					'resource' => [
 						'type' => 'model',
 						'model' => $instance['model'],
 						'id' => $instance['id'],
-					),
-				)
-			));
+					],
+				]
+			]);
 
 			if ($resourceDocument['subscribers']) {
 				$clientIds = array_merge($clientIds, $resourceDocument['subscribers']);
@@ -598,15 +608,15 @@ class DbUtil {
 
 
 function resourceSubscribers($db, $resource, $id, $clientId = null) {
-	$resourceDocument = mongoClient()->resources->findOne(array(
-		'_id' => array(
+	$resourceDocument = mongoClient()->resources->findOne([
+		'_id' => [
 			'db' => $db,
-			'resource' => array(
+			'resource' => [
 				'name' => $resource,
 				'id' => $id,
-			),
-		)
-	));
+			],
+		]
+	]);
 
 	$subscribers = (array)$resourceDocument['subscribers'];
 	if ($clientId) {
@@ -619,7 +629,7 @@ function resourceSubscribers($db, $resource, $id, $clientId = null) {
 }
 
 function distributeUpdate($db, $databaseSchema, $update, $clientId) {
-	$clientChanges = array();
+	$clientChanges = [];
 	foreach ($update['data'] as $model => $modelChanges) {
 		foreach ($modelChanges as $id => $instanceChanges) {
 			$resources = resources($databaseSchema, $model, $id);
@@ -628,17 +638,17 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 				$subscribers = resourceSubscribers($db, $resource['resource'], $resource['id'], $clientId);
 
 				if ($subscribers) {
-					$results = array();
+					$results = [];
 					if ($instanceChanges != 'delete') {
 						$edges = nodeEdges($databaseSchema, $resource['resource'], $resource['path']);
-						$includedEdges = array();
+						$includedEdges = [];
 						foreach ($edges as $edge) {
 							if ($instanceChanges[$edge]) {
 								$includedEdges[] = $edge;
 							}
 						}
 
-						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, array('edges' => $includedEdges, 'excludeReferences' => true));
+						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, ['edges' => $includedEdges, 'excludeReferences' => true]);
 					}
 					
 					foreach ($subscribers as $subscriber) {
@@ -654,19 +664,21 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 	}
 
 	foreach ($clientChanges as $cid => $changes) {
-		sendToClient($cid, $db, array('id' => $update['id'], 'data' => $changes));
+		sendToClient($cid, $db, ['id' => $update['id'], 'data' => $changes]);
 	}
 }
 
 function executeUpdate($update, $databaseSchema) {
-	$mapping = array();
+	$results = [];
 
 	foreach ($update as $model => &$modelChanges) {
 		$storage = storageEngine($databaseSchema, schemaModelStorage($databaseSchema, $model));
 		if ($storage->singleInsert()) {
 			foreach ($modelChanges as $id => &$changes) {
-				if (isTemporaryId($id) && !$mapping[$id]) {
-					updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
+				if (isTemporaryId($id) && !$results['mapping'][$id]) {
+					if (updateObject($databaseSchema, $model, $id, $changes, $results, $update) === false) {
+						return [null, null, $results['errors']];
+					}
 				}
 			}
 			unset($changes);
@@ -677,8 +689,10 @@ function executeUpdate($update, $databaseSchema) {
 
 	foreach ($update as $model => &$modelChanges) {
 		foreach ($modelChanges as $id => &$changes) {
-			if (isTemporaryId($id) && !$mapping[$id]) {
-				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update, 'attributes');
+			if (isTemporaryId($id) && !$results['mapping'][$id]) {
+				if (updateObject($databaseSchema, $model, $id, $changes, $results, $update, 'attributes') === false) {
+					return [null, null, $results['errors']];
+				}
 			}
 		}
 		unset($changes);
@@ -688,7 +702,7 @@ function executeUpdate($update, $databaseSchema) {
 	foreach ($update as $model => &$modelChanges) {
 		foreach ($modelChanges as $id => &$changes) {
 			if (isTemporaryId($id)) {
-				updateObject($databaseSchema, $model, $mapping[$id], $changes, $mapping, $update, 'relationships');
+				updateObject($databaseSchema, $model, $results['mapping'][$id], $changes, $results, $update, 'relationships');
 			}
 		}
 		unset($changes);
@@ -698,7 +712,7 @@ function executeUpdate($update, $databaseSchema) {
 	foreach ($update as $model => &$modelChanges) {
 		foreach ($modelChanges as $id => &$changes) {
 			if (!isTemporaryId($id)) {
-				updateObject($databaseSchema, $model, $id, $changes, $mapping, $update);
+				updateObject($databaseSchema, $model, $id, $changes, $results, $update);
 			}
 		}
 		unset($changes);
@@ -708,7 +722,7 @@ function executeUpdate($update, $databaseSchema) {
 
 	foreach ($update as $model => $modelChanges) {
 		foreach ($modelChanges as $id => $changes) {
-			if ($newId = $mapping[$id]) {
+			if ($newId = $results['mapping'][$id]) {
 				$resolvedUpdate[$model][$newId] = $changes;
 			}
 			else {
@@ -717,39 +731,43 @@ function executeUpdate($update, $databaseSchema) {
 		}
 	}
 
-	return array($mapping, $resolvedUpdate);
+	$r = [$results['mapping'], $resolvedUpdate];
+	if ($results['errors']) {
+		$r[] = $results['errors'];
+	}
+	return $r;
 }
 
 function sendToClient($clientId, $db, $update) {	
-	mongoClient()->clients->update(array('_id' => makeClientId($clientId)), array('$push' => array("updates.$db" => $update)));
+	mongoClient()->clients->update(['_id' => makeClientId($clientId)], ['$push' => ["updates.$db" => $update]]);
 
-	$clientDocument = mongoClient()->clients->findOne(array('_id' => makeClientId($clientId)));
+	$clientDocument = mongoClient()->clients->findOne(['_id' => makeClientId($clientId)]);
 
 	if ($clientDocument['connected']) {
-		httpPost('http://localhost:3001/push', array(
-			'clientIds' => array($clientId),
+		httpPost('http://localhost:3001/push', [
+			'clientIds' => [$clientId],
 			'update' => json_encode($update)
-		));
+		]);
 	}
 }
 
 
 function ancestors($databaseSchema, $model, $id) {
-	$properties = array();
+	$properties = [];
 	foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
 		if ($schema['owner']) {
 			$properties[$name] = true;
 		}
 	}
 
-	$objects = array(
-		array(
+	$objects = [
+		[
 			'model' => $model,
 			'id' => $id,
-		)
-	);
+		]
+	];
 	if ($properties) {
-		$object = getObject($databaseSchema, $model, $id, $results, array('getRelationships' => false, 'properties' => $properties));
+		$object = getObject($databaseSchema, $model, $id, $results, ['getRelationships' => false, 'properties' => $properties]);
 		foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
 			if ($schema['owner']) {
 				$objects = array_merge($objects, ancestors($databaseSchema, $schema['model'], $object[$name]));
@@ -760,21 +778,21 @@ function ancestors($databaseSchema, $model, $id) {
 }
 
 function ancestors2($databaseSchema, $model, $id) {
-	$properties = array();
+	$properties = [];
 	foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
 		if ($schema['owner']) {
 			$properties[$name] = true;
 		}
 	}
 
-	$objects = array(
-		array(
+	$objects = [
+		[
 			'model' => $model,
 			'id' => $id,
-		)
-	);
+		]
+	];
 	if ($properties) {
-		$object = getObject($databaseSchema, $model, $id, $results, array('getRelationships' => false, 'properties' => $properties));
+		$object = getObject($databaseSchema, $model, $id, $results, ['getRelationships' => false, 'properties' => $properties]);
 
 		foreach (schemaModelRelationships($databaseSchema, $model) as $name => $schema) {
 			if ($schema['owner']) {
@@ -805,14 +823,14 @@ function nodeInfo($databaseSchema, $resource, $path) {
 
 	}
 
-	return array('model' => $model, 'schema' => (array)$schema['nodes'][$path] + (array)$schema['models'][$model]);
+	return ['model' => $model, 'schema' => (array)$schema['nodes'][$path] + (array)$schema['models'][$model]];
 }
 
 function resolvePathInfo($databaseSchema, $resource, $path) {
 	$schema = $databaseSchema['resources'][$resource];
 	$model = $schema['root'];
 
-	$pathInfo = array();
+	$pathInfo = [];
 
 	if ($path) {
 		$p = '';
@@ -822,7 +840,7 @@ function resolvePathInfo($databaseSchema, $resource, $path) {
 			if (!($schema['nodes'][$p]['edges'] !== false && $schema['nodes'][$p]['edges'][$edge] !== false && !in_array($edge, (array)$schema['models'][$model]['references']))) {
 				return false;
 			}
-			$pathInfo[] = array('model' => $model, 'edge' => $edge);
+			$pathInfo[] = ['model' => $model, 'edge' => $edge];
 			$model = $databaseSchema['models'][$model]['relationships'][$edge]['model'];
 			if (!$model) return false;
 			$p = implode('.', array_slice($components, 0, $i + 1));
@@ -830,14 +848,14 @@ function resolvePathInfo($databaseSchema, $resource, $path) {
 
 	}
 
-	$pathInfo[] = array('model' => $model);
+	$pathInfo[] = ['model' => $model];
 
 	return $pathInfo;
 }
 
 
-function nodePaths($databaseSchema, $resource, $model, $path = array()) {
-	$paths = array();
+function nodePaths($databaseSchema, $resource, $model, $path = []) {
+	$paths = [];
 
 	$schema = $databaseSchema['resources'][$resource];
 	if ($model == $schema['root']) {
@@ -861,21 +879,21 @@ function nodePaths($databaseSchema, $resource, $model, $path = array()) {
 
 function resolvedResourcePaths($databaseSchema, $resource, $path, $id) {
 	if ($path === '') {
-		return array(/*array('id' => $id, 'model' => $databaseSchema['resources'][$resource]['root'])*/array($id));
+		return [/*array('id' => $id, 'model' => $databaseSchema['resources'][$resource]['root'])*/[$id]];
 	}
 
 	$resolvedPath = resolvePathInfo($databaseSchema, $resource, $path);
 
-	$stack[] = array(
+	$stack[] = [
 		'id' => $id,
 		'model' => $resolvedPath[count($resolvedPath) - 1]['model'],
 		'component' => count($resolvedPath) - 2,
-		'resolvedPath' => array(
+		'resolvedPath' => [
 			/*array('id' => $id, 'model' => $resolvedPath[count($resolvedPath) - 1]['model'])*/$id
-		)
-	);
+		]
+	];
 
-	$roots = array();
+	$roots = [];
 	while ($s = array_pop($stack)) {
 		$i = $s['component'];
 		$model = $s['model'];
@@ -884,48 +902,48 @@ function resolvedResourcePaths($databaseSchema, $resource, $path, $id) {
 		$component = $resolvedPath[$i];
 		if ($component['edge']) {
 			$rel = $databaseSchema['models'][$component['model']]['relationships'][$component['edge']]['inverseRelationship'];
-			$object = getObject($databaseSchema, $model, $id, $results, array('getRelationships' => false, 'properties' => array($rel => true)));
+			$object = getObject($databaseSchema, $model, $id, $results, ['getRelationships' => false, 'properties' => [$rel => true]]);
 
 			if ($object) {
 				if ($i > 0) {
 					foreach ((array)$object[$rel] as $id) {
-						$stack[] = array(
+						$stack[] = [
 							'id' => $id,
 							'model' => $component['model'],
 							'component' => $i - 1,
-							'resolvedPath' => array_merge(array(/*array('id' => $id, 'model' => $component['model'], 'edge' => $component['edge'])*/$id), $s['resolvedPath']),
-						);
+							'resolvedPath' => array_merge([/*array('id' => $id, 'model' => $component['model'], 'edge' => $component['edge'])*/$id], $s['resolvedPath']),
+						];
 					}
 				}
 				else {
 					foreach ((array)$object[$rel] as $rootId) {
-						$roots[] = array_merge(array(/*array('id' => $rootId, 'model' => $component['model'], 'edge' => $component['edge'])*/$rootId), $s['resolvedPath']);
+						$roots[] = array_merge([/*array('id' => $rootId, 'model' => $component['model'], 'edge' => $component['edge'])*/$rootId], $s['resolvedPath']);
 					}
 //						$roots = array_merge($roots, (array)$object[$rel]);
 				}
 			}
 		}
 		else {
-			$roots[] = /*array('id' => $id, 'model' => $model)*/array($id);
+			$roots[] = /*array('id' => $id, 'model' => $model)*/[$id];
 		}
 	}
 	return $roots;
 }
 
 function resources($databaseSchema, $model, $id) {
-	$resources = array();
+	$resources = [];
 	foreach ($databaseSchema['resources'] as $name => $_) {
 		$paths = nodePaths($databaseSchema, $name, $model);
 		foreach ($paths as $path) {
 			$resolvedPaths = resolvedResourcePaths($databaseSchema, $name, $path, $id);
 
 			foreach ($resolvedPaths as $resolvedPath) {
-				$resources[] = array(
+				$resources[] = [
 					'resource' => $name,
 					'path' => $path,
 					'resolvedPath' => $resolvedPath,
 					'id' => $resolvedPath[0],//['id'],
-				);
+				];
 			}
 		}
 	}
@@ -933,13 +951,13 @@ function resources($databaseSchema, $model, $id) {
 }
 
 function resource($databaseSchema, $resource, $id, &$results) {
-	return resourceSubtree($databaseSchema, $resource, '', array($id), $results);
+	return resourceSubtree($databaseSchema, $resource, '', [$id], $results);
 }
 
-function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instancePath, $opts=array()) {
+function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instancePath, $opts=[]) {
 	$schema = $databaseSchema['resources'][$resource];
 
-	$options = array();
+	$options = [];
 
 	foreach ($schema['nodes'] as $path => $node) {
 		if ($basePath) {
@@ -958,7 +976,7 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 		}
 
 		if ($node['edges'] === false) {
-			$obj['relationships'] = array();
+			$obj['relationships'] = [];
 		}
 		else if ($node['edges']) {
 			foreach ($node['edges'] as $edge => $include) {
@@ -982,7 +1000,7 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 
 
 	if ($parentEdge) {
-		$options['excludeRelationshipInstances'][$parentEdge] = array($instancePath[count($instancePath) - 2]);
+		$options['excludeRelationshipInstances'][$parentEdge] = [$instancePath[count($instancePath) - 2]];
 	}
 
 
@@ -995,10 +1013,10 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 		}
 	}
 
-	return array($model, $options);
+	return [$model, $options];
 }
 
-function resourceSubtree($databaseSchema, $resource, $basePath, $instancePath, &$results, $opts=array()) {
+function resourceSubtree($databaseSchema, $resource, $basePath, $instancePath, &$results, $opts=[]) {
 	// $schema = $databaseSchema['resources'][$resource];
 
 	// $options = array();
@@ -1080,7 +1098,7 @@ function resourceSubtree($databaseSchema, $resource, $basePath, $instancePath, &
 
 function nodeEdges($databaseSchema, $resource, $path) {
 	$nodeInfo = nodeInfo($databaseSchema, $resource, $path);
-	$edges = array();
+	$edges = [];
 	foreach ($databaseSchema['models'][$nodeInfo['model']]['relationships'] as $relName => $relSchema) {
 		if (!in_array($relName, (array)$nodeInfo['schema']['references'])) {
 			$edges[] = $relName;

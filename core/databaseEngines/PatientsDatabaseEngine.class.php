@@ -10,8 +10,9 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function attribute($model, $id, array $storageConfig, $attrName, array $attrSchema) {
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
+		$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
+
 			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Profile?patientID=' . $user['patientId']), true);
 			if ($attrName == 'ssn') {
 				return $response['SSN'];
@@ -29,11 +30,11 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
 		// return false;
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
+		$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
 			foreach ($response as $i => $obj) {
-				$addresses[] = array(
+				$addresses[] = [
 					'id' => $id . '-' . $obj['AddressID'],
 					'street1' => $obj['Address'],
 					'street2' => $obj['Address2'],
@@ -42,7 +43,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 					'zip' => $obj['Zip'],
 					'name' => $obj['Name'],
 					'user' => $id,
-				);
+				];
 			}
 			$value = $addresses;
 			return true;
@@ -53,10 +54,10 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function insert(array $schema, array $storageConfig, $model, $id, array $changes) {
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($changes['relationships']['user'])));
+		$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($changes['relationships']['user'])]);
 
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
-			$fields = array(
+			$fields = [
 				'Address' => def($changes['attributes']['street1'], 'Address'),
 				'Address2' => def($changes['attributes']['street2'], ''),
 				'City' => def($changes['attributes']['city'], 'City'),
@@ -64,9 +65,9 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 				'Zip' => def($changes['attributes']['zip'], '12345'),
 				'Name' => def($changes['attributes']['name'], 'Name'),
 				'PatientID' => $user['patientId'],
-			);
+			];
 
-			$fieldsStr = array();
+			$fieldsStr = [];
 
 			foreach ($fields as $key => $value) {
 				$fieldsStr[] = "$key=$value";
@@ -85,7 +86,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	public function update(array $schema, array $storageConfig, $model, $id, array $changes) {
-		$user = _mongoClient()->divvydose->User->findOne(array('_id' => new MongoId($id)));
+		$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 			foreach ((array)$changes['attributes'] as $key => $value) {

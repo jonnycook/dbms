@@ -1,78 +1,78 @@
 <?php
 
-return array(
-	'databases' => array(
+return [
+	'databases' => [
 		'default' => 'mongodb',
-		'mongodb' => array(
+		'mongodb' => [
 			'type' => 'mongodb',
 			'db' => 'knowledge',
-		),
-	),
-	'models' => array(
-		'Event' => array(
-			'attributes' => array(
-				'action' => array('type' => 'string'),
-				'time' => array('type' => 'string'),
-			),
-			'relationships' => array(
-				'agents' => array(
+		],
+	],
+	'models' => [
+		'Event' => [
+			'attributes' => [
+				'action' => ['type' => 'string'],
+				'time' => ['type' => 'string'],
+			],
+			'relationships' => [
+				'agents' => [
 					'type' => 'Many',
 					'model' => 'Entity',
-				),
-				'objects' => array(
+				],
+				'objects' => [
 					'type' => 'Many',
 					'model' => 'Entity'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Name' => array(
-			'relationships' => array(
-				'primaryForm' => array(
+		'Name' => [
+			'relationships' => [
+				'primaryForm' => [
 					'type' => 'One',
 					'model' => 'NameForm',
-				),
-				'forms' => array(
+				],
+				'forms' => [
 					'type' => 'Many',
 					'model' => 'NameForm',
 					'inverseRelationship' => 'name'
-				)
-			)
-		),
-		'NameForm' => array(
-			'attributes' => array(
-				'value' => array('type' => 'string')
-			),
-			'relationships' => array(
-				'name' => array(
+				]
+			]
+		],
+		'NameForm' => [
+			'attributes' => [
+				'value' => ['type' => 'string']
+			],
+			'relationships' => [
+				'name' => [
 					'type' => 'One',
 					'model' => 'Name',
 					'inverseRelationship' => 'forms'
-				)
-			)
-		),
+				]
+			]
+		],
 
-		'Entity' => array(
-			'relationships' => array(
-				'primaryName' => array(
+		'Entity' => [
+			'relationships' => [
+				'primaryName' => [
 					'type' => 'One',
 					'model' => 'Name',
-				),
-				'names' => array(
+				],
+				'names' => [
 					'type' => 'Many',
 					'model' => 'Name',
-				)
-			)
-		)
-	),
-	'routes' => array(
-		'/' => array(
+				]
+			]
+		]
+	],
+	'routes' => [
+		'/' => [
 			'type' => 'db'
-		),
+		],
 
-		'/:model/:id' => array(
+		'/:model/:id' => [
 			'type' => 'model'
-		),
+		],
 		// '/Model' => array('model' => 'Model'),
 
 		// '/settings/:id' => array(
@@ -82,6 +82,6 @@ return array(
 		// 		'collection' => 'settings',
 		// 	)
 		// )
-	)
+	]
 
-);
+];
