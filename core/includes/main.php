@@ -232,7 +232,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 	$modelSchema = schemaModel($schema, $model);
 
 	if ($modelSchema['storage']['filter'] && $first) {
-		$modelSchema['storage']['filter']($results[$model][$id]);
+		$modelSchema['storage']['filter']($results[$model][$id], $id);
 	}
 
 	return $results[$model][$id];

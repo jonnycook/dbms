@@ -81,7 +81,7 @@ return [
 				// 	}
 				// },
 
-				'filter' => function(&$user) {
+				'filter' => function(&$user, $id) {
 					if ($user['patientId'] == 'DUMMY') {
 						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
@@ -186,8 +186,12 @@ return [
 						return;
 					}
 
-					if ($user['trackingNumber']) {
-						$user['lastShipmentTrackingUrl'] = "http://wwwapps.ups.com/WebTracking/track?loc=en_US&track.x=Track&trackNums=$user[trackingNumber]";
+					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
+
+
+
+					if ($userDocument['trackingNumber']) {
+						$user['lastShipmentTrackingUrl'] = "http://wwwapps.ups.com/WebTracking/track?loc=en_US&track.x=Track&trackNums=$userDocument[trackingNumber]";
 					}
 
 					if ($user['divvyPacks'] && $user['patientId']) {
@@ -302,7 +306,7 @@ return [
 
 				'demo' => ['type' => 'bool'],
 
-				'trackingNumber' => ['type' => 'string'],
+				// 'trackingNumber' => ['type' => 'string'],
 			],
 			'relationships' => [
 				'caregivers' => [
