@@ -15,6 +15,7 @@ function shipmentDate($facility, $shipment) {
 }
 
 
+// TODO: cache expire
 function qs1Get($url) {
 	$mongo = new MongoClient();
 	$id = md5($url);
@@ -227,6 +228,9 @@ return [
 								'packets' => array_values($packets),
 							];
 						}
+					}
+					else {
+						unset($user['divvyPacks']);
 					}
 
 					if ($user['facility']) {
