@@ -185,8 +185,7 @@ return [
 						return;
 					}
 
-					if ($user['divvyPacks']) {
-						var_dump($user);
+					if ($user['divvyPacks'] && $user['patientId']) {
 						$rxProfile = qs1Get('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
