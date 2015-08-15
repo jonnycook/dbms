@@ -31,7 +31,7 @@ function qs1Get($url) {
 
 return [
 	'init' => function($client) {
-		if ($client['params']['dev'] || 1) {
+		if ($client['params']['dev'] && 0) {
 			define('QS1_SERVER', 'sandbox.qs1api.com');
 			define('QS1_PHARMACY', 'VendorTest');
 		}
