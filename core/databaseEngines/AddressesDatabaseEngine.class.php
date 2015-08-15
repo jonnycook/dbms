@@ -9,39 +9,88 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 	public function ids($model, array $storageConfig) {
 	}
 
+
+	private function addresses($userId) {
+		if ($this->addresses[$userId]) {
+			return $this->addresses[$userId];
+		}
+		else {
+			$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($userId)]);
+			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
+			foreach ($response as $i => $obj) {
+				if ($obj['AddressID'] == 'PERM') {
+					list($lastName, $firstName) = explode(', ',$obj['Name']);
+					$name = "$firstName $lastName";
+				}
+				else {
+					$name = $obj['Name'];
+				}
+				$addresses[] = [
+					'id' => $userId . '-' . $obj['AddressID'],
+					'street1' => $obj['Address'],
+					'street2' => $obj['Address2'],
+					'city' => $obj['City'],
+					'state' => $obj['State'],
+					'zip' => $obj['Zip'],
+					'name' => $name,
+					'user' => $userId,
+				];
+			}
+			return $this->addresses = $addresses;
+		}
+	}
+
+	// private function data($id) {
+
+	// 	$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
+	// 	foreach ($response as $i => $obj) {
+	// 		if ($obj['AddressID'] == 'PERM') {
+	// 			list($lastName, $firstName) = explode(', ',$obj['Name']);
+	// 			$name = "$firstName $lastName";
+	// 		}
+	// 		else {
+	// 			$name = $obj['Name'];
+	// 		}
+	// 		$addresses[] = [
+	// 			'id' => $id . '-' . $obj['AddressID'],
+	// 			'street1' => $obj['Address'],
+	// 			'street2' => $obj['Address2'],
+	// 			'city' => $obj['City'],
+	// 			'state' => $obj['State'],
+	// 			'zip' => $obj['Zip'],
+	// 			'name' => $name,
+	// 			'user' => $id,
+	// 		];
+	// 	}
+	// 	$value = $addresses;
+
+	// }
+
+	private function address($id) {
+		list($userId, $addressId) = explode('-', $id);
+		$addresses = $this->addresses($userId);
+		foreach ($addresses as $address) {
+			if ($address['id'] == $id) {
+				return $address;
+			}
+		}
+	}
+
 	public function attribute($model, $id, array $storageConfig, $attrName, array $attrSchema) {
+		if ($model == 'Address') {
+			$address = $this->address($id);
+			return $address[$attrName];
+		}
 	}
 
 	public function singleInsert() { return true; }
 
 	public function relationship(array $schema, $model, $id, array $storageConfig, $relName, array $relSchema, &$value) {
-		// return false;
-
 		if ($model == 'User' && $relName == 'addresses') {
 			$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 			if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
-				$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
-				foreach ($response as $i => $obj) {
-					if ($obj['AddressID'] == 'PERM') {
-						list($lastName, $firstName) = explode(', ',$obj['Name']);
-						$name = "$firstName $lastName";
-					}
-					else {
-						$name = $obj['Name'];
-					}
-					$addresses[] = [
-						'id' => $id . '-' . $obj['AddressID'],
-						'street1' => $obj['Address'],
-						'street2' => $obj['Address2'],
-						'city' => $obj['City'],
-						'state' => $obj['State'],
-						'zip' => $obj['Zip'],
-						'name' => $name,
-						'user' => $id,
-					];
-				}
+				$addresses = $this->addresses($id);
 				$value = $addresses;
-				// var_dump($addresses);
 				return true;
 			}
 			else if ($user['patientId'] == 'DUMMY') {
