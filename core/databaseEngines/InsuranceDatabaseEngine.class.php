@@ -35,15 +35,15 @@ class InsuranceDatabaseStorageEngine extends DatabaseEngine {
 			}
 			else if ($user['patientId'] == 'DUMMY') {
 				$value = [
-					[
-						'id' => "$id-PERM",
-						'street1' => '10 WINDY POINT',
-						'city' => 'ROCK ISLAND',
-						'state' => 'IL',
-						'zip' => 61201,
-						'user' => $id,
-						'name' => 'ROSALIND FRANKLIN',
-					]
+					// [
+					// 	'id' => "$id-PERM",
+					// 	'street1' => '10 WINDY POINT',
+					// 	'city' => 'ROCK ISLAND',
+					// 	'state' => 'IL',
+					// 	'zip' => 61201,
+					// 	'user' => $id,
+					// 	'name' => 'ROSALIND FRANKLIN',
+					// ]
 				];
 				return true;
 			}
