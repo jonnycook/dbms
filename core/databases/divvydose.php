@@ -186,6 +186,10 @@ return [
 						return;
 					}
 
+					if ($user['trackingNumber']) {
+						$user['lastShipmentTrackingUrl'] = "http://wwwapps.ups.com/WebTracking/track?loc=en_US&track.x=Track&trackNums=$user[trackingNumber]",
+					}
+
 					if ($user['divvyPacks'] && $user['patientId']) {
 						$rxProfile = qs1Get('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']);
 						foreach ($rxProfile as $rx) {
@@ -297,6 +301,8 @@ return [
 				'agreedToTerms' => ['type' => 'bool'],
 
 				'demo' => ['type' => 'bool'],
+
+				'trackingNumber' => ['type' => 'string'],
 			],
 			'relationships' => [
 				'caregivers' => [
