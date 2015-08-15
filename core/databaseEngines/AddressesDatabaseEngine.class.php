@@ -22,6 +22,13 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 			if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 				$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
 				foreach ($response as $i => $obj) {
+					if ($obj['AddressID'] == 'PERM') {
+						list($lastName, $firstName) = explode(', ',$obj['Name']);
+						$name = "$firstName $lastName";
+					}
+					else {
+						$name = $obj['Name'];
+					}
 					$addresses[] = [
 						'id' => $id . '-' . $obj['AddressID'],
 						'street1' => $obj['Address'],
@@ -29,7 +36,7 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 						'city' => $obj['City'],
 						'state' => $obj['State'],
 						'zip' => $obj['Zip'],
-						'name' => $obj['Name'],
+						'name' => $name,
 						'user' => $id,
 					];
 				}
@@ -111,19 +118,37 @@ class AddressesDatabaseStorageEngine extends DatabaseEngine {
 			}
 			$fieldsStr = '';
 
-			$fields['AddressID'] = $addressId;
-			$fields['PatientID'] = $user['patientId'];
+			if ($addressId == 'PERM') {
+				$fields['PatientID'] = $user['patientId'];
 
-			foreach ($fields as $key => $value) {
-				$fieldsStr[] = "$key=$value";
+				unset($fields['Name']);
+
+				foreach ($fields as $key => $value) {
+					$fieldsStr[] = "$key=$value";
+				}
+				$fieldsStr = implode('&', $fieldsStr);
+
+				$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Profile?patientID='.$user['patientId']);
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
+				$response = curl_exec($ch);
 			}
-			$fieldsStr = implode('&', $fieldsStr);
+			else {
+				$fields['AddressID'] = $addressId;
+				$fields['PatientID'] = $user['patientId'];
 
-			$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
-			$response = curl_exec($ch);
+				foreach ($fields as $key => $value) {
+					$fieldsStr[] = "$key=$value";
+				}
+				$fieldsStr = implode('&', $fieldsStr);
+
+				$ch = curl_init('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses');
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
+				$response = curl_exec($ch);
+			}
 		}
 	}
 
