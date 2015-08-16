@@ -47,7 +47,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'type' => 'Packet',
 						'image' => 'http://jonnycook.com/dd/images/' . ($i + 1) . '.png',
 						'packaging' => 'In A Packet',
-						'monographUrl' => "https://server.divvydose.com/app/v1/monograph.php?drug=$obj[p3]",
+						'monographUrl' => "https://server.divvydose.com/app/v1/monograph.php?drug=$p[3]",
 					];
 				}
 			}
