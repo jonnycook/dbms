@@ -2,6 +2,18 @@
 //ini_set('html_errors', 0);
 // header('Content-Type: text/plain');
 
+require_once('vendor/autoload.php');
+
+$ravenClient = new Raven_Client('https://49379cd047ce4c7686fac7ce7572fcf8:2a5739f68245414d9098922280f314a0@app.getsentry.com/50459', [
+	'release' => '1.0.0',
+]);
+
+$error_handler = new Raven_ErrorHandler($ravenClient);
+$error_handler->registerExceptionHandler();
+$error_handler->registerErrorHandler();
+$error_handler->registerShutdownFunction();
+
+
 require_once('includes/header.php');
 require_once('includes/schema.php');
 require_once('databaseEngines/MongoDbDatabaseEngine.class.php');
@@ -26,6 +38,9 @@ if ($_REQUEST['schemaVersion']) {
 else {
 	$schemaVersion = 1;
 }
+
+$ravenClient->user_context(array('clientId' => $clientId));
+$ravenClient->extra_context(array('schema' => $schemaVersion, 'env' => ENV));
 
 $databaseSchema = require("databases/$databaseName.php");
 

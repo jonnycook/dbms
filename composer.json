@@ -1,0 +1,5 @@
+{
+    "require": {
+        "raven/raven": "0.12.0"
+    }
+}
