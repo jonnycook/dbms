@@ -48,6 +48,8 @@ if ($clientId) {
 		if (!$clientDocument) {
 			die('invalidClientId');
 		}
+
+		mongoClient()->clients->update(['_id' => $id], ['$push' => ['requests' => ['get' => $_GET, 'post' => $_POST]]]);
 	}
 }
 
