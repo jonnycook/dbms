@@ -12,6 +12,7 @@ $client = [
 	'_id' => $clientId,
 	'subscribedTo' => [],
 	'registeredAt' => gmdate('Y-m-d H:i:s'),
+	'ip' => $_SERVER['REMOTE_ADDR'],
 ];
 
 if ($_GET['client']) {
