@@ -15,6 +15,7 @@ require_once('databaseEngines/PaymentMethodsDatabaseEngine.class.php');
 
 require_once('includes/main.php');
 
+
 if ($_REQUEST['clientId']) {
 	$clientId = $_REQUEST['clientId'];
 }

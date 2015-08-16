@@ -21,7 +21,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 				return $response['FirstName'];
 			}
 			else if ($attrName == 'facility') {
-				return $response['FacilityCode'];
+				return $response['FacilityName'];
 			}
 		}
 	}

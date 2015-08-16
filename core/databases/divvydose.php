@@ -187,9 +187,6 @@ return [
 					}
 
 					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
-
-
-
 					if ($userDocument['trackingNumber']) {
 						$user['lastShipmentTrackingUrl'] = "http://wwwapps.ups.com/WebTracking/track?loc=en_US&track.x=Track&trackNums=$userDocument[trackingNumber]";
 					}
@@ -242,11 +239,14 @@ return [
 					}
 
 					if ($user['facility']) {
-						$facility = substr($user['facility'], 1);
-						$currentShipment = currentShipment($facility);
+						if (preg_match('/^FACILITY (\d+) \(ZONE (\d+)\)$/', $user['facility'], $matches)) {
+							$facility = intval($matches[1])
+							$zone = intval($matches[2])
+							$currentShipment = currentShipment($facility);
+							$user['lastShipment'] = shipmentDate($facility, $currentShipment);
+							$user['nextShipment'] = shipmentDate($facility, $currentShipment + 1);
+						}
 
-						$user['lastShipment'] = shipmentDate($facility, $currentShipment);
-						$user['nextShipment'] = shipmentDate($facility, $currentShipment + 1);
 						// $currentDate = date('j');
 						// if ($shipmentDate <= $currentDate) {
 						// 	$user['lastShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
