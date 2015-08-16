@@ -26,13 +26,13 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 		if ($user['patientId']) {
 			if ($user['patientId'] == 'DUMMY') {
 				$prescriptions = [
-					['ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth'],	
-					['LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth'],	
+					['ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth', 'ATOR5DA1'],	
+					['LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth', 'LISI469A'],	
 					['ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'],
 					['FISH OIL + DHA 500 MG', '6022141', 'Take three times daily by mouth'],	
 					['MULTIVITAMIN', '1618033', 'Take once daily by mouth'],	
 					['PROBIOTIC', '7973010', 'Take once daily by mouth'],	
-					['LEVOTHYROXINE 125 MCG', '3182008', 'Take once daily by mouth'],	
+					['LEVOTHYROXINE 125 MCG', '3182008', 'Take once daily by mouth', 'LEVO24A1'],	
 					['OMEPRAZOLE 40 MG', '6934889', 'Take once daily at bedtime'],	
 				];
 				foreach ($prescriptions as $i => $p) {
@@ -47,6 +47,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 						'type' => 'Packet',
 						'image' => 'http://jonnycook.com/dd/images/' . ($i + 1) . '.png',
 						'packaging' => 'In A Packet',
+						'monographUrl' => "https://server.divvydose.com/app/v1/monograph.php?drug=$obj[p3]",
 					];
 				}
 			}
