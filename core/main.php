@@ -42,8 +42,6 @@ else {
 $ravenClient->user_context(array('clientId' => $clientId));
 $ravenClient->extra_context(array('schema' => $schemaVersion, 'env' => ENV));
 
-cool();
-
 $databaseSchema = require("databases/$databaseName.php");
 
 if ($clientId) {
