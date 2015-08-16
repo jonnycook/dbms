@@ -13,7 +13,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 		$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
 
-			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Profile?patientID=' . $user['patientId']), true);
+			$response = qs1Get('Patient/Profile', ['patientID' => $user['patientId']]);
 			if ($attrName == 'ssn') {
 				return $response['SSN'];
 			}
@@ -32,7 +32,7 @@ class PatientsDatabaseStorageEngine extends DatabaseEngine {
 		// return false;
 		$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 		if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
-			$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Addresses?patientID=' . $user['patientId']), true);
+			$response = qs1Get('Patient/Addresses', ['patientID' => $user['patientId']]);
 			foreach ($response as $i => $obj) {
 				$addresses[] = [
 					'id' => $id . '-' . $obj['AddressID'],

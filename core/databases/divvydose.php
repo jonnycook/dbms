@@ -1,6 +1,10 @@
 <?php
 
 define('QS1', true);
+define('QS1_USE_CACHE', true);
+
+require_once(__DIR__.'/../includes/divvydose-shared/qs1.php');
+
 
 function currentShipment($facility) {
 	$begin = mktime(0, 0, 0, 6, 1, 2015);
@@ -14,25 +18,9 @@ function shipmentDate($facility, $shipment) {
 	return date('Y-m-d H:i:s', $begin + ($shipment * 28 + ($facility - 1)) * (60*60*24));
 }
 
-
-// TODO: cache expire
-function qs1Get($url) {
-	$mongo = new MongoClient();
-	$id = md5($url);
-	// $document = $mongo->divvydose->qs1Cache->findOne(['_id' => $id]);
-	if ($document) {
-		return $document['data'];
-	}
-	else {
-		$data = json_decode(file_get_contents($url), true);
-		// $mongo->divvydose->qs1Cache->insert(['_id' => $id, 'data' => $data]);
-		return $data;
-	}
-}
-
 return [
 	'init' => function($client) {
-		if ($client['dev']) {
+		if ($client['dev'] && 0) {
 			define('QS1_SERVER', 'sandbox.qs1api.com');
 			define('QS1_PHARMACY', 'VendorTest');
 		}
@@ -192,7 +180,7 @@ return [
 					}
 
 					if ($user['divvyPacks'] && $user['patientId']) {
-						$rxProfile = qs1Get('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/RxProfile?patientID=' . $user['patientId']);
+						$rxProfile = qs1Get('Patient/RxProfile', ['patientID' => $user['patientId']]);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
 								$parts = explode(', ', $rx['PrescriberName']);
@@ -416,9 +404,15 @@ return [
 		],
 
 		'Prescription' => [
-			'storage' => defined('QS1') ? [
+			'storage' => (defined('QS1') ? [
 				'primary' => 'medications'
-			] : null,
+			] : null) + [
+				'filter' => function(&$prescription) {
+					if (!$prescription['state']) {
+						$prescription['state'] = 'resumed';
+					}
+				}
+			],
 
 			'attributes' => [
 				'packaging' => ['type' => 'string', 'values' => ['In A Packet', 'Separate Bottle']],
@@ -438,6 +432,11 @@ return [
 				'prescriber' => ['type' => 'string'],
 				'rxNumber' => ['type' => 'string'],
 				'endDate' => ['type' => 'date'],
+
+				'state' => [
+					'storage' => ['db' => 'mongodb'],
+					'type' => 'string',
+				],
 			],
 			'relationships' => [
 				'user' => [

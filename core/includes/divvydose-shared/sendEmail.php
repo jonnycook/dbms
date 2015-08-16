@@ -1,6 +1,6 @@
 <?php
 
-function loadTemplate($__name, $__params=[], $type='html') {
+function loadTemplate($__name, $__params=array(), $type='html') {
   extract($__params);
   ob_start();
   include(__DIR__."/emails/$__name.php");
@@ -10,7 +10,7 @@ function loadTemplate($__name, $__params=[], $type='html') {
   if ($type == 'html') {
     $body = nl2br($body);
   }
-  return ['body' => $body, 'subject' => $subject];
+  return array('body' => $body, 'subject' => $subject);
 }
 
 
@@ -27,7 +27,14 @@ function sendEmail($opts) {
   $mail->AddReplyTo('hi@divvydose.com', 'divvyDOSE');
   $mail->SetFrom('hi@divvydose.com', 'divvyDOSE');
 
-  $mail->AddAddress($opts['to']['email'], $opts['to']['name']);
+  if ($opts['to']['name']) {
+    $name = $opts['to']['name'];
+  }
+  else {
+    $name = "{$opts['to']['firstName']} {$opts['to']['lastName']}";
+  }
+
+  $mail->AddAddress($opts['to']['email'], $name);
 
   $subject = $opts['subject'];
 
@@ -146,7 +153,7 @@ function sendEmail($opts) {
     <td>&nbsp;</td>
   </tr>
   <tr>
-    <td style="font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:20px; text-align:center; color:#4A4F53"><a href="#" style="color:#4775A3; text-decoration:underline;">Email Settings</a>   |   <a href="http://www.divvydose.com/electronic-privacy-policy.html" style="color:#4775A3; text-decoration:underline;">Privacy Policy</a>  | <a href="https://divvydose.zendesk.com/hc/en-us" style="color:#4775A3; text-decoration:underline;">Help Center</a></td>
+    <a href="http://www.divvydose.com/electronic-privacy-policy.html" style="color:#4775A3; text-decoration:underline;">Privacy Policy</a>  | <a href="https://www.divvydose.com/help.html" style="color:#4775A3; text-decoration:underline;">Help Center</a></td>
   </tr>
   <tr>
     <td>&nbsp;</td>

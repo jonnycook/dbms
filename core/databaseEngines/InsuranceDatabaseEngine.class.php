@@ -20,7 +20,7 @@ class InsuranceDatabaseStorageEngine extends DatabaseEngine {
 		if ($model == 'User' && $relName == 'insurance') {
 			$user = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($id)]);
 			if ($user['patientId'] && $user['patientId'] != 'DUMMY') {
-				$response = json_decode(file_get_contents('http://' . QS1_SERVER . '/api/Patient/' . QS1_PHARMACY . '/Insurance?patientID=' . $user['patientId']), true);
+				$response = qs1Get('Patient/Insurance', ['patientID' => $user['patientId']]);
 				foreach ($response as $i => $obj) {
 					$addresses[] = [
 						'id' => $id . '-' . $obj['InsuranceID'],

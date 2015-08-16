@@ -1,0 +1,12 @@
+v8
+Added qs1Get method.
+
+v7
+Fixed layout of emails.
+
+v6
+Added caregiver system emails.
+
+v5
+Removed unsubscribe link from email template.
+Fixed help URL.
