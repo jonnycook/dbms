@@ -8,7 +8,6 @@ $clientId = CryptoLib::randomString(32);
 
 $mongo = mongoClient();
 
-
 $client = [
 	'_id' => $clientId,
 	'subscribedTo' => [],

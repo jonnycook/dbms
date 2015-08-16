@@ -4,6 +4,17 @@ header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('UTC');
 require_once(__DIR__.'/env.php');
 
+require_once(__DIR__.'/../vendor/autoload.php');
+
+$ravenClient = new Raven_Client('https://49379cd047ce4c7686fac7ce7572fcf8:2a5739f68245414d9098922280f314a0@app.getsentry.com/50459', [
+	'release' => '1.0.0',
+]);
+
+$error_handler = new Raven_ErrorHandler($ravenClient);
+$error_handler->registerExceptionHandler();
+$error_handler->registerErrorHandler();
+$error_handler->registerShutdownFunction();
+
 function _mongoClient() {
 	global $_mongoClient;
 	if (!$_mongoClient) {
@@ -28,7 +39,7 @@ function terminateClient($clientId) {
 		}
 	}
 
-	$mongo->clients->remove(['_id' => makeClientId($clientId)]);
+	$mongo->clients->update(['_id' => makeClientId($clientId)], ['$set' => ['terminated' => true]]);
 }
 
 function httpPost($url, $data) {
