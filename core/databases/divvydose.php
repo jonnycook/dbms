@@ -240,8 +240,8 @@ return [
 
 					if ($user['facility']) {
 						if (preg_match('/^FACILITY (\d+) \(ZONE (\d+)\)$/', $user['facility'], $matches)) {
-							$facility = intval($matches[1])
-							$zone = intval($matches[2])
+							$facility = intval($matches[1]);
+							$zone = intval($matches[2]);
 							$currentShipment = currentShipment($facility);
 							$user['lastShipment'] = shipmentDate($facility, $currentShipment);
 							$user['nextShipment'] = shipmentDate($facility, $currentShipment + 1);
