@@ -39,7 +39,7 @@ function terminateClient($clientId) {
 		}
 	}
 
-	$mongo->clients->update(['_id' => makeClientId($clientId)], ['$set' => ['terminated' => true]]);
+	$mongo->clients->update(['_id' => makeClientId($clientId)], ['$set' => ['terminated' => gmdate('Y-m-d H:i:s')]]);
 }
 
 function httpPost($url, $data) {
