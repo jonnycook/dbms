@@ -72,7 +72,7 @@ return [
 
 				'filter' => function(&$user, $id, $first) {
 					if (!$first) return;
-					
+
 					if ($user['patientId'] == 'DUMMY') {
 						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
@@ -596,6 +596,11 @@ return [
 				'primary' => 'paymentMethods',
 			],
 			'attributes' => [
+				'nameOnCard' => [
+					'type' => 'string',
+					'schema' => 1
+				],
+
 				'firstName' => ['type' => 'string'],
 				'lastName' => ['type' => 'string'],
 				'number' => ['type' => 'string'],
