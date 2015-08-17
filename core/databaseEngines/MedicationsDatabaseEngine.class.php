@@ -122,7 +122,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 				zendeskClient()->tickets()->create(array(
 					'subject' => "Prescription",
 					'comment' => "$rxNumber $state",
-					// 'tags' => array('contact'),
+					'tags' => array('prescription-update'),
 					'requester_id' => $userDocument['zendeskId'],
 					'submitter_id' => $userDocument['zendeskId'],
 				));
