@@ -69,7 +69,8 @@ return [
 				// 	}
 				// },
 
-				'filter' => function(&$user, $id) {
+				'filter' => function(&$user, $id, $first) {
+					if (!$first) return;
 					if ($user['patientId'] == 'DUMMY') {
 						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
@@ -406,12 +407,18 @@ return [
 		'Prescription' => [
 			'storage' => (defined('QS1') ? [
 				'primary' => 'medications'
-			] : null) + [
-				'filter' => function(&$prescription) {
+			] : array()) + [
+				'filter' => function(&$prescription, $id, $first) {
 					if (!$prescription['state']) {
 						$prescription['state'] = 'resumed';
 					}
-				}
+				},
+
+				'config' => [
+					'mongodb' => [
+						'id' => ['auto' => false],
+					]
+				]
 			],
 
 			'attributes' => [
@@ -434,7 +441,7 @@ return [
 				'endDate' => ['type' => 'date'],
 
 				'state' => [
-					'storage' => ['db' => 'mongodb'],
+					// 'storage' => ['db' => 'mongodb'],
 					'type' => 'string',
 				],
 			],

@@ -23,6 +23,7 @@ function createStorageEngine($type, array $config) {
 	}
 }
 function storageEngine(array $schema, $name) {
+	assert(is_string($name));
 	global $_storageEngines;
 	if ($_storageEngines[$name]) {
 		return $_storageEngines[$name];
@@ -231,8 +232,8 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 	$modelSchema = schemaModel($schema, $model);
 
-	if ($modelSchema['storage']['filter'] && $first) {
-		$modelSchema['storage']['filter']($results[$model][$id], $id);
+	if ($modelSchema['storage']['filter']) {
+		$modelSchema['storage']['filter']($results[$model][$id], $id, $first);
 	}
 
 	return $results[$model][$id];

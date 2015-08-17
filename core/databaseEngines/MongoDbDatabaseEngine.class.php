@@ -20,6 +20,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 	}
 
 	private function storageId(array $storageConfig, $modelId) {
+		// var_dump($storageConfig);
 		if ($storageConfig['id']['auto'] || !isset($storageConfig['id']['auto'])) {
 			try {
 				return new MongoId($modelId);

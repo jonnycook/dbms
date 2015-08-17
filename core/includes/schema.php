@@ -47,7 +47,7 @@ function propSchemaStorage(array $schema, $model, array $attrSchema) {
 }
 
 function schemaStorageConfig(array $schema, $storage) {
-	assert($storage);
+	assert(is_string($storage));
 	return $schema['databases'][$storage];
 }
 
