@@ -228,7 +228,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 		$results[$model][$id] = $object;
 
-		$results[$model][$id]['@path'] = $options['path'];
+		// $results[$model][$id]['@path'] = $options['path'];
 	}
 	else {
 		$results[$model][$id] = array_merge((array)$results[$model][$id], $object);
