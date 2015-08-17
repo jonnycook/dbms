@@ -247,9 +247,15 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 			// TODO: Possibly response with error
 			return null;
 		}
+
+		if ($schema['models'][$model]['storage']['onDelete']) {
+			$schema['models'][$model]['storage']['onDelete']($model, $id);
+		}
+
 		$storageNames = schemaAllModelStorage($schema, $model);
 		foreach ($storageNames as $storageName) {
 			$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
+			
 			$storage = storageEngine($schema, $storageName);
 			$storage->delete($schema, $storageConfig, $model, $id);
 		}
@@ -371,6 +377,9 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 		unset($value);
 
 		if (isTemporaryId($id)) {
+			if ($schema['models'][$model]['storage']['onInsert']) {
+				$schema['models'][$model]['storage']['onInsert']($model, $changes);
+			}
 			$primaryStorageName = schemaModelStorage($schema, $model);
 			$storageConfig = schemaModelStorageConfig($schema, $model, $primaryStorageName);
 			$storage = storageEngine($schema, $primaryStorageName);
@@ -395,6 +404,10 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 			}
 		}
 		else {
+			if ($schema['models'][$model]['storage']['onUpdate']) {
+				$schema['models'][$model]['storage']['onUpdate']($model, $id, $changes);
+			}
+
 			if ($storageChanges) {
 				foreach ($storageChanges as $storageName => $c) {
 					$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);

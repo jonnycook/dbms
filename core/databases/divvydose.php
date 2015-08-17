@@ -4,6 +4,7 @@ define('QS1', true);
 define('QS1_USE_CACHE', true);
 
 require_once(__DIR__.'/../includes/divvydose-shared/qs1.php');
+require_once(__DIR__.'/../includes/divvydose-shared/zenDesk.php');
 
 
 function currentShipment($facility) {
@@ -517,9 +518,29 @@ return [
 		],
 
 		'Allergy' => [
-			// 'storage' => [
-				
-			// ],
+			'storage' => [
+				'onDelete' => function($model, $id) {
+					$document = _mongoClient()->divvydose->Allergy->findOne(['_id' => new MongoId($id)]);
+					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($document['user'])]);
+					zendeskClient()->tickets()->create(array(
+						'subject' => "Allergry Removed",
+						'comment' => $document['name'],
+						'tags' => array('allergy-removed'),
+						'requester_id' => $userDocument['zendeskId'],
+						'submitter_id' => $userDocument['zendeskId'],
+					));
+				},
+				'onInsert' => function($model, $changes) {
+					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($changes['user'])]);
+					zendeskClient()->tickets()->create(array(
+						'subject' => "Allergry Added",
+						'comment' => $changes['name'],
+						'tags' => array('allergy-added'),
+						'requester_id' => $userDocument['zendeskId'],
+						'submitter_id' => $userDocument['zendeskId'],
+					));
+				},
+			],
 			'attributes' => [
 				'name' => ['type' => 'string'],
 			],
@@ -533,6 +554,29 @@ return [
 			]
 		],
 		'Condition' => [
+			'storage' => [
+				'onDelete' => function($model, $id) {
+					$document = _mongoClient()->divvydose->Condition->findOne(['_id' => new MongoId($id)]);
+					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($document['user'])]);
+					zendeskClient()->tickets()->create(array(
+						'subject' => "Condition Removed",
+						'comment' => $document['name'],
+						'tags' => array('condition-removed'),
+						'requester_id' => $userDocument['zendeskId'],
+						'submitter_id' => $userDocument['zendeskId'],
+					));
+				},
+				'onInsert' => function($model, $changes) {
+					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($changes['user'])]);
+					zendeskClient()->tickets()->create(array(
+						'subject' => "Condition Added",
+						'comment' => $changes['name'],
+						'tags' => array('condition-added'),
+						'requester_id' => $userDocument['zendeskId'],
+						'submitter_id' => $userDocument['zendeskId'],
+					));
+				},
+			],
 			'attributes' => [
 				'name' => ['type' => 'string'],
 			],
