@@ -113,6 +113,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 		$relOptions += [
 			'child' => true,
 			'from' => ['model' => $model, 'id' => $id, 'relName' => $relName],
+			'path' => array_merge((array)$options['path'], ["$model.$id.$relName"]),
 		];
 
 		// var_dump($relName, $relOptions);
@@ -224,7 +225,10 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 	}
 	
 	if ($results[$model][$id] === true) {
+
 		$results[$model][$id] = $object;
+
+		$results[$model][$id]['@path'] = $options['path'];
 	}
 	else {
 		$results[$model][$id] = array_merge((array)$results[$model][$id], $object);
