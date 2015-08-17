@@ -75,7 +75,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 	$object = [];
 	foreach ($attributes as $name => $attrSchema) {
-		if ($results[$model][$id][$name] || (isset($options['properties']) && !$options['properties'][$name])) continue;
+		if ($results[$model][$id][$name] || (isset($options['properties']) && !$options['properties'][$name]) || isset($options['attributes']) && !$options['attributes'][$relName]) continue;
 		list($storage, $storageConfig) = propStorage($schema, $model, $name);//storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $attrSchema));
 
 		$modelSchema = schemaModel($schema, $model);
@@ -663,7 +663,7 @@ function distributeUpdate($db, $databaseSchema, $update, $clientId) {
 							}
 						}
 
-						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, ['edges' => $includedEdges, 'excludeReferences' => true]);
+						resourceSubtree($databaseSchema, $resource['resource'], $resource['path'], $resource['resolvedPath'], $results, ['attributes' => [], 'edges' => $includedEdges, 'excludeReferences' => true]);
 					}
 					
 					foreach ($subscribers as $subscriber) {
@@ -1014,6 +1014,10 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 		$options['excludeRelationshipInstances'][$parentEdge] = [$instancePath[count($instancePath) - 2]];
 	}
 
+
+	if (isset($opts['attributes'])) {
+		$options['attributes'] = $opts['attributes'];
+	}
 
 	if (isset($opts['edges'])) {
 		$edges = nodeEdges($databaseSchema, $resource, $basePath);

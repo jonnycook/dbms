@@ -72,6 +72,7 @@ return [
 
 				'filter' => function(&$user, $id, $first) {
 					if (!$first) return;
+					
 					if ($user['patientId'] == 'DUMMY') {
 						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
