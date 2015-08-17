@@ -30,7 +30,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 			if ($user['patientId']) {
 				if ($user['patientId'] == 'DUMMY') {
 					$prescriptions = [
-						['ATORVOSTATIN 20 MG', '06001164', 'Take once daily by mouth', 'ATOR5DA1'],	
+						['ATORVOSTATIN 20 MG', '06001164!', 'Take once daily by mouth', 'ATOR5DA1'],	
 						['LISINOPRIL 20 MG', '0112358', 'Take once daily by mouth', 'LISI469A'],	
 						['ASPIRIN 81 MG', '8675309', 'Take once daily by mouth'],
 						['FISH OIL + DHA 500 MG', '6022141', 'Take three times daily by mouth'],	
