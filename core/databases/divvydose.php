@@ -517,6 +517,9 @@ return [
 		],
 
 		'Allergy' => [
+			// 'storage' => [
+				
+			// ],
 			'attributes' => [
 				'name' => ['type' => 'string'],
 			],

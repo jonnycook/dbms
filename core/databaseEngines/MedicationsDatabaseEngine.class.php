@@ -107,7 +107,6 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fieldsStr);
 		$response = curl_exec($ch);
 		$response = json_decode($response, true);
-		// var_dump($changes);
 		return "{$changes['relationships']['user']}-$response[AddressID]";
 	}
 
@@ -126,7 +125,6 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 					'requester_id' => $userDocument['zendeskId'],
 					'submitter_id' => $userDocument['zendeskId'],
 				));
-
 			}
 		}
 
