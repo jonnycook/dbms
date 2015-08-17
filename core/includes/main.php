@@ -1001,7 +1001,7 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 			}
 		}
 
-		if ($opts['excludeReferences'] && isset($node['references'])) {
+		if (isset($node['references'])) {
 			foreach ($node['references'] as $ref) {
 				$obj['excludeProperties'][$ref] = true;
 			}

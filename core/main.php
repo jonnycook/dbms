@@ -282,14 +282,14 @@ else if ($backup = $_POST['backup']) {
 }
 else if ($_GET['test']) {
 
-	// var_dump(resourceSubtreeOptions($databaseSchema, 'user', '', []));
+	var_dump(resourceSubtreeOptions($databaseSchema, 'user', '', []));
 
 
 
 
 	// var_dump(nodePaths($databaseSchema, 'user', 'User'));
 
-	resourceSubtree($databaseSchema, 'user', '', ['55b4225ed4c62d576b515636'], $results);
+	// resourceSubtree($databaseSchema, 'user', '', ['55b4225ed4c62d576b515636'], $results);
 	var_dump($results);
 	// var_dump(resourceSubtreeOptions($databaseSchema, 'user', 'medicineLogEntries', [], ['excludeReferences' => true]));
 //	var_dump(nodeEdges($databaseSchema, 'user', 'caringFor'));
