@@ -117,7 +117,7 @@ class MedicationsDatabaseStorageEngine extends DatabaseEngine {
 			if ($state != $document['state']) {
 				require_once('includes/divvydose-shared/zenDesk.php');
 				list($userId, $rxNumber) = explode('-', $id);
-				$userDocument = mongoClient()->divvydose->User->findOne(['_id' => new MongoId($userId)]);
+				$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($userId)]);
 				_mongoClient()->divvydose->Prescription->update(['_id' => $id], ['$set' => ['state' => $state]], ['upsert' => true]);
 				zendeskClient()->tickets()->create(array(
 					'subject' => "Prescription",
