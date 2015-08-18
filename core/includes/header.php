@@ -38,7 +38,7 @@ function mongoClient() {
 	return $client->dbms;
 }
 
-function terminateClient($clientId) {
+function terminateClient($clientId, $opts=[]) {
 	$mongo = mongoClient();
 	$clientDocument = $mongo->clients->findOne(['_id' => makeClientId($clientId)]);
 	if ($clientDocument['subscribedTo']) {
@@ -48,7 +48,9 @@ function terminateClient($clientId) {
 		}
 	}
 
-	$mongo->clients->update(['_id' => makeClientId($clientId)], ['$set' => ['connected' => false, 'terminated' => gmdate('Y-m-d H:i:s')]]);
+	$data = ['connected' => false, 'terminated' => gmdate('Y-m-d H:i:s')];
+	if ($opts['replaced']) $data['replaced'] = true;
+	$mongo->clients->update(['_id' => makeClientId($clientId)], ['$set' => $data]);
 }
 
 function httpPost($url, $data) {

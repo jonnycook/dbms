@@ -8,6 +8,7 @@ $clientId = CryptoLib::randomString(32);
 
 $mongo = mongoClient();
 
+
 $client = [
 	'_id' => $clientId,
 	'subscribedTo' => [],
@@ -21,6 +22,19 @@ if ($_GET['client']) {
 
 if ($client['token']) {
 	$client['userId'] = decrypt($client['token'], 'USER_ID');
+}
+
+if ($client['type'] == 'mobile') {
+	$cursor = $mongo->clients->find([
+		'type' => 'mobile', 
+		'device.id' => $client['device']['id'],
+		'device.platform' => $client['device']['platform'],
+		'terminated' => ['$exists' => false],
+		'app' => $client['app'],
+	]);
+	foreach ($cursor as $client) {
+		terminateClient($client['_id'], ['replaced' => true]);
+	}
 }
 
 $mongo->clients->insert($client);
