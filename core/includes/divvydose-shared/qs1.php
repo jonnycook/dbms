@@ -53,7 +53,7 @@ function qs1Get($method, $params=[]) {
 	}
 
 	if (defined('QS1_USE_CACHE')) {
-		$mongo = new MongoClient();
+		$mongo = _mongoClient();
 		$id = md5($url);
 		$document = $mongo->divvydose->qs1Cache->findOne(['_id' => $id]);
 		if ($document) {

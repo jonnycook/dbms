@@ -18,7 +18,16 @@ $error_handler->registerShutdownFunction();
 function _mongoClient() {
 	global $_mongoClient;
 	if (!$_mongoClient) {
-		$_mongoClient = new MongoClient();
+		if (ENV == 'prod') {
+			$mongoOpts = [
+				'username' => 'admin', 
+				'password' => 'I3B9632J87oz5dn',
+			];
+			$_mongoClient = new MongoClient("mongodb://localhost:27017", $mongoOpts);
+		}
+		else {
+			$_mongoClient = new MongoClient();			
+		}
 	}
 	return $_mongoClient;
 }

@@ -5,7 +5,7 @@ require_once(__DIR__.'/DatabaseEngine.class.php');
 
 class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 	public function __construct(array $config) {
-		$this->client = new MongoClient();
+		$this->client = _mongoClient();
 		$this->db = $this->client->{$config['db']};
 	}
 

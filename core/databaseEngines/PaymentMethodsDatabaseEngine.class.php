@@ -52,7 +52,7 @@ class gwapi {
 
 class PaymentMethodsStorageEngine extends DatabaseEngine {
 	public function __construct(array $config) {
-		$this->client = new MongoClient();
+		$this->client = _mongoClient();
 		$this->db = $this->client->{$config['db']};
 		$this->gw = new gwapi;
 		$this->gw->setLogin('Divvy34', 'divvyDOSE1');
