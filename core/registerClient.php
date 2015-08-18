@@ -37,6 +37,8 @@ if ($client['type'] == 'mobile') {
 	}
 }
 
+var_dump($client);
+
 $mongo->clients->insert($client);
 
 echo json_encode([

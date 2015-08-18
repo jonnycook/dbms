@@ -1,5 +1,12 @@
 <?php
 
+
+require_once('core/includes/CryptoLib.php');
+require_once('core/includes/divvydose-shared/encryption.php');
+
+var_dump($clientId = CryptoLib::randomString(32));
+var_dump($clientId = CryptoLib::randomString(32));
+
 // $ch = curl_init('http://sandbox.qs1api.com/api/Patient/VendorTest/Addresses?patientID=DEGESA');
 
 // $fields = json_decode('
@@ -41,21 +48,21 @@
 // curl_exec($ch);
 
 
-$method = 'Patient/Profile?patientID=asdf';
+// $method = 'Patient/Profile?patientID=asdf';
 
-$methodParts = explode('/', $method);
+// $methodParts = explode('/', $method);
 
-// $fieldsStr = [];
+// // $fieldsStr = [];
 
-// foreach ($fields as $key => $value) {
-//   $fieldsStr[] = "$key=$value";
+// // foreach ($fields as $key => $value) {
+// //   $fieldsStr[] = "$key=$value";
+// // }
+// // $fieldsStr = implode('&', $fieldsStr);
+
+//   $url = "http://52.27.135.117/api/$methodParts[0]/divvyDOSE";    
+
+// if ($methodParts[1]) {
+//   $url .= "/$methodParts[1]";
 // }
-// $fieldsStr = implode('&', $fieldsStr);
 
-  $url = "http://52.27.135.117/api/$methodParts[0]/divvyDOSE";    
-
-if ($methodParts[1]) {
-  $url .= "/$methodParts[1]";
-}
-
-var_dump($url);
+// var_dump($url);
