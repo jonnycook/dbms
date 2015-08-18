@@ -32,8 +32,8 @@ if ($client['type'] == 'mobile') {
 		'terminated' => ['$exists' => false],
 		'app' => $client['app'],
 	]);
-	foreach ($cursor as $client) {
-		terminateClient($client['_id'], ['replaced' => true]);
+	foreach ($cursor as $otherClient) {
+		terminateClient($otherClient['_id'], ['replaced' => true]);
 	}
 }
 
