@@ -37,7 +37,7 @@ if ($client['type'] == 'mobile') {
 	}
 }
 
-$ravenClient->captureMessage(json_encode($client));
+// $ravenClient->captureMessage(json_encode($client));
 
 $mongo->clients->insert($client);
 
