@@ -87,7 +87,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			isset($options['attributes']) && !$options['attributes'][$name] || 
 			$options['excludeProperties'][$name]) {
 			
-			if (DEBUG_MODE) echo "Skipped $model $id $name\n";
+			// if (DEBUG_MODE) echo "Skipped $model $id $name\n";
 			continue;
 		}
 
@@ -117,7 +117,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 		if (isset($options['properties']) && !$options['properties'][$relName] ||
 			isset($options['relationships']) && !$options['relationships'][$relName] ||
 			$options['excludeProperties'][$relName]) {
-			if (DEBUG_MODE) echo "Skipped $model $id $relName\n";
+			// if (DEBUG_MODE) echo "Skipped $model $id $relName\n";
 			continue;
 		}
 
