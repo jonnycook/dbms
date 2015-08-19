@@ -114,7 +114,10 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 		if (isset($options['properties']) && !$options['properties'][$relName] ||
 			isset($options['relationships']) && !$options['relationships'][$relName] ||
-			$options['excludeProperties'][$relName]) continue;
+			$options['excludeProperties'][$relName]) {
+			if (DEBUG_MODE) echo "Skipped $model $id $relName\n";
+			continue;
+		}
 
 		$relOptions = (array)$options['propertyOptions'][$relName] + (array)$relSchema['storage']['objectOptions'];
 
