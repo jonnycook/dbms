@@ -73,7 +73,7 @@ return [
 				'filter' => function(&$user, $id, $first) {
 					if (!$first) return;
 
-			
+
 					if ($user['patientId'] == 'DUMMY') {
 						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
@@ -379,7 +379,7 @@ return [
 				// 'notifiedWhenSkipped' => ['type' => 'bool'], // schema 2
 				'notifiedWhenTaken' => ['type' => 'bool'],
 				'notifiedWhenOffline' => ['type' => 'bool'],
-				'notificationDelay' => ['type' => 'interval'],
+				'notificationDelay' => ['type' => 'interval', 'defaultValue' => 15],
 			],
 			'relationships' => [
 				'caregiverUser' => [
