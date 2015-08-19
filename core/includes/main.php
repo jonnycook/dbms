@@ -83,10 +83,10 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 	foreach ($attributes as $name => $attrSchema) {
 		if (isset($results[$model][$id][$name]) ||
 			(isset($options['properties']) && !$options['properties'][$name]) ||
-			isset($options['attributes']) && !$options['attributes'][$relName] || 
-			$options['excludeProperties'][$relName]) {
+			isset($options['attributes']) && !$options['attributes'][$name] || 
+			$options['excludeProperties'][$name]) {
 			
-			if (DEBUG_MODE) echo "Skipped $model $id $relName\n";
+			if (DEBUG_MODE) echo "Skipped $model $id $name\n";
 			continue;
 		}
 
