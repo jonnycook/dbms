@@ -640,7 +640,7 @@ function resourceSubscribers($db, $resource, $id, $clientId = null) {
 	return $subscribers;
 }
 
-function distributeUpdate($db, $databaseSchema, $update, $clientId) {
+function distributeUpdate($db, $databaseSchema, $update, $clientId=null) {
 	$clientChanges = [];
 	foreach ($update['data'] as $model => $modelChanges) {
 		foreach ($modelChanges as $id => $instanceChanges) {

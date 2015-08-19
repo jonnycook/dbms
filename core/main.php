@@ -33,7 +33,7 @@ $ravenClient->extra_context(array('schema' => $schemaVersion, 'env' => ENV));
 $databaseSchema = require("databases/$databaseName.php");
 
 if ($clientId) {
-	if ($clientId == 'wW8tp9y1vp2Y8vH') {
+	if ($clientId == SUPER_CLIENT) {
 		$clientDocument = [];
 	}
 	else {
@@ -56,6 +56,13 @@ if ($clientId) {
 if ($databaseSchema['init']) {
 	$databaseSchema['init']($clientDocument);
 }
+
+// get resource
+// update
+// pull
+// push
+
+// backup
 
 if ($resourceRoots = $_GET['resource']) {
 	$params = [];
@@ -186,6 +193,15 @@ if ($resourceRoots = $_GET['resource']) {
 			'path' => $resourceRoots,
 			'data' => $allResults
 		] + $resolvedResource);
+	}
+}
+else if ($_GET['push']) {
+	if ($clientId == SUPER_CLIENT) {
+		getObject($databaseSchema, $_GET['model'], $_GET['id'], $results, [
+			'properties' => [$_GET['property'] => true],
+		]);
+		distributeUpdate($databaseName, $databaseSchema, ['id' => rand(), 'data' => $results]);
+		var_dump($results);
 	}
 }
 else if ($update = $_POST['update']) {

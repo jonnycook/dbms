@@ -237,16 +237,6 @@ return [
 							$user['lastShipment'] = shipmentDate($facility, $currentShipment);
 							$user['nextShipment'] = shipmentDate($facility, $currentShipment + 1);
 						}
-
-						// $currentDate = date('j');
-						// if ($shipmentDate <= $currentDate) {
-						// 	$user['lastShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
-						// 	$user['nextShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') + 1, $shipmentDate, date('Y')));
-						// }
-						// else {
-						// 	$user['nextShipment'] = date('Y') . '-' . date('m') . '-' . str_pad($shipmentDate, 2 - strlen($shipmentDate), '0', STR_PAD_LEFT);
-						// 	$user['lastShipment'] = date('Y-m-d', mktime(0, 0, 0, date('n') - 1, $shipmentDate, date('Y')));
-						// }
 					}
 				}
 			],
@@ -600,7 +590,6 @@ return [
 					'type' => 'string',
 					'schema' => 1
 				],
-
 				'firstName' => ['type' => 'string'],
 				'lastName' => ['type' => 'string'],
 				'number' => ['type' => 'string'],
@@ -763,7 +752,7 @@ return [
 
 		// TODO: only allow from super client
 		'/:model/:id' => [
-			'clients' => ['wW8tp9y1vp2Y8vH'],
+			'clients' => [SUPER_CLIENT],
 			'type' => 'model'
 		],
 	]

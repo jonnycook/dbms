@@ -1,5 +1,7 @@
 <?php
 
+define('SUPER_CLIENT', 'wW8tp9y1vp2Y8vH');
+
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('UTC');
 require_once(__DIR__.'/env.php');
