@@ -207,7 +207,6 @@ else if ($_GET['push']) {
 			'properties' => [$_GET['property'] => true],
 		]);
 		distributeUpdate($databaseName, $databaseSchema, ['id' => rand(), 'data' => $results]);
-		var_dump($results);
 	}
 }
 else if ($update = $_POST['update']) {
