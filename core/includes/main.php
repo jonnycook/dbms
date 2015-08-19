@@ -84,7 +84,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			isset($options['attributes']) && !$options['attributes'][$relName] || 
 			$options['excludeProperties'][$relName]) {
 			
-			if (defined('DEBUG_MODE')) echo "Skipped $relName\n";
+			if (defined('DEBUG_MODE')) echo "Skipped $model $id $relName\n";
 			continue;
 		}
 
