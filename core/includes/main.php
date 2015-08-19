@@ -70,19 +70,29 @@ function propStorage($schema, $model, $prop) {
 }
 
 function getObject(array $schema, $model, $id, &$results=null, $options=null) {
-	$attributes = schemaModelAttributes($schema, $model);
-	$relationships = schemaModelRelationships($schema, $model);
+	if (!$results[$model][$id]) {
+		$first = true;
+		$results[$model][$id] = true;
+	}
 
 	$object = [];
+
+	$attributes = schemaModelAttributes($schema, $model);
 	foreach ($attributes as $name => $attrSchema) {
-		if ($results[$model][$id][$name] || (isset($options['properties']) && !$options['properties'][$name]) || isset($options['attributes']) && !$options['attributes'][$relName]) continue;
-		list($storage, $storageConfig) = propStorage($schema, $model, $name);//storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $attrSchema));
+		if (isset($results[$model][$id][$name]) ||
+			(isset($options['properties']) && !$options['properties'][$name]) ||
+			isset($options['attributes']) && !$options['attributes'][$relName] || 
+			$options['excludeProperties'][$relName]) {
+			
+			if (defined('DEBUG_MODE')) echo "Skipped $relName\n";
+			continue;
+		}
 
-		$modelSchema = schemaModel($schema, $model);
-		// $storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
-
+		list($storage, $storageConfig) = propStorage($schema, $model, $name);
+		
 		$deps = $storage->dependencies($model, $name);
 		if ($deps) {
+			$modelSchema = schemaModel($schema, $model);
 			$resolvedDeps = [];
 			foreach ($deps as $i => $dep) {
 				list($db, $dbProp) = explode('.', $dep);
@@ -95,17 +105,14 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 		$object[$name] = $storage->attribute($model, $id, $storageConfig, $name, $attrSchema, $resolvedDeps);
 	}
 
-
-	if (!$results[$model][$id]) {
-		$first = true;
-		$results[$model][$id] = true;
-	}
-
+	$relationships = schemaModelRelationships($schema, $model);
 	foreach ($relationships as $relName => $relSchema) {
 		// TODO: this is a huge hack!!!
 		if ($relSchema['access'] == 'owner' && $options['child']) continue;
 
-		if (isset($options['properties']) && !$options['properties'][$relName] || isset($options['relationships']) && !$options['relationships'][$relName] || $options['excludeProperties'][$relName]) continue;
+		if (isset($options['properties']) && !$options['properties'][$relName] ||
+			isset($options['relationships']) && !$options['relationships'][$relName] ||
+			$options['excludeProperties'][$relName]) continue;
 
 		$relOptions = (array)$options['propertyOptions'][$relName] + (array)$relSchema['storage']['objectOptions'];
 
@@ -146,13 +153,12 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			}
 		}
 		else {
-			$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $relSchema));
-
-			$modelSchema = schemaModel($schema, $model);
-			$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
-			unset($value);
-
 			if (!$relSchema['storage']['ignore']) {
+				$storage = storageEngine($schema, $storageName = propSchemaStorage($schema, $model, $relSchema));
+				$modelSchema = schemaModel($schema, $model);
+				$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
+				unset($value);
+
 				if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
 					if ($value !== null) {
 						switch ($relSchema['type']) {
@@ -220,9 +226,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 	}
 	
 	if ($results[$model][$id] === true) {
-
 		$results[$model][$id] = $object;
-
 		// $results[$model][$id]['@path'] = $options['path'];
 	}
 	else {
@@ -230,13 +234,13 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 	}
 
 	$modelSchema = schemaModel($schema, $model);
-
 	if ($modelSchema['storage']['filter']) {
 		$modelSchema['storage']['filter']($results[$model][$id], $id, $first);
 	}
 
 	return $results[$model][$id];
 }
+
 
 function updateObject(array $schema, $model, $id, &$changes, &$results=null, array $allChanges=[], $whatToUpdate='both') {
 	assert(is_string($model));
