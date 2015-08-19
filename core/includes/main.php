@@ -126,7 +126,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 						}
 						else {
 
-							if ($options['excludeRelationshipInstances'][$relName] && in_array($value, $options['excludeRelationshipInstances'][$relName])) break;
+							if ($options['excludeRelationshipInstances'][$relName] && ($options['excludeRelationshipInstances'][$relName] === true || in_array($value, $options['excludeRelationshipInstances'][$relName]))) break;
 
 							if (!$results[$relSchema['model']][$value]) {
 								getObject($schema, $relSchema['model'], $value, $results, $relOptions);
@@ -136,7 +136,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 					case 'Many':
 						foreach ($value as $relId) {
-							if (($options['excludeRelationshipInstances'][$relName] && in_array($relId, $options['excludeRelationshipInstances'][$relName]))) continue;
+							if ($options['excludeRelationshipInstances'][$relName] && ($options['excludeRelationshipInstances'][$relName] === true || in_array($relId, $options['excludeRelationshipInstances'][$relName]))) continue;
 							if (!$results[$relSchema['model']][$relId]) {
 								getObject($schema, $relSchema['model'], $relId, $results, $relOptions);
 							}
@@ -166,7 +166,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 									}
 									else {
 										if (!$results[$relSchema['model']][$value]) {
-											if ($options['excludeRelationshipInstances'][$relName] && in_array($value, $options['excludeRelationshipInstances'][$relName])) continue 2;
+											if ($options['excludeRelationshipInstances'][$relName] && ($options['excludeRelationshipInstances'][$relName] === true || in_array($value, $options['excludeRelationshipInstances'][$relName]))) continue 2;
 											getObject($schema, $relSchema['model'], $value, $results, $relOptions);
 										}
 									}
@@ -188,7 +188,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 										$relId = $v;
 										if ($options['getRelationships'] || !isset($options['getRelationships'])) {
 											if (!$results[$relSchema['model']][$relId]) {
-												if ($options['excludeRelationshipInstances'][$relName] && in_array($relId, $options['excludeRelationshipInstances'][$relName])) continue;
+												if ($options['excludeRelationshipInstances'][$relName] && ($options['excludeRelationshipInstances'][$relName] === true || in_array($relId, $options['excludeRelationshipInstances'][$relName]))) continue;
 
 												getObject($schema, $relSchema['model'], $relId, $results, $relOptions);
 											}
