@@ -107,7 +107,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 		if (DEBUG_MODE) echo "Get $model $id $name\n";
 		$object[$name] = $storage->attribute($model, $id, $storageConfig, $name, $attrSchema, $resolvedDeps);
-		if ($object[$name] === null && $attrSchema['defaultValue']]) {
+		if ($object[$name] === null && $attrSchema['defaultValue']) {
 			$object[$name] = $attrSchema['defaultValue'];
 		}
 	}
