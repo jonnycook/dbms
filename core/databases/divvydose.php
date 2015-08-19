@@ -519,29 +519,29 @@ return [
 		],
 
 		'Allergy' => [
-			// 'storage' => [
-			// 	'onDelete' => function($model, $id) {
-			// 		$document = _mongoClient()->divvydose->Allergy->findOne(['_id' => new MongoId($id)]);
-			// 		$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($document['user'])]);
-			// 		zendeskClient()->tickets()->create(array(
-			// 			'subject' => "Allergry Removed",
-			// 			'comment' => $document['name'],
-			// 			'tags' => array('allergy-removed'),
-			// 			'requester_id' => $userDocument['zendeskId'],
-			// 			'submitter_id' => $userDocument['zendeskId'],
-			// 		));
-			// 	},
-			// 	'onInsert' => function($model, $changes) {
-			// 		$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($changes['user'])]);
-			// 		zendeskClient()->tickets()->create(array(
-			// 			'subject' => "Allergry Added",
-			// 			'comment' => $changes['name'],
-			// 			'tags' => array('allergy-added'),
-			// 			'requester_id' => $userDocument['zendeskId'],
-			// 			'submitter_id' => $userDocument['zendeskId'],
-			// 		));
-			// 	},
-			// ],
+			'storage' => [
+				'onDelete' => function($model, $id) {
+					$document = _mongoClient()->divvydose->Allergy->findOne(['_id' => new MongoId($id)]);
+					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($document['user'])]);
+					zendeskClient()->tickets()->create(array(
+						'subject' => "Allergry Removed",
+						'comment' => $document['name'],
+						'tags' => array('allergy-removed'),
+						'requester_id' => $userDocument['zendeskId'],
+						'submitter_id' => $userDocument['zendeskId'],
+					));
+				},
+				'onInsert' => function($model, $changes) {
+					$userDocument = _mongoClient()->divvydose->User->findOne(['_id' => new MongoId($changes['user'])]);
+					zendeskClient()->tickets()->create(array(
+						'subject' => "Allergry Added",
+						'comment' => $changes['name'],
+						'tags' => array('allergy-added'),
+						'requester_id' => $userDocument['zendeskId'],
+						'submitter_id' => $userDocument['zendeskId'],
+					));
+				},
+			],
 			'attributes' => [
 				'name' => ['type' => 'string'],
 			],
@@ -713,7 +713,6 @@ return [
 						'references' => ['currentAddress', 'currentPaymentMethod', 'currentInsurance'],
 
 						'edges' => ['caregivers', 'caringFor'],
-
 					]
 				],
 
@@ -742,10 +741,6 @@ return [
 		]
 	],
 	'routes' => [
-		// '/' => [
-		// 	'type' => 'db'
-		// ],
-
 		'/u' => [
 			[
 				'type' => 'model',
@@ -773,10 +768,6 @@ return [
 		],
 	]
 ];
-
-
-
-
 
 
 // 'Supplement' => array(
