@@ -107,7 +107,6 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 		if (isset($options['properties']) && !$options['properties'][$relName] || isset($options['relationships']) && !$options['relationships'][$relName] || $options['excludeProperties'][$relName]) continue;
 
-
 		$relOptions = (array)$options['propertyOptions'][$relName] + (array)$relSchema['storage']['objectOptions'];
 
 		$relOptions += [
@@ -115,9 +114,6 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			'from' => ['model' => $model, 'id' => $id, 'relName' => $relName],
 			'path' => array_merge((array)$options['path'], ["$model.$id.$relName"]),
 		];
-
-		// var_dump($relName, $relOptions);
-
 
 		if ($value = $results[$model][$id][$relName]) {
 			if ($options['getRelationships'] || !isset($options['getRelationships'])) {
@@ -157,7 +153,6 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			unset($value);
 
 			if (!$relSchema['storage']['ignore']) {
-				// var_dump($relName);
 				if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
 					if ($value !== null) {
 						switch ($relSchema['type']) {
@@ -281,7 +276,6 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 				if (preg_match('/(\[[\^$]?\]|\([^(]*\))$/', $str, $matches)) {
 					$op = $matches[1];
 					$pathStr = substr($str, 0, -strlen($op));
-
 
 					switch ($op) {
 						case '[]':
@@ -1003,7 +997,7 @@ function resourceSubtreeOptions($databaseSchema, $resource, $basePath, $instance
 
 		if (isset($node['references'])) {
 			foreach ($node['references'] as $ref) {
-				$obj['excludeProperties'][$ref] = true;
+				$obj['excludeRelationshipInstances'][$ref] = true;
 			}
 		}
 		unset($obj);
