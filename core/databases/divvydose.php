@@ -226,6 +226,7 @@ return [
 						}
 					}
 					else {
+						if (DEBUG_MODE) echo "Removing divvyPacks\n";
 						unset($user['divvyPacks']);
 					}
 
