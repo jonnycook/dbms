@@ -105,6 +105,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			}
 		}
 
+		if (DEBUG_MODE) echo "Get $model $id $name\n";
 		$object[$name] = $storage->attribute($model, $id, $storageConfig, $name, $attrSchema, $resolvedDeps);
 	}
 
@@ -165,6 +166,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 				$storageConfig = modelSchemaStorageConfig($modelSchema, $storageName);
 				unset($value);
 
+				if (DEBUG_MODE) echo "Get $model $id $relName\n";
 				if ($storage->relationship($schema, $model, $id, $storageConfig, $relName, $relSchema, $value)) {
 					if ($value !== null) {
 						switch ($relSchema['type']) {
