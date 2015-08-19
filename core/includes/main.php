@@ -70,6 +70,7 @@ function propStorage($schema, $model, $prop) {
 }
 
 function getObject(array $schema, $model, $id, &$results=null, $options=null) {
+	if (DEBUG_MODE) debug_print_backtrace();
 	if (!$results[$model][$id]) {
 		$first = true;
 		$results[$model][$id] = true;
