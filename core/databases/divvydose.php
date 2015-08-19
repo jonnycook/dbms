@@ -768,6 +768,7 @@ return [
 
 		// TODO: only allow from super client
 		'/:model/:id' => [
+			'clients' => ['wW8tp9y1vp2Y8vH'],
 			'type' => 'model'
 		],
 	]

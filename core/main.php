@@ -107,6 +107,12 @@ if ($resourceRoots = $_GET['resource']) {
 				}
 			}
 			
+			if ($routeSchema['clients']) {
+				if (!in_array($clientId, $routeSchema['clients'])) {
+					throw new Exception("Client	'$clientId' not allowed to access route");
+				}
+			}
+
 			unset($resolvedResource);
 			if ($routeSchema['type'] == 'db') {
 				foreach ($databaseSchema['models'] as $modelName => $modelSchema) {
