@@ -15,9 +15,11 @@ require_once('databaseEngines/PaymentMethodsDatabaseEngine.class.php');
 
 require_once('includes/main.php');
 
-
 if ($_GET['debug']) {
 	define('DEBUG_MODE', true);
+}
+else {
+	define('DEBUG_MODE', false);
 }
 
 if ($_REQUEST['clientId']) {

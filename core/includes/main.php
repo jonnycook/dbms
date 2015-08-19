@@ -77,6 +77,8 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 	$object = [];
 
+	if (DEBUG_MODE) var_dump($options)
+
 	$attributes = schemaModelAttributes($schema, $model);
 	foreach ($attributes as $name => $attrSchema) {
 		if (isset($results[$model][$id][$name]) ||
@@ -84,7 +86,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 			isset($options['attributes']) && !$options['attributes'][$relName] || 
 			$options['excludeProperties'][$relName]) {
 			
-			if (defined('DEBUG_MODE')) echo "Skipped $model $id $relName\n";
+			if (DEBUG_MODE) echo "Skipped $model $id $relName\n";
 			continue;
 		}
 
