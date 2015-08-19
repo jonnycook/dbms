@@ -77,7 +77,7 @@ function getObject(array $schema, $model, $id, &$results=null, $options=null) {
 
 	$object = [];
 
-	if (DEBUG_MODE) var_dump($options)
+	if (DEBUG_MODE) var_dump($options);
 
 	$attributes = schemaModelAttributes($schema, $model);
 	foreach ($attributes as $name => $attrSchema) {
