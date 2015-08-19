@@ -73,6 +73,7 @@ return [
 				'filter' => function(&$user, $id, $first) {
 					if (!$first) return;
 
+			
 					if ($user['patientId'] == 'DUMMY') {
 						$user['demo'] = true;
 						$timezone = date_default_timezone_get();
@@ -182,8 +183,8 @@ return [
 						$user['lastShipmentTrackingUrl'] = "http://wwwapps.ups.com/WebTracking/track?loc=en_US&track.x=Track&trackNums=$userDocument[trackingNumber]";
 					}
 
-					if ($user['divvyPacks'] && $user['patientId']) {
-						$rxProfile = qs1Get('Patient/RxProfile', ['patientID' => $user['patientId']]);
+					if ($user['divvyPacks'] && $userDocument['patientId']) {
+						$rxProfile = qs1Get('Patient/RxProfile', ['patientID' => $userDocument['patientId']]);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
 								$parts = explode(', ', $rx['PrescriberName']);
