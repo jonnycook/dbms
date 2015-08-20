@@ -202,6 +202,7 @@ return [
 						}
 
 						foreach ($user['divvyPacks'] as $beginDate => $divvyPack) {
+							$packets = [];
 							$rxs = [];
 							foreach ($divvyPack as $dose) {
 								if (!$rxs[$rxNumber = $dose['rxNumber']]) {
