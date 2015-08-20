@@ -184,7 +184,7 @@ return [
 					}
 
 					if ($user['divvyPacks'] && $userDocument['patientId']) {
-						$rxProfile = qs1Get('Patient/RxProfile', ['patientID' => $userDocument['patientId']]);
+						$rxProfile = qs1Get('Patient/RxProfile', ['patientID' => $userDocument['patientId'], 'ActiveScriptsOnly' => 'false']);
 						foreach ($rxProfile as $rx) {
 							if (strpos($rx['PrescriberName'], ', ')) {
 								$parts = explode(', ', $rx['PrescriberName']);
