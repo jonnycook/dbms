@@ -1,2 +1,0 @@
-git add -A; git commit -m "."; git push origin master
-ssh -i ~/keypair.pem ec2-user@52.11.118.192 "cd /var/www/html/dbms/v1/ && git pull"
