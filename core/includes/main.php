@@ -279,7 +279,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 		$relationships = schemaModelRelationships($schema, $model);
 		foreach ($changes as $prop => &$value) {
 			if (preg_match('/^([^.(\[]+)([.(\[].+)$/', $prop, $matches)) {
-				$value = (array)$value;
+				
 
 				$prop = $matches[1];
 
@@ -288,7 +288,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 
 				$str = $matches[2];
 
-				if (preg_match('/(\[[\^$]?\]|\([^(]*\))$/', $str, $matches)) {
+				if (preg_match('/(\[[\^$]?\]|\(([^(]*)\))$/', $str, $matches)) {
 					$op = $matches[1];
 					$pathStr = substr($str, 0, -strlen($op));
 
@@ -303,7 +303,7 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 							break;
 
 						default:
-							$operation = array_shift($value);
+							$operation = $matches[2];
 							break;
 					}
 				}
@@ -328,17 +328,29 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 				}
 
 				if ($relSchema = $relationships[$prop]) {
-					foreach ($value as &$relId) {
-						if (isTemporaryId($relId)) {
-							if ($results['mapping'][$relId]) {
-								$relId = $results['mapping'][$relId];
+					if (is_array($value)) {
+						foreach ($value as &$relId) {
+							if (isTemporaryId($relId)) {
+								if ($results['mapping'][$relId]) {
+									$relId = $results['mapping'][$relId];
+								}
+								else {
+									$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $results, $allChanges);
+								}
+							}
+						}
+						unset($relId);
+					}
+					else {
+						if (isTemporaryId($value)) {
+							if ($results['mapping'][$value]) {
+								$value = $results['mapping'][$value];
 							}
 							else {
-								$relId = updateObject($schema, $relSchema['model'], $relId, $allChanges[$relSchema['model']][$relId], $results, $allChanges);
+								$value = updateObject($schema, $relSchema['model'], $value, $allChanges[$relSchema['model']][$value], $results, $allChanges);
 							}
 						}
 					}
-					unset($relId);
 				}
 
 				$storageChanges[$storageName]['operations'][] = [
@@ -425,7 +437,10 @@ function updateObject(array $schema, $model, $id, &$changes, &$results=null, arr
 				foreach ($storageChanges as $storageName => $c) {
 					$storageConfig = schemaModelStorageConfig($schema, $model, $storageName);
 					$storage = storageEngine($schema, $storageName);
-					$storage->update($schema, $storageConfig, $model, $id, $c);
+
+					if ($storage->update($schema, $storageConfig, $model, $id, $c)) {
+						$changes['@inserted'] = true;
+					}
 				}				
 			}
 		}
@@ -634,14 +649,11 @@ class DbUtil {
 //}
 
 
-function resourceSubscribers($db, $resource, $id, $clientId = null) {
+function subscribers($db, $resource, $clientId) {
 	$resourceDocument = mongoClient()->resources->findOne([
 		'_id' => [
 			'db' => $db,
-			'resource' => [
-				'name' => $resource,
-				'id' => $id,
-			],
+			'resource' => $resource,
 		]
 	]);
 
@@ -653,14 +665,53 @@ function resourceSubscribers($db, $resource, $id, $clientId = null) {
 		}
 	}
 	return $subscribers;
+
+}
+
+
+function resourceSubscribers($db, $resource, $id, $clientId = null) {
+	return subscribers($db, [
+				'name' => $resource,
+				'id' => $id,
+			], $clientId);
+	// $resourceDocument = mongoClient()->resources->findOne([
+	// 	'_id' => [
+	// 		'db' => $db,
+	// 		'resource' => ,
+	// 	]
+	// ]);
+
+	// $subscribers = (array)$resourceDocument['subscribers'];
+	// if ($clientId) {
+	// 	$index = array_search($clientId, $subscribers);
+	// 	if ($index !== false) {
+	// 		array_splice($subscribers, $index, 1);
+	// 	}
+	// }
+	// return $subscribers;
 }
 
 function distributeUpdate($db, $databaseSchema, $update, $clientId=null) {
 	$clientChanges = [];
+	
+	$subscribers = subscribers($db, ['type' => 'db'], $clientId);
+	foreach ($subscribers as $subscriber) {
+		$clientChanges[$subscriber] = $update['data'];
+	}
+
 	foreach ($update['data'] as $model => $modelChanges) {
+		foreach ((array)$databaseSchema['resources'] as $name => $resourceSchema) {
+			if ($resourceSchema['canSubscribe'] !== false && $resourceSchema['type'] == 'collection' && $resourceSchema['model'] == $model) {
+				$subscribers = subscribers($db, ['name' => $name], $clientId);
+				foreach ($subscribers as $subscriber) {
+					$clientChanges[$subscriber][$model] = $modelChanges;
+				}
+			}
+		}
+
+
 		foreach ($modelChanges as $id => $instanceChanges) {
 			$resources = resources($databaseSchema, $model, $id);
-
 			foreach ($resources as $resource) {
 				$subscribers = resourceSubscribers($db, $resource['resource'], $resource['id'], $clientId);
 
@@ -765,9 +816,9 @@ function executeUpdate($update, $databaseSchema) {
 function sendToClient($clientId, $db, $update) {	
 	mongoClient()->clients->update(['_id' => makeClientId($clientId)], ['$push' => ["updates.$db" => $update]]);
 
-	$clientDocument = mongoClient()->clients->findOne(['_id' => makeClientId($clientId)]);
+	$clientDocument = mongoClient()->clients->findOne(['_id' => makeClientId($clientId)], ['connected' => 1, 'realtime' => 1]);
 
-	if ($clientDocument['connected']) {
+	if ($clientDocument['connected'] && $clientDocument['realtime'] !== false) {
 		httpPost('http://localhost:3001/push', [
 			'clientIds' => [$clientId],
 			'update' => json_encode($update)
@@ -891,11 +942,13 @@ function nodePaths($databaseSchema, $resource, $model, $path = []) {
 		}
 	}
 
+	if ($databaseSchema['models'][$model]['relationships']) {
 	foreach ($databaseSchema['models'][$model]['relationships'] as $name => $relSchema) {
 		if ($name == $path[0]) continue;
 		if ($relSchema['inverseRelationship'] && ($relSchema['owner'] || in_array($name, (array)$schema['models'][$model]['edges']))) {
 			$paths = array_merge($paths, (array)nodePaths($databaseSchema, $resource, $relSchema['model'], array_merge((array)$relSchema['inverseRelationship'], $path)));
 		}
+	}	
 	}
 
 	return $paths;
@@ -956,18 +1009,20 @@ function resolvedResourcePaths($databaseSchema, $resource, $path, $id) {
 
 function resources($databaseSchema, $model, $id) {
 	$resources = [];
-	foreach ($databaseSchema['resources'] as $name => $_) {
-		$paths = nodePaths($databaseSchema, $name, $model);
-		foreach ($paths as $path) {
-			$resolvedPaths = resolvedResourcePaths($databaseSchema, $name, $path, $id);
+	if ($databaseSchema['resources']) {
+		foreach ($databaseSchema['resources'] as $name => $_) {
+			$paths = nodePaths($databaseSchema, $name, $model);
+			foreach ($paths as $path) {
+				$resolvedPaths = resolvedResourcePaths($databaseSchema, $name, $path, $id);
 
-			foreach ($resolvedPaths as $resolvedPath) {
-				$resources[] = [
-					'resource' => $name,
-					'path' => $path,
-					'resolvedPath' => $resolvedPath,
-					'id' => $resolvedPath[0],//['id'],
-				];
+				foreach ($resolvedPaths as $resolvedPath) {
+					$resources[] = [
+						'resource' => $name,
+						'path' => $path,
+						'resolvedPath' => $resolvedPath,
+						'id' => $resolvedPath[0],//['id'],
+					];
+				}
 			}
 		}
 	}

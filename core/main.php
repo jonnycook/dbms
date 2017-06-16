@@ -33,10 +33,10 @@ else {
 	$schemaVersion = 1;
 }
 
-$ravenClient->user_context(array('clientId' => $clientId));
-$ravenClient->extra_context(array('schema' => $schemaVersion, 'env' => ENV));
+// $ravenClient->user_context(array('clientId' => $clientId));
+// $ravenClient->extra_context(array('schema' => $schemaVersion, 'env' => ENV));
 
-$databaseSchema = require("databases/$databaseName.php");
+$databaseSchema = require("../databases/$databaseName.php");
 
 if ($clientId) {
 	if ($clientId == SUPER_CLIENT) {
@@ -70,7 +70,102 @@ if ($databaseSchema['init']) {
 
 // backup
 
-if ($resourceRoots = $_GET['resource']) {
+function route($databaseSchema, $url) {
+	$params = [];
+
+	$models = array_keys($databaseSchema['models']);
+	foreach ($databaseSchema['routes'] as $route => $routeSchema) {
+		preg_match_all('/:([a-z]+)/', $route, $matches);
+		$paramNames = $matches[1];
+
+		$pattern = preg_replace_callback('/:([a-z]+)/', function($matches) use ($models) {
+			if ($matches[1] == 'model') {
+				return '(' . implode('|', $models) . ')';
+			}
+			else {
+				return '(.*?)';
+			}
+		}, $route);
+
+		if (preg_match("#^$pattern\$#", $url, $matches)) {
+			foreach ($paramNames as $i => $paramName) {
+				$params[$paramName] = $matches[$i + 1];
+			}
+			$matched = true;
+			break;
+		}
+	}
+
+	if ($matched) {
+		if (!$routeSchema[0]) {
+			$routeSchemas = [$routeSchema];
+		}
+		else {
+			$routeSchemas = $routeSchema;
+		}
+		$allResults = [];
+		foreach ($routeSchemas as $routeSchema) {
+			$results = [];
+			if (is_callable($routeSchema)) {
+				$routeSchema = $routeSchema();
+				// $params = array_merge($params, $routeSchema['params']);
+			}
+
+			if ($routeSchema['params']) {
+				if (is_callable($routeSchema['params'])) {
+					$params = array_merge($params, $routeSchema['params']($clientDocument));
+				}
+				else {
+					$params = array_merge($params, $routeSchema['params']);			
+				}
+			}
+			
+			if ($routeSchema['clients']) {
+				if (!in_array($clientId, $routeSchema['clients'])) {
+					throw new Exception("Client	'$clientId' not allowed to access route");
+				}
+			}
+
+			unset($resolvedResource);
+			if ($routeSchema['type'] == 'db') {
+				$resolvedResource = [
+					'type' => 'db',
+				];
+			}
+			else if ($routeSchema['type'] == 'model') {
+				if ($params['id']) {
+					$resolvedResource = [
+						'type' => 'model',
+						'model' => $params['model'],
+						'id' => $params['id'],
+					];
+				}
+				else {
+					$resolvedResource = [
+						'type' => 'model',
+						'model' => $params['model'],
+					];
+				}
+			}
+			else if ($routeSchema['type'] == 'resource') {
+				$id = $routeSchema['id']($clientDocument);
+				$resolvedResource = [
+					'name' => $routeSchema['resource'],
+					'id' => $id,
+				];
+			}
+		}
+
+		return $resolvedResource;
+	}
+}
+
+if ($route = $_GET['subscribe']) {
+	$resource = route($databaseSchema, $route);
+	addSubscriberToResource($databaseName, $schemaVersion, $resource, $clientId);
+	var_dump($resource);
+}
+else if ($resourceRoots = $_GET['resource']) {
 	$params = [];
 
 	$models = array_keys($databaseSchema['models']);
@@ -172,17 +267,61 @@ if ($resourceRoots = $_GET['resource']) {
 				}
 			}
 			else if ($routeSchema['type'] == 'resource') {
-				$id = $routeSchema['id']($clientDocument);
+				$resourceSchema = $databaseSchema['resources'][$routeSchema['resource']];
 
-				resource($databaseSchema, $routeSchema['resource'], $id, $results);
+				if ($resourceSchema['type'] == 'collection') {
+					$resolvedResource = [
+						'name' => $routeSchema['resource'],
+					];
 
-				$resolvedResource = [
-					'name' => $routeSchema['resource'],
-					'id' => $id,
-				];
+					if ($resourceSchema['canSubscribe'] === false) {
+						$canSubscribe = false;
+					}
+
+					if ($resourceSchema['get']) {
+						if ($_GET['params']) {
+							$p = json_decode($_GET['params'], true);
+						}
+						$results = $resourceSchema['get']($databaseName, $databaseSchema, $p);
+					}
+					else if ($resourceSchema['model']) {
+						$primaryStorageName = schemaModelStorage($databaseSchema, $resourceSchema['model']);
+						$storageConfig = schemaModelStorageConfig($databaseSchema, $resourceSchema['model'], $primaryStorageName);
+						$storage = storageEngine($databaseSchema, $primaryStorageName);
+
+						$ids = $storage->ids($resourceSchema['model'], $storageConfig);
+						foreach ($ids as $id) {
+							getObject($databaseSchema, $resourceSchema['model'], $id, $results);
+						}
+					}
+				}
+				else if ($resourceSchema['type'] == 'collections') {
+					$resolvedResource = [
+						'name' => $routeSchema['resource'],
+					];
+
+					foreach ($resourceSchema['models'] as $model) {
+						$primaryStorageName = schemaModelStorage($databaseSchema, $model);
+						$storageConfig = schemaModelStorageConfig($databaseSchema, $model, $primaryStorageName);
+						$storage = storageEngine($databaseSchema, $primaryStorageName);
+
+						$ids = $storage->ids($model, $storageConfig);
+						foreach ($ids as $id) {
+							getObject($databaseSchema, $model, $id, $results);
+						}
+					}
+				}
+				else {
+					$id = $routeSchema['id']($clientDocument);				
+					resource($databaseSchema, $routeSchema['resource'], $id, $results);
+					$resolvedResource = [
+						'name' => $routeSchema['resource'],
+						'id' => $id,
+					];
+				}
 			}
 
-			if ($clientId && $resolvedResource) addSubscriberToResource($databaseName, $schemaVersion, $resolvedResource, $clientId);
+			if ($clientId && $resolvedResource && $canSubscribe !== false) addSubscriberToResource($databaseName, $schemaVersion, $resolvedResource, $clientId);
 
 			foreach ($results as $model => $instances) {
 				foreach ($instances as $id => $instance) {
@@ -210,6 +349,7 @@ else if ($_GET['push']) {
 	}
 }
 else if ($update = $_POST['update']) {
+	// echo 'update';
 	$update = json_decode($update, true);
 
 	$updateDoc = mongoClient()->updates->findOne(['_id' => ['db' => $databaseName, 'id' => $update['id']]]);
@@ -241,6 +381,7 @@ else if ($update = $_POST['update']) {
 			}
 		}
 
+		// var_dump($resolvedUpdate);
 		distributeUpdate($databaseName, $databaseSchema, ['id' => $update['id'], 'data' => $resolvedUpdate], $clientId);
 
 		if ($delete) {

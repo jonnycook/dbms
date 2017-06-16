@@ -17,18 +17,20 @@ trunc = (message) ->
 
 wss = null
 
-switch env
-	when 'prod'
-		https = require 'https'
+# switch env
+# 	when 'prod'
+# 		https = require 'https'
 
-		httpsServer = https.createServer
-			key:fs.readFileSync '/home/ec2-user/ssl_np.key'
-			cert:fs.readFileSync '/home/ec2-user/ssl_certificate.crt'
-		httpsServer.listen 8080
+# 		httpsServer = https.createServer
+# 			key:fs.readFileSync '/home/ec2-user/ssl_np.key'
+# 			cert:fs.readFileSync '/home/ec2-user/ssl_certificate.crt'
+# 		httpsServer.listen 8080
 
-		wss = new WebSocketServer server:httpsServer
-	when 'dev'
-		wss = new WebSocketServer port:8080
+# 		wss = new WebSocketServer server:httpsServer
+# 	when 'dev'
+# 		wss = new WebSocketServer port:8081
+
+wss = new WebSocketServer port:8080
 
 
 
@@ -61,15 +63,16 @@ class Connection
 			@close 'error'
 
 		ws.on 'message', (message) =>
-			# console.log message
-			if !@version
-				@version = message
-				console.log 'version', @version
-			else if @version == '1'
-				[messageId, code, params...] = message.split '\t'
-				@onMessage messageId, code, params
-			else
-				console.log 'invalid version'
+			if message != 'ping'
+				# console.log message
+				if !@version
+					@version = message
+					console.log 'version', @version
+				else if @version == '1'
+					[messageId, code, params...] = message.split '\t'
+					@onMessage messageId, code, params
+				else
+					console.log 'invalid version'
 
 		counter = 0
 		ws.on 'pong', ->
@@ -119,7 +122,7 @@ class Connection
 						@_respond number, 0, body
 
 			when 'g'
-				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?resource=#{params[0]}&db=#{@db}&schemaVersion=#{@schemaVersion}&clientId=#{@clientId}", (err, res, body) =>
+				request.get "http://127.0.0.1/dbms/#{@dbmsVersion}/core/main.php?resource=#{params[0]}&params=#{params[1]}&db=#{@db}&schemaVersion=#{@schemaVersion}&clientId=#{@clientId}", (err, res, body) =>
 					if body == 'invalidClientId'
 						@_respond number, 1
 					else

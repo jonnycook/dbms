@@ -1,0 +1,45 @@
+/
+	Image, ImageSet
+	user = User#%userId
+
+Image#1
+
+ImageSet#1
+
+data/Image
+
+
+
+data
+	User#1
+
+
+
+''
+
+data/ImageSet/images
+
+
+
+data/user
+
+
+
+
+Image#1
+	paths
+		/Image
+		/ImageSet/images
+
+
+
+
+imageSet[1]/images(0, 100)
+
+
+imageSet/images
+
+
+
+
+imageSet[1]/

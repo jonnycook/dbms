@@ -44,3 +44,14 @@ $mongo->clients->insert($client);
 echo json_encode([
 	'id' => $clientId,
 ]);
+
+
+foreach ($mongo->clients->find([
+	'opts.terminateOnDisconnect' => 1,
+	'connected' => false,
+	'terminated' => null
+]) as $client) {
+	if (time() - $client['disconnectedAt'] >= 30) {
+		terminateClient($client['_id']);
+	}
+}

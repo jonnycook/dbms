@@ -172,6 +172,55 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 		}
 
 
+		if ($changes['operations']) {
+			foreach ($changes['operations'] as $operation) {
+				// $update = null;
+				$path = implode('.', $operation['path']);
+				switch ($operation['operation']) {
+					case 'assign':
+						$update['$set'][$path] = $operation['parameters'];
+						break;
+
+					case 'add':
+					case 'push':
+						$update['$push'][$path] = $operation['parameters'];
+						break;
+
+					case 'pop':
+						$update['$pop'][$path] = 1;
+						break;
+
+					case 'shift':
+						$update['$pop'][$path] = -1;
+						break;
+
+					case 'remove':
+						$update['$pull'][$path] = $operation['parameters'];
+						break;
+
+					case 'addToSet':
+					// case 'concat':
+						$update['$addToSet'][$path]['$each'] = $operation['parameters'];
+						break;
+
+					case 'onInsert':
+						$update['$setOnInsert'][$path] = $operation['parameters'];
+						break;
+				}
+
+			}
+
+			if ($update) {
+				// var_dump($update);
+				$response = $this->db->{$collection}->update(['_id' => $this->storageId($storageConfig, $id)], $update, ['upsert' => true]);
+				if (!$response['updatedExisting']) {
+					$inserted = true;
+				}
+				$update = null;
+			}
+		}
+
+
 		if ($changes['attributes']) {
 			$update = ['$set' => $changes['attributes']];		
 		}
@@ -189,40 +238,7 @@ class MongoDbDatabaseStorageEngine extends DatabaseEngine {
 			$this->db->{$collection}->update(['_id' => $this->storageId($storageConfig, $id)], $update, ['upsert' => true]);			
 		}
 
-
-
-		if ($changes['operations']) {
-			foreach ($changes['operations'] as $operation) {
-				$update = null;
-				switch ($operation['operation']) {
-					case 'assign':
-						$update['$set'][implode('.', $operation['path'])] = $operation['parameters'][0];
-						break;
-
-					case 'add':
-					case 'push':
-						$update['$push'][implode('.', $operation['path'])] = $operation['parameters'][0];
-						break;
-
-					case 'pop':
-						$update['$pop'][implode('.', $operation['path'])] = 1;
-						break;
-
-					case 'shift':
-						$update['$pop'][implode('.', $operation['path'])] = -1;
-						break;
-
-					case 'remove':
-						$update['$pull'][implode('.', $operation['path'])] = $operation['parameters'][0];
-						break;
-				}
-
-				if ($update) {
-					$this->db->{$collection}->update(['_id' => $this->storageId($storageConfig, $id)], $update, ['upsert' => true]);			
-				}
-
-			}
-		}
+		return $inserted;
 	}
 
 	public function delete(array $schema, array $storageConfig, $model, $id) {

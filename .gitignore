@@ -1,3 +1,13 @@
 /core/includes/env.php
 /router/env.js
 /router/src/env.coffee
+/core/vendor/
+/gateway/node_modules/
+/router/node_modules/
+/databases
+/.idea
+/*.sublime-*
+/deploy-*
+/vendor
+/router/*.js*
+/gateway/*.js*
